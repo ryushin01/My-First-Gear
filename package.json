@@ -1,0 +1,24 @@
+{
+  "name": "my-first-gear",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint && steiger apps/shop/src && steiger apps/admin/src",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e --concurrency=1",
+    "storybook": "pnpm --filter shop storybook"
+  },
+  "devDependencies": {
+    "@feature-sliced/steiger-plugin": "^0.8.2",
+    "steiger": "0.9.0",
+    "turbo": "2.11.10"
+  },
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "type": "module"
+}

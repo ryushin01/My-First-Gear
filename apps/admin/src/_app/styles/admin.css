@@ -1,0 +1,29 @@
+/* Bulma 기본 스타일 외에 접근성에 꼭 필요한 것만 더한다. */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  color: #000;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+.admin-aside {
+  min-width: 13rem;
+}
+@media (max-width: 768px) {
+  .columns.is-mobile-wrap {
+    display: block;
+  }
+}
+.admin-aside {
+  min-height: calc(100dvh - 3.25rem);
+}
+@media (max-width: 768px) {
+  .admin-aside {
+    min-height: 0;
+  }
+}

@@ -1,0 +1,152 @@
+@unocss;
+
+:root {
+  --edge: 40px;
+  --bezel-radius: 36px;
+  --ink: #111111;
+  --ink-deep: #050505;
+  --cream: #fcf8ef;
+  --label: #ffffffbf;
+  --brand: #ff3131;
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --edge: 12px;
+    --bezel-radius: 24px;
+  }
+}
+
+html {
+  background: var(--ink-deep);
+}
+
+body {
+  min-height: 100dvh;
+  padding: var(--edge);
+  background: var(--ink-deep);
+  color: var(--cream);
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* 흑백 모드: 화면 전체를 흑백으로 바꾼다 */
+html[data-bw="on"] .crt-screen {
+  filter: grayscale(1) contrast(1.15) brightness(1.03);
+}
+
+/* 브라운관 화면 */
+.crt-screen {
+  position: relative;
+  min-height: calc(100dvh - var(--edge) * 2);
+  border-radius: var(--bezel-radius);
+  background:
+    radial-gradient(ellipse at 50% 40%, #222 0%, var(--ink) 60%, #0b0b0b 100%);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+
+/* 주사선, 노이즈, 가장자리 어두움. 화면 위에 고정해 스크롤해도 유지한다 */
+.crt-overlay {
+  position: fixed;
+  inset: var(--edge);
+  border-radius: var(--bezel-radius);
+  pointer-events: none;
+  z-index: 50;
+  box-shadow:
+    0 0 0 100vmax var(--ink-deep),
+    inset 0 0 80px 20px rgb(0 0 0 / 0.75),
+    inset 0 0 0 2px rgb(255 255 255 / 0.04);
+}
+
+.crt-overlay::before,
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.crt-overlay::before {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.025) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+.crt-overlay::after {
+  background-image: var(--noise);
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  animation: grain-shift 0.9s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0% { background-position: 0 0; }
+  25% { background-position: -40px 20px; }
+  50% { background-position: 30px -30px; }
+  75% { background-position: -20px -50px; }
+  100% { background-position: 0 0; }
+}
+
+/* 깜빡임은 밝기 변화가 아주 작아 섬광이 되지 않게 둔다 (KWCAG 6.3.1) */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.985; }
+}
+
+.crt-content {
+  animation: crt-flicker 4s ease-in-out infinite;
+}
+
+/* 빨강·파랑 색 번짐 */
+.rgb-split {
+  text-shadow:
+    -1.5px 0 rgb(255 40 70 / 0.55),
+    1.5px 0 rgb(40 150 255 / 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-overlay::after,
+  .crt-content {
+    animation: none;
+  }
+}
+
+/* 상세 페이지의 작은 TV 화면 */
+.crt-inset {
+  box-shadow:
+    inset 0 0 60px rgb(0 0 0 / 0.9),
+    0 20px 50px rgb(0 0 0 / 0.5);
+  background:
+    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.03) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 50% 45%, #1e1e1e 0%, #050505 75%);
+}
+
+.crt-inset svg {
+  filter: drop-shadow(-2px 0 rgb(255 40 70 / 0.5)) drop-shadow(2px 0 rgb(40 150 255 / 0.5));
+}
+
+/* 헤더와 상태 표시줄은 화면에 붙어 있으므로 아래 본문이 비치지 않게 배경을 깐다 */
+.crt-chrome-top {
+  background: linear-gradient(to bottom, #161616 0%, #161616 78%, rgb(22 22 22 / 0));
+  border-top-left-radius: var(--bezel-radius);
+  border-top-right-radius: var(--bezel-radius);
+}
+
+.crt-chrome-bottom {
+  background: linear-gradient(to top, #121212 0%, #121212 78%, rgb(18 18 18 / 0));
+  border-bottom-left-radius: var(--bezel-radius);
+  border-bottom-right-radius: var(--bezel-radius);
+}

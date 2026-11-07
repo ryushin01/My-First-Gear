@@ -1,0 +1,28 @@
+{
+  "name": "@mfg/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:seed-sql": "node --experimental-strip-types scripts/seed-sql.ts"
+  },
+  "devDependencies": {
+    "@netlify/database-dev": "1.0.2",
+    "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.11",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
+  },
+  "dependencies": {
+    "@mfg/catalog": "workspace:*",
+    "@netlify/database": "2.0.3",
+    "drizzle-orm": "0.45.4",
+    "pg": "8.23.1"
+  }
+}

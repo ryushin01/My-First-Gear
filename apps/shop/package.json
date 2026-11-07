@@ -1,0 +1,45 @@
+{
+  "name": "shop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist .netlify/db-dev -- next dev --port 3000",
+    "start:db": "node ../../packages/db/scripts/with-db.mjs -- next start",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@mfg/catalog": "workspace:*",
+    "@mfg/db": "workspace:*",
+    "@mfg/gear-art": "workspace:*",
+    "next": "16.4.5",
+    "pretendard": "1.3.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@netlify/database-dev": "1.0.2",
+    "@netlify/functions": "^6.1.0",
+    "@playwright/test": "1.58.0",
+    "@storybook/addon-a11y": "10.6.6",
+    "@storybook/nextjs-vite": "10.6.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@unocss/postcss": "66.12.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "storybook": "10.6.6",
+    "typescript": "^5",
+    "unocss": "66.12.0",
+    "vite": "8.3.6"
+  }
+}
