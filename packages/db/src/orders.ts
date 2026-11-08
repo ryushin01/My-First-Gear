@@ -1,11 +1,12 @@
 import { and, count, desc, eq, gte, inArray, sql, sum } from "drizzle-orm";
 import { getProductById, getService, shippingFee } from "@mfg/catalog";
 import type { Db } from "./client";
-import { consultRequests, orderLines, orders, productMerch, type OrderStatus } from "./schema";
+import { consultRequests, orderEvents, orderLines, orders, productMerch, type OrderStatus } from "./schema";
 
 export type Order = typeof orders.$inferSelect;
 export type OrderLine = typeof orderLines.$inferSelect;
-export type OrderWithLines = Order & { lines: OrderLine[] };
+export type OrderEvent = typeof orderEvents.$inferSelect;
+export type OrderWithLines = Order & { lines: OrderLine[]; events: OrderEvent[] };
 
 export type PlaceOrderInput = {
   userId?: number | null;
@@ -78,6 +79,7 @@ export async function placeOrder(db: Db, input: PlaceOrderInput): Promise<Order>
       .returning();
 
     await tx.insert(orderLines).values(resolved.map((l) => ({ ...l, orderId: order.id })));
+    await tx.insert(orderEvents).values({ orderId: order.id, status: order.status });
     for (const l of resolved) {
       if (merch.has(l.itemId)) {
         await tx
@@ -91,14 +93,14 @@ export async function placeOrder(db: Db, input: PlaceOrderInput): Promise<Order>
 }
 
 export async function getOrder(db: Db, id: string): Promise<OrderWithLines | undefined> {
-  return db.query.orders.findFirst({ where: eq(orders.id, id), with: { lines: true } });
+  return db.query.orders.findFirst({ where: eq(orders.id, id), with: { lines: true, events: { orderBy: (e, { asc }) => [asc(e.id)] } } });
 }
 
 /** 비회원 조회: 주문 번호와 받는 분 이름이 모두 맞아야 한다. */
 export async function findOrderForBuyer(db: Db, id: string, name: string): Promise<OrderWithLines | undefined> {
   return db.query.orders.findFirst({
     where: and(eq(orders.id, id.trim().toUpperCase()), eq(orders.buyerName, name.trim())),
-    with: { lines: true },
+    with: { lines: true, events: { orderBy: (e, { asc }) => [asc(e.id)] } },
   });
 }
 
@@ -107,13 +109,35 @@ export async function listOrders(db: Db, options: { status?: OrderStatus; limit?
     where: options.status ? eq(orders.status, options.status) : undefined,
     orderBy: [desc(orders.createdAt)],
     limit: options.limit ?? 100,
-    with: { lines: true },
+    with: { lines: true, events: { orderBy: (e, { asc }) => [asc(e.id)] } },
   });
 }
 
 export async function updateOrderStatus(db: Db, id: string, status: OrderStatus) {
   const [row] = await db.update(orders).set({ status }).where(eq(orders.id, id)).returning();
+  if (row) await db.insert(orderEvents).values({ orderId: id, status });
   return row;
+}
+
+/** 회원이 취소할 수 있는 상태: 결제 완료, 상품 준비 중 (조립·배송이 시작되면 취소할 수 없다) */
+export const CANCELLABLE: OrderStatus[] = ["paid", "preparing"];
+
+/** 회원이 자기 주문을 취소한다. 재고를 되돌린다. */
+export async function cancelOrderByUser(db: Db, userId: number, id: string): Promise<{ ok: boolean; message: string }> {
+  return db.transaction(async (tx) => {
+    const order = await tx.query.orders.findFirst({ where: and(eq(orders.id, id), eq(orders.userId, userId)), with: { lines: true } });
+    if (!order) return { ok: false, message: "주문을 찾지 못했습니다." };
+    if (!CANCELLABLE.includes(order.status)) return { ok: false, message: "조립이나 배송이 시작된 주문은 취소할 수 없습니다. 1:1 문의로 남겨 주세요." };
+    await tx.update(orders).set({ status: "cancelled" }).where(eq(orders.id, id));
+    await tx.insert(orderEvents).values({ orderId: id, status: "cancelled" });
+    for (const line of order.lines) {
+      await tx
+        .update(productMerch)
+        .set({ stock: sql`${productMerch.stock} + ${line.quantity}`, updatedAt: new Date() })
+        .where(eq(productMerch.productId, line.itemId));
+    }
+    return { ok: true, message: `${id} 주문을 취소했습니다.` };
+  });
 }
 
 export async function dashboardStats(db: Db) {

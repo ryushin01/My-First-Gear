@@ -2,5 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm --filter @mfg/db db:migrate && pnpm turbo run build --filter=shop",
-  "crons": [{ "path": "/api/cron/reset-demo", "schedule": "0 19 * * *" }]
+  "crons": [
+    {
+      "path": "/api/cron/reset-demo",
+      "schedule": "0 19 * * *"
+    }
+  ],
+  "regions": [
+    "sin1"
+  ]
 }

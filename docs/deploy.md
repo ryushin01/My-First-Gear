@@ -2,6 +2,9 @@
 
 쇼핑몰과 어드민을 **Vercel 프로젝트 두 개**로 배포합니다. DB는 Vercel Marketplace로 연결한 **Neon(Postgres)** 하나를 함께 씁니다.
 
+- **지역:** Neon 연동에서 고를 수 있는 지역 중 한국에서 가장 가까운 싱가포르(`sin1`)에 DB를 두고, 두 앱의 함수도 같은 지역에서 실행합니다(`vercel.json`의 `regions`). DB와 함수가 멀면 쿼리마다 왕복 시간이 쌓이므로 둘을 함께 옮깁니다.
+- **프리뷰 배포:** DB 연결은 운영 환경에만 두었습니다. 프리뷰 배포는 운영 데이터를 건드리지 않고, 쇼핑몰은 코드의 기본 카탈로그로 화면만 보여 줍니다(주문·회원 기능은 "서버에 연결할 수 없음"으로 안내). 프리뷰에서도 DB가 필요하면 Neon 콘솔의 Vercel 연동 설정에서 프리뷰 브랜치를 켜고 `MFG_MIGRATE_ON_PREVIEW=1`을 넣습니다.
+
 > Vercel Hobby 요금제와 Neon 무료 요금제의 한도(빌드 시간, DB 용량·컴퓨트 시간, 크론 횟수)는 바뀔 수 있으니 공식 문서에서 확인하세요.
 
 ## 1. 쇼핑몰 프로젝트
@@ -20,7 +23,7 @@
 
 | 이름 | 값 |
 |---|---|
-| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Neon 연동이 자동으로 넣음 |
+| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Neon 연동이 운영 환경에 자동으로 넣음 |
 | `MFG_SESSION_SECRET` | 회원 세션 서명용 임의의 긴 문자열 (Sensitive) |
 | `MFG_REVALIDATE_SECRET` | 캐시 갱신 엔드포인트 비밀 값 (어드민과 같게) |
 | `CRON_SECRET` | 크론 호출 확인용 임의의 긴 문자열 |
@@ -60,3 +63,5 @@
 3. `pnpm test` (컴포넌트·접근성·호환성 테스트, 로컬 Postgres(PGlite) 통합 테스트)
 4. `pnpm build`
 5. 쇼핑몰 E2E, 어드민 + 쇼핑몰 E2E (실패하면 결과를 아티팩트로 올림)
+
+`.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `deployment_status` 이벤트에 맞춰, 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.

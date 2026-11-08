@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { channelOf, getCategory, getProductBySlug, nextInCategory, products } from "@mfg/catalog";
+import { channelOf, getCategory, getProductBySlug, nextInCategory, products, type Product } from "@mfg/catalog";
+import { SITE_URL } from "@/shared/config";
 import { getCatalog } from "@/entities/product/index.server";
 import { GearArt } from "@mfg/gear-art";
-import { PriceTag } from "@/entities/product";
+import { PriceTag, RecentlyViewed, RecordRecentView } from "@/entities/product";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductCommunity } from "./ProductCommunity";
+import { CompareButton } from "./CompareButton";
+import { RestockButton } from "./RestockButton";
 import { WishButton } from "./WishButton";
 import { CrtScreen } from "@/widgets/crt-screen";
 
@@ -43,6 +46,7 @@ async function ProductContent({ slug }: { slug: string }) {
 
   return (
     <>
+      <ProductJsonLd product={product} />
       <article className="grid gap-10 py-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
         <div className="flex flex-col gap-6">
           <nav aria-label="현재 위치" className="font-mono text-xs uppercase text-label">
@@ -95,7 +99,10 @@ async function ProductContent({ slug }: { slug: string }) {
           ) : (
             <AddToCartButton productId={product.id} productName={product.name} disabled={soldOut} />
           )}
+          {soldOut && product.purchaseMode === "cart" && <RestockButton productId={product.id} />}
           <WishButton productId={product.id} productName={product.name} />
+          <CompareButton slug={product.slug} name={product.name} />
+          <RecordRecentView slug={product.slug} />
         </div>
 
         <div className="flex flex-col gap-8">
@@ -138,8 +145,9 @@ async function ProductContent({ slug }: { slug: string }) {
           )}
         </div>
       </article>
-      <div className="pb-16">
+      <div className="flex flex-col gap-12 pb-16">
         <ProductCommunity productId={product.id} reviewCount={product.reviewCount} />
+        <RecentlyViewed exclude={product.slug} />
       </div>
     </>
   );
@@ -152,5 +160,36 @@ export function generateProductParams() {
 export async function generateProductMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  return product ? { title: product.name, description: product.tagline } : {};
+  if (!product) return {};
+  const description = `${product.tagline} · ${product.brand} ${getCategory(product.categoryId).name}`;
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: { title: product.name, description, url: `/product/${product.slug}` },
+  };
+}
+
+/** 검색 엔진용 상품 구조화 데이터 (schema.org Product) */
+function ProductJsonLd({ product }: { product: Product }) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    brand: { "@type": "Brand", name: product.brand },
+    category: getCategory(product.categoryId).name,
+    sku: product.id,
+    image: new URL(`/product/${product.slug}/opengraph-image`, SITE_URL).href,
+    aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviewCount },
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "KRW",
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: new URL(`/product/${product.slug}`, SITE_URL).href,
+    },
+  };
+  // </script>가 끼어들지 못하게 <를 이스케이프한다.
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }

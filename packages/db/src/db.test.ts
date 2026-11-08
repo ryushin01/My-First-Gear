@@ -131,3 +131,79 @@ describe("마이페이지", () => {
     expect((await listSavedBuilds(db, 1))[0].name).toBe("게임용");
   });
 });
+
+import { reviewStats } from "./community";
+import { cancelOrderByUser, getOrder } from "./orders";
+import {
+  attemptKey,
+  createSession,
+  deleteSession,
+  getMemberState,
+  getSessionUser,
+  isLockedOut,
+  listRestockByUser,
+  recordAttempt,
+  requestRestock,
+  restockCounts,
+  saveMemberBuild,
+  saveMemberCart,
+} from "./member";
+
+describe("세션과 로그인 시도 제한", () => {
+  it("세션을 지우면 바로 무효가 된다", async () => {
+    const session = await createSession(db, 1, 3600);
+    expect(await getSessionUser(db, session.id)).toBe(1);
+    await deleteSession(db, session.id);
+    expect(await getSessionUser(db, session.id)).toBeNull();
+  });
+
+  it("10분 안에 다섯 번 틀리면 잠기고, 성공하면 풀린다", async () => {
+    const key = attemptKey("member", "demo@myfirstgear.dev");
+    for (let i = 0; i < 4; i++) await recordAttempt(db, key, false);
+    expect(await isLockedOut(db, key)).toBe(false);
+    await recordAttempt(db, key, false);
+    expect(await isLockedOut(db, key)).toBe(true);
+    await recordAttempt(db, key, true);
+    expect(await isLockedOut(db, key)).toBe(false);
+  });
+});
+
+describe("장바구니·견적 동기화, 재입고 알림, 후기 집계", () => {
+  it("회원 상태를 저장하고 읽는다", async () => {
+    await saveMemberCart(db, 1, [{ productId: "p-ssd-001", quantity: 2 }]);
+    await saveMemberBuild(db, 1, { parts: { cpu: "p-cpu-001" }, services: ["svc-assembly"] });
+    const state = await getMemberState(db, 1);
+    expect(state?.cart).toEqual([{ productId: "p-ssd-001", quantity: 2 }]);
+    expect(state?.build?.parts.cpu).toBe("p-cpu-001");
+  });
+
+  it("재입고 알림을 신청하고 상품별로 센다", async () => {
+    await requestRestock(db, 1, "p-con-001");
+    await requestRestock(db, 1, "p-con-001");
+    await requestRestock(db, 2, "p-con-001");
+    expect(await listRestockByUser(db, 1)).toEqual(["p-con-001"]);
+    expect((await restockCounts(db))["p-con-001"]).toBe(2);
+  });
+
+  it("DB 후기를 상품별로 집계한다 (시드 후기)", async () => {
+    expect((await reviewStats(db))["p-cpu-001"]).toEqual({ count: 2, sum: 9 });
+  });
+});
+
+describe("주문 취소와 상태 이력", () => {
+  it("결제 완료 주문은 회원이 취소하고 재고가 돌아온다", async () => {
+    const order = await placeOrder(db, { userId: 1, lines: [{ itemId: "p-ssd-001", quantity: 3 }], buyer, payment: "card" });
+    expect((await cancelOrderByUser(db, 2, order.id)).ok).toBe(false); // 다른 회원은 못 함
+    expect((await cancelOrderByUser(db, 1, order.id)).ok).toBe(true);
+    const saved = await getOrder(db, order.id);
+    expect(saved?.status).toBe("cancelled");
+    expect(saved?.events.map((e) => e.status)).toEqual(["paid", "cancelled"]);
+    expect((await listMerch(db)).find((m) => m.productId === "p-ssd-001")?.stock).toBe(76);
+  });
+
+  it("조립이 시작된 주문은 취소할 수 없다", async () => {
+    const order = await placeOrder(db, { userId: 1, lines: [{ itemId: "p-mem-001", quantity: 1 }, { itemId: "svc-assembly", quantity: 1 }], buyer, payment: "card" });
+    expect(order.status).toBe("assembling");
+    expect((await cancelOrderByUser(db, 1, order.id)).ok).toBe(false);
+  });
+});

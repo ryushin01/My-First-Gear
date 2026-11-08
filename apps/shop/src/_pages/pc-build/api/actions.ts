@@ -2,7 +2,7 @@
 
 import { getDb, hasDatabase, saveBuild } from "@mfg/db";
 import { getSessionUserId } from "@/entities/member/index.server";
-import { decodeBuild } from "../model/codec";
+import { decodeBuild } from "@/entities/build";
 
 export async function saveBuildAction(name: string, encoded: string, total: number): Promise<{ ok: boolean; message: string }> {
   const userId = await getSessionUserId();

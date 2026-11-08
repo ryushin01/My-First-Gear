@@ -8,11 +8,13 @@ export {
   findOrderForBuyer,
   getOrder,
   listOrders,
+  CANCELLABLE,
+  cancelOrderByUser,
   OrderError,
   placeOrder,
   updateOrderStatus,
 } from "./orders";
-export type { Order, OrderLine, OrderWithLines, PlaceOrderInput } from "./orders";
+export type { Order, OrderEvent, OrderLine, OrderWithLines, PlaceOrderInput } from "./orders";
 export { createConsult, listConsults, updateConsultStatus } from "./consults";
 export type { ConsultRequest } from "./consults";
 export { resetDemoData } from "./reset";
@@ -32,6 +34,26 @@ export {
   listQuestionsForAdmin,
   listReviews,
   maskName,
+  reviewStats,
 } from "./community";
 export { deleteSavedBuild, isWished, listOrdersByUser, listSavedBuilds, listWishlist, saveBuild, toggleWish } from "./mypage";
 export { DEMO_MEMBER } from "./seed";
+export {
+  attemptKey,
+  cancelRestock,
+  createSession,
+  deleteSession,
+  getMemberState,
+  getSessionUser,
+  hasRestockRequest,
+  isLockedOut,
+  listRestockByUser,
+  LOGIN_MAX_FAILURES,
+  LOGIN_WINDOW_MINUTES,
+  purgeExpiredSessions,
+  recordAttempt,
+  requestRestock,
+  restockCounts,
+  saveMemberBuild,
+  saveMemberCart,
+} from "./member";

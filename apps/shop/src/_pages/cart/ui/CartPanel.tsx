@@ -5,6 +5,8 @@ import { useId } from "react";
 import { FREE_SHIPPING_FROM, formatPrice } from "@mfg/catalog";
 import { GearArt } from "@mfg/gear-art";
 import { removeFromCart, setQuantity, useCartSummary } from "@/entities/cart";
+import { cartCompat } from "../model/cartCompat";
+import { CartCompatNotice } from "./CartCompatNotice";
 
 export function CartPanel() {
   const { lines, subtotal, shipping, total } = useCartSummary();
@@ -22,8 +24,12 @@ export function CartPanel() {
     );
   }
 
+  const compat = cartCompat(lines.flatMap((line) => (line.product ? [line.product] : [])));
+
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="flex flex-col gap-4">
+      <CartCompatNotice compat={compat} />
       <ul className="flex flex-col gap-2">
         {lines.map((line) => {
           const qtyId = `qty-${line.id}`;
@@ -75,6 +81,7 @@ export function CartPanel() {
           );
         })}
       </ul>
+      </div>
 
       <aside aria-labelledby={summaryId} className="flex flex-col gap-4 lg:sticky lg:top-40 lg:self-start">
         <h2 id={summaryId} className="mono-label">

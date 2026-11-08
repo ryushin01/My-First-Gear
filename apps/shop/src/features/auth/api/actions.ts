@@ -1,6 +1,6 @@
 "use server";
 
-import { authenticate, AuthError, createUser, getDb, hasDatabase } from "@mfg/db";
+import { attemptKey, authenticate, AuthError, createUser, getDb, hasDatabase, isLockedOut, LOGIN_WINDOW_MINUTES, recordAttempt } from "@mfg/db";
 import { endSession, startSession } from "@/entities/member/index.server";
 import { EMAIL_PATTERN } from "@/shared/lib";
 
@@ -30,7 +30,14 @@ export async function loginAction(_: AuthState, formData: FormData): Promise<Aut
   if (Object.keys(errors).length) return { ok: false, message: "입력 내용을 확인해 주세요.", errors, values };
   if (!hasDatabase()) return { ok: false, message: NO_DB, values };
 
-  const user = await authenticate(getDb(), email, password);
+  // 같은 이메일로 10분 안에 5번 틀리면 잠시 막는다 (비밀번호 대입 방지).
+  const db = getDb();
+  const key = attemptKey("member", email);
+  if (await isLockedOut(db, key)) {
+    return { ok: false, message: `로그인에 여러 번 실패해 ${LOGIN_WINDOW_MINUTES}분 동안 막았습니다. 잠시 뒤 다시 시도해 주세요.`, values };
+  }
+  const user = await authenticate(db, email, password);
+  await recordAttempt(db, key, Boolean(user));
   if (!user) return { ok: false, message: "이메일 또는 비밀번호가 맞지 않습니다.", values };
   await startSession(user);
   return { ok: true, message: `${user.name}님, 반갑습니다.`, next: safeNext(formData.get("next")) };

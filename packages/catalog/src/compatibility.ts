@@ -88,6 +88,20 @@ export function checkBuild(build: Build): BuildIssue[] {
       message: `그래픽카드 길이 ${gpu.lengthMm}mm가 케이스 허용 길이 ${pcCase.maxGpuLengthMm}mm보다 깁니다.`,
     });
   }
+  if (gpu && pcCase && gpu.slots > pcCase.maxGpuSlots) {
+    issues.push({
+      level: "error",
+      parts: ["gpu", "case"],
+      message: `그래픽카드 두께 ${gpu.slots}슬롯이 케이스가 받는 ${pcCase.maxGpuSlots}슬롯보다 두껍습니다.`,
+    });
+  }
+  if (gpu && psu && gpu.powerConnector === "12V-2x6" && !psu.has12V2x6) {
+    issues.push({
+      level: "warning",
+      parts: ["gpu", "psu"],
+      message: "그래픽카드는 12V-2x6 전원 커넥터를 쓰는데 파워에 이 단자가 없습니다. 변환 케이블이 필요합니다.",
+    });
+  }
   if (cooler && pcCase && cooler.type === "air" && cooler.heightMm > pcCase.maxCoolerHeightMm) {
     issues.push({
       level: "error",

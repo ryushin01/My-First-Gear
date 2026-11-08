@@ -73,14 +73,15 @@ export type PartCompat =
   | { part: "cpu"; socket: Socket; memoryType: MemoryType; tdp: number; integratedGraphics: boolean }
   | { part: "mainboard"; socket: Socket; memoryType: MemoryType; formFactor: BoardFormFactor; memorySlots: number }
   | { part: "memory"; memoryType: MemoryType; modules: number; capacityGb: number }
-  | { part: "gpu"; lengthMm: number; tdp: number }
+  | { part: "gpu"; lengthMm: number; tdp: number; powerConnector: "8pin" | "12V-2x6"; slots: number }
   | { part: "storage"; interface: "NVMe" | "SATA" }
-  | { part: "psu"; wattage: number; formFactor: PsuFormFactor }
+  | { part: "psu"; wattage: number; formFactor: PsuFormFactor; has12V2x6: boolean }
   | {
       part: "case";
       boards: BoardFormFactor[];
       maxGpuLengthMm: number;
       maxCoolerHeightMm: number;
+      maxGpuSlots: number;
       psuFormFactors: PsuFormFactor[];
     }
   | { part: "cooler"; sockets: Socket[]; type: "air" | "liquid"; heightMm: number; tdpRating: number };

@@ -28,6 +28,8 @@ export type PlaceOrderRequest = {
 };
 
 export type OrderSummary = {
+  assembly?: boolean;
+  events?: { status: OrderStatus; createdAt: string }[];
   id: string;
   status: OrderStatus;
   total: number;

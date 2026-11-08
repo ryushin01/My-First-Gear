@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.3.1-ff3131)
+![version](https://img.shields.io/badge/version-0.4.0-ff3131)
 
 컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -15,9 +15,13 @@
 |---|---|
 | ![브라운관 화면 안에 VHS 표지처럼 꾸민 소니 NW-WM1ZM2 그림이 가운데 놓인 캐러셀](docs/images/shop-home.jpg) | ![DAP 카테고리의 채널 목록, 브랜드 필터, 상품 카드 그리드](docs/images/shop-list.jpg) |
 
-| PC 견적 | 상품 상세 |
+| PC 견적 | 예산별 빠른 견적 |
 |---|---|
-| ![CPU부터 쿨러까지 8칸을 채운 견적과 예상 소비 전력, 조립 서비스 선택, 호환성 확인 완료 문구](docs/images/shop-build.jpg) | ![대괄호 라벨, 큰 세리프 상품명, 작은 TV 화면 속 워크맨 그림과 사양 표](docs/images/shop-detail.jpg) |
+| ![CPU부터 쿨러까지 8칸을 채운 견적과 예상 소비 전력, 조립 서비스 선택, 호환성 확인 완료 문구](docs/images/shop-build.jpg) | ![200만 원 이하 게임용으로 고른 예산과 용도, 추천된 부품 목록과 총액](docs/images/shop-quick-build.jpg) |
+
+| 상품 상세 | 상품 비교 |
+|---|---|
+| ![대괄호 라벨, 큰 세리프 상품명, 작은 TV 화면 속 워크맨 그림과 사양 표](docs/images/shop-detail.jpg) | ![헤드폰 두 개와 이어폰 하나의 가격, 평점, 사양을 나란히 놓은 비교 표](docs/images/shop-compare.jpg) |
 
 | 마이페이지 | 상품 후기·Q&A |
 |---|---|
@@ -38,18 +42,18 @@
 | 메뉴 | 내용 |
 |---|---|
 | 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 18개 카테고리 채널 목록 |
-| 기어 | 카테고리별 목록, 브랜드·품절 필터와 정렬(주소에 유지), 상세 사양 표, 다음 상품("Next tape") |
-| PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·쿨러 높이·파워 용량 검사, 견적 주소 공유, 조립·OS 설치·선 정리·24시간 테스트 옵션 |
-| 주문·상담 | 장바구니, 모의 결제(가격·재고는 서버에서 다시 계산), 비회원 주문 조회, 자동차·모터사이클은 구매 상담 신청 |
-| 회원 | 가입·로그인(데모 `demo@myfirstgear.dev` / `demo1234`), 후기·Q&A·찜, 마이페이지(주문 내역, 저장한 견적, 찜, 1:1 문의) |
+| 기어·검색 | 카테고리 목록, 필터·정렬(주소에 유지), 검색, 상품 비교(최대 4개), 최근 본 상품, 상품별 공유 이미지·구조화 데이터 |
+| PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·두께·전원 커넥터·쿨러 높이·파워 용량 검사, 예산·용도별 빠른 견적, 견적 주소·이미지 공유, 조립 옵션 |
+| 주문·상담 | 장바구니(담긴 부품 호환성 재검사), 모의 결제(서버에서 금액·재고 재계산), 주문 취소, 배송 단계, 비회원 조회, 고가 상품 상담 |
+| 회원 | 가입·로그인(데모 `demo@myfirstgear.dev` / `demo1234`, 시도 제한), 후기·Q&A·찜·재입고 알림, 기기 간 장바구니·견적 동기화, 마이페이지 |
 
 **어드민** (`apps/admin`, Bulma)
 
 | 메뉴 | 내용 |
 |---|---|
 | 대시보드 | 최근 주문, 매출, 조립 중, 새 상담 건수, 재고 부족 상품 |
-| 상품 판매 정보 | 가격·정가·재고·추천·노출 수정 → 쇼핑몰 캐시 즉시 갱신 |
-| 주문·상담·문의 | 주문·상담 상태 변경, 1:1 문의와 상품 Q&A 답변(쇼핑몰에 바로 반영), 회원 목록 |
+| 상품 판매 정보 | 가격·정가·재고·추천·노출 수정 → 쇼핑몰 캐시 즉시 갱신, 재입고 알림 신청 수 |
+| 주문·상담·문의 | 주문 상태 변경과 이력, 상담 처리, 1:1 문의와 상품 Q&A 답변(쇼핑몰에 바로 반영), 회원 목록 |
 
 쇼핑몰에서 들어온 주문·상담·문의는 어드민에, 어드민에서 바꾼 가격·재고와 답변은 쇼핑몰에 바로 반영됩니다. 데모 데이터는 매일 새벽 처음 상태로 돌아갑니다. KWCAG 2.2 33개 항목은 [접근성 점검표](docs/accessibility.md)에 정리했습니다.
 
@@ -62,9 +66,9 @@
 | 프레임워크 | Next.js 16 (App Router, Cache Components), React 19, TypeScript |
 | 구조 | pnpm 워크스페이스 + Turborepo 모노레포, Feature-Sliced Design v2.1 (steiger 검사) |
 | 스타일 | 쇼핑몰 UnoCSS (`presetWind4`), 어드민 Bulma 1 |
-| 데이터 | PostgreSQL (Neon, 로컬·테스트는 PGlite), Drizzle ORM, 서버 액션 |
+| 데이터 | PostgreSQL (Neon 싱가포르, 로컬·테스트는 PGlite), Drizzle ORM, 서버 액션, `next/og` 공유 이미지 |
 | 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·접근성(axe)·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사) |
-| 배포 | Vercel (쇼핑몰·어드민 두 프로젝트, Cron), GitHub Actions |
+| 배포 | Vercel (쇼핑몰·어드민 두 프로젝트, 싱가포르 함수, Cron), GitHub Actions (CI, 배포 직후 운영 스모크 테스트) |
 
 ## 시작하기
 
@@ -84,6 +88,7 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 | `pnpm lint` / `typecheck` | ESLint + FSD 검사 / 타입 검사 |
 | `pnpm test` | 컴포넌트·접근성·호환성·DB 통합 테스트 |
 | `pnpm test:e2e` | 프로덕션 빌드를 로컬 DB로 띄워 쇼핑몰·어드민 E2E |
+| `pnpm --filter shop test:smoke` | 운영 주소 스모크 테스트 (읽기 전용) |
 
 ## 프로젝트 구조
 
@@ -95,7 +100,7 @@ apps/
 │  └─ vercel.json   빌드(마이그레이션 적용), 데모 초기화 크론
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
-├─ catalog/         상품·카테고리·호환성 검사 (순수 TS)
+├─ catalog/         상품·카테고리·호환성 검사·검색·예산 추천 (순수 TS)
 ├─ gear-art/        상품 SVG 그림 18종
 └─ db/              Drizzle 스키마·쿼리·마이그레이션, 로컬 DB(PGlite) 실행 스크립트
 ```

@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const pages = ["/", "/gear", "/gear/gpu", "/product/antec-torque", "/build", "/assembly", "/cart", "/checkout", "/orders", "/consult", "/login", "/signup", "/my"];
+const pages = ["/", "/gear", "/gear/gpu", "/product/antec-torque", "/build", "/assembly", "/cart", "/checkout", "/orders", "/consult", "/login", "/signup", "/my", "/search?q=AM5", "/build/quick", "/compare"];
 
 for (const path of pages) {
   test(`${path}: 가로 넘침, 작은 조작 요소, axe 위반이 없다`, async ({ page }) => {
@@ -9,6 +9,8 @@ for (const path of pages) {
     // 로그인이 필요한 화면은 로그인 화면으로 이동이 끝난 뒤 검사한다.
     if (path === "/my") await page.waitForURL(/\/login\?next=/);
     await expect(page.getByRole("main")).toBeVisible();
+    // 스트리밍으로 들어오는 본문까지 그려진 뒤 검사한다 (페이지 제목이 나타날 때까지 기다림)
+    await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
     // 조작 가능한 요소는 24×24px 이상 (KWCAG 6.1.3). 문단 안 링크, 레이블 안 체크박스, inert 영역, 숨은 바로가기는 뺀다.

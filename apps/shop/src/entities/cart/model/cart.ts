@@ -42,6 +42,13 @@ export function removeFromCart(productId: string) {
   store.set((lines) => lines.filter((line) => line.productId !== productId));
 }
 
+/** 회원 동기화용: 바뀔 때마다 알림을 받고, 현재 값을 읽고, 통째로 바꾼다. */
+export const onCartChange = (listener: () => void) => store.subscribe(listener);
+export const readCart = () => store.get();
+export function replaceCart(lines: CartLine[]) {
+  store.set(lines);
+}
+
 export function clearCart() {
   store.set([]);
 }

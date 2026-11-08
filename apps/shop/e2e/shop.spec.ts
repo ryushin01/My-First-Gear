@@ -60,7 +60,7 @@ test("장바구니에 담고 모의 결제 후 주문을 조회한다", async ({
   await page.getByLabel("주문 번호").fill(orderId);
   await page.getByLabel("받는 분 이름").fill("김기어");
   await page.getByRole("button", { name: "조회하기" }).click();
-  await expect(page.getByText("결제 완료")).toBeVisible();
+  await expect(page.getByText("결제 완료").first()).toBeVisible();
 });
 
 test("PC 견적에서 호환성 오류를 알리고 해결하면 담을 수 있다", async ({ page }) => {

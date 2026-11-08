@@ -63,7 +63,7 @@ export function ProductCommunity({ productId, reviewCount }: { productId: string
         <h2 id={`${productId}-reviews`} className="font-display text-3xl">
           후기
         </h2>
-        <p className="font-mono text-xs text-label">누적 후기 {reviewCount.toLocaleString("ko-KR")}개 중 최근 후기</p>
+        <p className="font-mono text-xs text-label">누적 후기 {reviewCount.toLocaleString("ko-KR")}개 중 회원 후기</p>
         <Suspense fallback={loading}>
           <ReviewList productId={productId} />
         </Suspense>

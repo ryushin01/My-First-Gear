@@ -11,7 +11,8 @@
     "test:e2e": "playwright test",
     "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist .local-db -- next dev --port 3000",
     "start:db": "node ../../packages/db/scripts/with-db.mjs -- next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:smoke": "playwright test -c playwright.smoke.config.ts"
   },
   "dependencies": {
     "@mfg/catalog": "workspace:*",

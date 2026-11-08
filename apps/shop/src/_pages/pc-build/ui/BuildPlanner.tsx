@@ -26,7 +26,7 @@ import {
   toBuild,
   toggleService,
   useBuildState,
-} from "../model/build";
+} from "@/entities/build";
 import { useMemberName } from "@/entities/member";
 import { useSubmitLock } from "@/shared/lib";
 import { saveBuildAction } from "../api/actions";
@@ -258,6 +258,16 @@ export function BuildPlanner() {
               처음부터
             </button>
           </div>
+          {filled > 0 && (
+            <a
+              href={`/api/og/build?b=${encodeURIComponent(encodeBuild(state))}`}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 text-sm hover:border-white"
+            >
+              견적 이미지 보기<span className="sr-only"> (새 창)</span>
+            </a>
+          )}
           <p role="status" className="min-h-5 break-all text-sm text-mute-100">
             {notice}
             {notice.startsWith("견적의") && (

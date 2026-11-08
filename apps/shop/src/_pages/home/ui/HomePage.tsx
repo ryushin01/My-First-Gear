@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { categories, channelOf, featuredProducts } from "@mfg/catalog";
 import { getCatalog } from "@/entities/product/index.server";
+import { RecentlyViewed } from "@/entities/product";
 import { CrtScreen } from "@/widgets/crt-screen";
 import { TapeCarousel } from "./TapeCarousel";
 
@@ -11,6 +12,8 @@ export async function HomePage() {
       <h1 className="sr-only">My First Gear, 첫 장비를 고르는 기어 숍</h1>
       <div className="flex flex-col gap-20 py-6">
         <TapeCarousel products={featuredProducts(products)} />
+
+        <RecentlyViewed />
 
         <section aria-labelledby="home-channels" className="flex flex-col gap-6">
           <div className="flex items-end justify-between gap-4">
@@ -50,6 +53,9 @@ export async function HomePage() {
             <div className="flex flex-wrap gap-3">
               <Link href="/build" className="inline-flex min-h-11 items-center rounded-md bg-cream px-5 text-ink hover:bg-white">
                 PC 견적 시작
+              </Link>
+              <Link href="/build/quick" className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-5 hover:border-white">
+                예산별 빠른 견적
               </Link>
               <Link href="/assembly" className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-5 hover:border-white">
                 조립 서비스 안내

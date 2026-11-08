@@ -23,6 +23,15 @@ export async function listReviews(db: Db, productId: string) {
   return rows.map(({ userName, ...row }) => ({ ...row, author: maskName(userName) }));
 }
 
+/** 상품별 DB 후기 수와 별점 합 (카탈로그의 누적 후기와 합쳐 보여 준다) */
+export async function reviewStats(db: Db): Promise<Record<string, { count: number; sum: number }>> {
+  const rows = await db
+    .select({ productId: reviews.productId, count: sql<number>`count(*)::int`, sum: sql<number>`sum(${reviews.rating})::int` })
+    .from(reviews)
+    .groupBy(reviews.productId);
+  return Object.fromEntries(rows.map((r) => [r.productId, { count: r.count, sum: r.sum }]));
+}
+
 export async function createReview(db: Db, input: { productId: string; userId: number; rating: number; body: string }) {
   if (!Number.isInteger(input.rating) || input.rating < 1 || input.rating > 5) throw new CommunityError("별점은 1에서 5 사이로 골라 주세요.");
   const exists = await db.query.reviews.findFirst({

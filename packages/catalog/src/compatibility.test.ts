@@ -69,3 +69,16 @@ describe("fitsBuild", () => {
     expect(fitsBuild(goodBuild, p("phoenix-keyboard"))).toBe(true);
   });
 });
+
+describe("전원 커넥터와 그래픽카드 두께", () => {
+  it("12V-2x6 그래픽카드에 단자가 없는 파워면 변환 케이블을 알려 준다", () => {
+    const issues = checkBuild({ ...goodBuild, psu: p("micronics-classic-ii-600") });
+    expect(issues).toContainEqual(expect.objectContaining({ level: "warning", parts: ["gpu", "psu"] }));
+    expect(checkBuild(goodBuild).some((i) => i.parts.join() === "gpu,psu")).toBe(false);
+  });
+
+  it("케이스가 받는 슬롯보다 두꺼운 그래픽카드는 오류", () => {
+    const thinCase = { ...p("antec-torque"), compat: { ...goodBuild.case!.compat!, maxGpuSlots: 2 } } as typeof goodBuild.case;
+    expect(checkBuild({ ...goodBuild, case: thinCase }).some((i) => i.parts.join() === "gpu,case" && i.message.includes("슬롯"))).toBe(true);
+  });
+});

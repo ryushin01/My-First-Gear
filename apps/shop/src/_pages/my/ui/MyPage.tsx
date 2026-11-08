@@ -3,9 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { formatPrice, getProductById } from "@mfg/catalog";
-import { getDb, listInquiriesByUser, listOrdersByUser, listSavedBuilds, listWishlist } from "@mfg/db";
+import { CANCELLABLE, getDb, listInquiriesByUser, listOrdersByUser, listRestockByUser, listSavedBuilds, listWishlist } from "@mfg/db";
 import { getSessionUser } from "@/entities/member/index.server";
-import { orderStatusLabel } from "@/entities/order";
+import { getCatalog } from "@/entities/product/index.server";
+import { orderStatusLabel, OrderTimeline } from "@/entities/order";
 import { ProductCard } from "@/entities/product";
 import { LogoutButton } from "@/features/auth";
 import { inquiryCategoryLabel } from "../model/inquiryLabels";
@@ -13,6 +14,7 @@ import { InquiryForm } from "./InquiryForm";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 import { deleteBuildAction } from "../api/actions";
+import { CancelOrderButton } from "./CancelOrderButton";
 
 export const myMetadata: Metadata = { title: "마이페이지", robots: { index: false } };
 
@@ -23,11 +25,13 @@ async function MyContent() {
   const user = await getSessionUser();
   if (!user) redirect("/login?next=/my");
   const db = getDb();
-  const [orders, builds, wished, inquiries] = await Promise.all([
+  const [orders, builds, wished, inquiries, restock, catalog] = await Promise.all([
     listOrdersByUser(db, user.id),
     listSavedBuilds(db, user.id),
     listWishlist(db, user.id),
     listInquiriesByUser(db, user.id),
+    listRestockByUser(db, user.id),
+    getCatalog(),
   ]);
   const wishedProducts = wished.flatMap((id) => getProductById(id) ?? []);
 
@@ -42,6 +46,7 @@ async function MyContent() {
             <li><a href="#my-orders" className="hover:text-cream">주문 내역</a></li>
             <li><a href="#my-builds" className="hover:text-cream">저장한 견적</a></li>
             <li><a href="#my-wish" className="hover:text-cream">찜</a></li>
+            <li><a href="#my-restock" className="hover:text-cream">재입고 알림</a></li>
             <li><a href="#my-inquiries" className="hover:text-cream">1:1 문의</a></li>
           </ul>
         </nav>
@@ -74,7 +79,15 @@ async function MyContent() {
                       {order.lines[0]?.name}
                       {order.lines.length > 1 && ` 외 ${order.lines.length - 1}건`}
                     </td>
-                    <td className="py-3 pr-4">{orderStatusLabel[order.status]}</td>
+                    <td className="py-3 pr-4 align-top">
+                      <details>
+                        <summary className="cursor-pointer">{orderStatusLabel[order.status]}</summary>
+                        <div className="mt-2">
+                          <OrderTimeline events={order.events} assembly={order.assembly} />
+                        </div>
+                      </details>
+                      <CancelOrderButton orderId={order.id} cancellable={CANCELLABLE.includes(order.status)} />
+                    </td>
                     <td className="py-3 text-right font-mono tabular-nums">{formatPrice(order.total)}</td>
                   </tr>
                 ))}
@@ -111,6 +124,26 @@ async function MyContent() {
                     </button>
                   </form>
                 </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section id="my-restock" aria-labelledby="my-restock-heading" className="flex flex-col gap-4">
+        <h2 id="my-restock-heading" className={sectionTitle}>재입고 알림</h2>
+        {restock.length === 0 ? (
+          <p className="text-mute-200">신청한 재입고 알림이 없습니다. 품절 상품 상세에서 신청할 수 있습니다.</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {restock.flatMap((id) => catalog.find((p) => p.id === id) ?? []).map((product) => (
+              <li key={product.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 p-4">
+                <Link href={`/product/${product.slug}`} className="hover:underline">
+                  {product.name}
+                </Link>
+                <span className={product.stock > 0 ? "text-[#3cb371]" : "text-mute-200"}>
+                  {product.stock > 0 ? `입고됨 · 재고 ${product.stock}개` : "아직 품절"}
+                </span>
               </li>
             ))}
           </ul>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CartCount } from "@/entities/cart";
+import { MemberSync } from "./MemberSync";
 import { AccountLink } from "./AccountLink";
 import { BwToggle } from "./BwToggle";
 import { FxToggle } from "./FxToggle";
@@ -11,6 +12,7 @@ import { Wordmark } from "./Wordmark";
 
 const NAV = [
   { href: "/gear", label: "Gear" },
+  { href: "/search", label: "검색" },
   { href: "/build", label: "PC 견적" },
   { href: "/assembly", label: "조립 서비스" },
   { href: "/cart", label: "장바구니" },
@@ -26,6 +28,7 @@ type CrtScreenProps = {
 export function CrtScreen({ children, source = "MY FIRST GEAR" }: CrtScreenProps) {
   return (
     <div className="crt-screen">
+      <MemberSync />
       <ScreenShell
         header={
       <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-12">
@@ -44,7 +47,7 @@ export function CrtScreen({ children, source = "MY FIRST GEAR" }: CrtScreenProps
           <ul className="flex flex-wrap justify-end gap-x-4 gap-y-1 font-mono md:gap-x-6 text-xs uppercase text-label">
             {NAV.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="inline-flex min-h-8 items-center hover:text-cream">
+                <Link href={item.href} className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-cream">
                   {item.label}
                   {item.href === "/cart" && <CartCount />}
                 </Link>

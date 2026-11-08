@@ -26,7 +26,12 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - 주문은 서버 액션 `placeOrderAction`이 처리합니다. 클라이언트가 보낸 가격은 쓰지 않고, 한 트랜잭션 안에서 DB 가격으로 다시 계산하고 재고를 줄입니다. 그 뒤 `updateTag("merch")`로 캐시를 갱신합니다.
 - 어드민이 판매 정보를 바꾸면 쇼핑몰의 `POST /api/revalidate`(헤더 `x-revalidate-secret`)를 호출해 캐시를 비웁니다.
 - 장바구니와 PC 견적은 브라우저 `localStorage`에 둡니다. 견적은 `/build?b=…` 주소로 공유하고, 회원은 마이페이지에 저장할 수 있습니다.
-- **회원 세션:** 이메일·비밀번호(scrypt 해시) 로그인. 서명한 `httpOnly` 쿠키 `mfg_session`으로 인증하고, 화면 표시용 이름만 `mfg_member` 쿠키에 둡니다. 세션을 읽는 코드는 `connection()`으로 요청 시점에만 실행합니다. 로그인 상태가 바뀌면 전체 페이지를 다시 불러옵니다 (Cache Components가 숨겨 둔 이전 화면이 남지 않게).
+- **회원 세션:** 이메일·비밀번호(scrypt 해시) 로그인. 세션은 DB(`sessions`)에 두고 `httpOnly` 쿠키 `mfg_session`에는 서명한 세션 id만 담습니다. 로그아웃하면 행을 지워 그 쿠키는 바로 무효가 됩니다. 화면 표시용 이름만 `mfg_member` 쿠키에 둡니다.
+- **로그인 시도 제한:** 회원은 이메일, 어드민은 IP 기준(해시해서 저장)으로 10분 안에 5번 틀리면 잠시 막습니다(`login_attempts`).
+- **회원 장바구니·견적 동기화:** 로그인하면 서버에 저장한 값(`member_states`)과 이 기기의 값을 합치고(같은 상품은 많은 수량), 바뀔 때마다 0.8초 뒤 저장합니다(`widgets/crt-screen/ui/MemberSync.tsx`). 세션을 읽는 코드는 `connection()`으로 요청 시점에만 실행합니다. 로그인 상태가 바뀌면 전체 페이지를 다시 불러옵니다 (Cache Components가 숨겨 둔 이전 화면이 남지 않게).
+- **평점·후기 수:** 카탈로그의 누적 후기(가상 값)에 DB 후기를 더해 다시 계산합니다(`applyMerch`). 후기를 쓰면 `merch` 태그도 갱신합니다.
+- **카탈로그 전송:** 가격·재고를 반영한 카탈로그는 필요한 화면(목록, 검색, 견적, 장바구니, 결제, 비교)만 `WithCatalog`로 감싸 넘깁니다. 모든 화면에 상품 전체를 싣지 않습니다.
+- **주문 상태 이력:** 주문을 만들거나 상태를 바꿀 때 `order_events`에 남겨 배송 단계 타임라인으로 보여 줍니다. 회원은 결제 완료·상품 준비 중일 때만 직접 취소할 수 있고, 재고가 돌아옵니다.
 - **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
 - 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 마이그레이션을 만듭니다. 운영 배포(Vercel 빌드)와 로컬 DB 모두 `scripts/migrate.mjs`(Drizzle 마이그레이터)로 적용합니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
@@ -49,6 +54,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 | `MFG_REVALIDATE_SECRET` | 두 앱 | 쇼핑몰 캐시 갱신 엔드포인트의 비밀 값 |
 | `MFG_SESSION_SECRET` | 쇼핑몰 | 회원 세션 쿠키 서명 키 (Vercel 운영 필수, 로컬은 개발용 기본값) |
 | `CRON_SECRET` | 쇼핑몰 | 데모 초기화 크론(`/api/cron/reset-demo`) 확인용 |
+| `NEXT_PUBLIC_SITE_URL` | 쇼핑몰 | 선택. sitemap·OG 절대 주소. 없으면 Vercel의 운영 주소(`VERCEL_PROJECT_PRODUCTION_URL`) |
 | `MFG_SHOP_URL` | 어드민 | 쇼핑몰 주소 (캐시 갱신 호출용) |
 | `MFG_ADMIN_SECRET` | 어드민 | 세션 쿠키 서명 키 (운영 필수) |
 | `MFG_ADMIN_PASSWORD` | 어드민 | 로그인 비밀번호. 없으면 공개 데모 비밀번호 `demo-admin` |
@@ -58,7 +64,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 [Arc Marumo](https://www.arcmarumo.com/)의 브라운관 TV와 VHS 테이프 콘셉트를 참고했습니다. 로고와 레이아웃은 복제하지 않았습니다.
 
 - 색: 배경 `#111`, 포인트 `#ff3131`, 크림 `#fcf8ef`, 회색 `#e4dfd9`·`#b2aeab`, 색 번짐 `#ff2846`·`#2896ff` (`uno.config.ts`)
-- 글꼴: 큰 제목 Instrument Serif + Gowun Batang, 라벨 JetBrains Mono, 본문 Pretendard
+- 글꼴: 큰 제목 Instrument Serif + Gowun Batang, 라벨 JetBrains Mono, 본문 Pretendard. Pretendard는 글자 묶음별로 나눈 파일(dynamic subset, 92조각)을 써서 화면에 쓰인 글자만 받습니다. 홈 글꼴 전송량 약 2.2MB → 0.5MB
 - 장치: 화면 전체 브라운관 프레임(주사선·노이즈·비네트), 타임코드, `[대괄호]` 고정폭 라벨, 흑백 토글, 눈금 진행 막대, "Next tape"
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.
 - 상품 그림은 `packages/gear-art`에서 종류별로 그립니다. 로고·엠블럼·상표 문양은 넣지 않습니다.
@@ -77,8 +83,9 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 | 명령 | 내용 |
 |---|---|
-| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(10), 쇼핑몰 컴포넌트·접근성 테스트(21), 어드민 컴포넌트·세션 테스트(4) |
-| `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 50개. 13개 화면의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
+| `pnpm test` | `packages/catalog` 호환성·검색·예산 추천(14), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(17), 쇼핑몰 컴포넌트·접근성·장바구니 호환성·동기화 테스트(27), 어드민 컴포넌트·세션 테스트(4) |
+| `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 74개. 검색, 빠른 견적, 비교, 최근 본 상품, 장바구니 호환성, 기기 간 동기화, 주문 취소·배송 단계, 재입고 알림, 로그인 시도 제한, 세션 무효화, sitemap·OG·구조화 데이터, 성능 예산(홈 글꼴 700KB 이하) 포함. 13개 화면의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
+| `pnpm --filter shop test:smoke` | 운영 주소를 대상으로 읽기 전용 스모크 테스트 (배포 직후 GitHub Actions가 자동 실행) |
 | `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 24개. 로그인, 가격 변경 반영, 주문·상담 상태, 문의 답변 반영, 가로 넘침·axe, 데모 초기화 크론 |
 
 - 컴포넌트 테스트는 컴포넌트 옆 `*.test.tsx`에 둡니다 (Vitest + Testing Library, jsdom).

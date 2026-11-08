@@ -32,12 +32,22 @@ export async function updateMerch(db: Db, productId: string, patch: MerchPatch):
   return row;
 }
 
-/** 카탈로그 상품에 DB 판매 정보를 덮어쓴다. 숨긴 상품은 뺀다. */
-export function applyMerch(merch: Merch[], source: Product[] = catalogProducts): Product[] {
+/**
+ * 카탈로그 상품에 DB 판매 정보를 덮어쓴다. 숨긴 상품은 뺀다.
+ * stats를 주면 카탈로그의 누적 후기(가상 값)에 DB 후기를 더해 평점과 후기 수를 다시 계산한다.
+ */
+export function applyMerch(
+  merch: Merch[],
+  source: Product[] = catalogProducts,
+  stats: Record<string, { count: number; sum: number }> = {},
+): Product[] {
   const byId = new Map(merch.map((m) => [m.productId, m]));
   return source.flatMap((product) => {
     const m = byId.get(product.id);
-    if (!m) return [product];
+    const extra = stats[product.id];
+    const reviewCount = product.reviewCount + (extra?.count ?? 0);
+    const rating = extra ? Math.round(((product.rating * product.reviewCount + extra.sum) / reviewCount) * 10) / 10 : product.rating;
+    if (!m) return [{ ...product, reviewCount, rating }];
     if (!m.visible) return [];
     return [
       {
@@ -46,6 +56,8 @@ export function applyMerch(merch: Merch[], source: Product[] = catalogProducts):
         listPrice: m.listPrice ?? undefined,
         stock: m.stock,
         featured: m.featured,
+        reviewCount,
+        rating,
       },
     ];
   });

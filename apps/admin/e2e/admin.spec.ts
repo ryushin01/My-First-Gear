@@ -57,6 +57,7 @@ test("쇼핑몰 주문을 어드민에서 처리한다", async ({ page }) => {
   await expect(page.getByRole("link", { name: orderId })).toBeVisible();
   await page.getByRole("link", { name: orderId }).click();
   await expect(page.getByRole("heading", { name: `주문 ${orderId}` })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "상태 이력" })).toBeVisible();
   await page.getByLabel(`${orderId} 상태`).selectOption("shipped");
   await page.getByRole("button", { name: new RegExp(`변경\\s*:\\s*${orderId}`) }).click();
   await expect(page.getByText(`${orderId} 상태를 바꿨습니다.`)).toBeVisible();
@@ -65,7 +66,7 @@ test("쇼핑몰 주문을 어드민에서 처리한다", async ({ page }) => {
   await shop.getByLabel("주문 번호").fill(orderId);
   await shop.getByLabel("받는 분 이름").fill("박데모");
   await shop.getByRole("button", { name: "조회하기" }).click();
-  await expect(shop.getByText("배송 중")).toBeVisible();
+  await expect(shop.getByText("배송 중").first()).toBeVisible();
 });
 
 test("상담 신청이 어드민에 쌓인다", async ({ page }) => {

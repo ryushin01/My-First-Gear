@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, index, integer, pgTable, primaryKey, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, jsonb, pgTable, primaryKey, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * 상품의 판매 정보. 상품 설명, 사양, 그림은 @mfg/catalog 코드에 있고
@@ -65,6 +65,7 @@ export const orderLines = pgTable(
 
 export const ordersRelations = relations(orders, ({ many, one }) => ({
   lines: many(orderLines),
+  events: many(orderEvents),
   user: one(users, { fields: [orders.userId], references: [users.id] }),
 }));
 export const orderLinesRelations = relations(orderLines, ({ one }) => ({
@@ -171,3 +172,73 @@ export const usersRelations = relations(users, ({ many }) => ({ orders: many(ord
 export const reviewsRelations = relations(reviews, ({ one }) => ({ user: one(users, { fields: [reviews.userId], references: [users.id] }) }));
 export const questionsRelations = relations(questions, ({ one }) => ({ user: one(users, { fields: [questions.userId], references: [users.id] }) }));
 export const inquiriesRelations = relations(inquiries, ({ one }) => ({ user: one(users, { fields: [inquiries.userId], references: [users.id] }) }));
+
+/** 회원의 장바구니와 PC 견적. 로그인하면 다른 기기에서도 이어서 쓴다. */
+export type StoredCartLine = { productId: string; quantity: number };
+export type StoredBuild = { parts: Record<string, string>; services: string[] };
+
+export const memberStates = pgTable("member_states", {
+  userId: integer("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  cart: jsonb("cart").$type<StoredCartLine[]>().notNull().default([]),
+  build: jsonb("build").$type<StoredBuild | null>(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** 로그인 세션. 쿠키에는 서명한 세션 id만 두고, 로그아웃하면 행을 지워 바로 무효로 만든다. */
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("sessions_user_idx").on(table.userId)],
+);
+
+/** 로그인 시도 기록. key는 "member:이메일" 또는 "admin:IP" 같은 문자열의 해시다. */
+export const loginAttempts = pgTable(
+  "login_attempts",
+  {
+    id: serial("id").primaryKey(),
+    key: text("key").notNull(),
+    ok: boolean("ok").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("login_attempts_key_idx").on(table.key, table.createdAt)],
+);
+
+/** 재입고 알림 신청 */
+export const restockRequests = pgTable(
+  "restock_requests",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: text("product_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.productId] })],
+);
+
+/** 주문 상태 이력 (배송 단계 타임라인) */
+export const orderEvents = pgTable(
+  "order_events",
+  {
+    id: serial("id").primaryKey(),
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "cascade" }),
+    status: text("status").$type<OrderStatus>().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("order_events_order_idx").on(table.orderId)],
+);
+
+export const orderEventsRelations = relations(orderEvents, ({ one }) => ({
+  order: one(orders, { fields: [orderEvents.orderId], references: [orders.id] }),
+}));

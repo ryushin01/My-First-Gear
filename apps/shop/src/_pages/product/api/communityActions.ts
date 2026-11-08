@@ -4,6 +4,7 @@ import { updateTag } from "next/cache";
 import { getProductById } from "@mfg/catalog";
 import { CommunityError, createQuestion, createReview, getDb, hasDatabase } from "@mfg/db";
 import { getSessionUserId } from "@/entities/member/index.server";
+import { MERCH_TAG } from "@/entities/product/index.server";
 import { communityTag } from "./communityQueries";
 
 export type CommunityState = { ok: boolean; message: string; field?: string; values?: { body: string; rating?: string } } | null;
@@ -32,6 +33,7 @@ export async function createReviewAction(_: CommunityState, formData: FormData):
     throw error;
   }
   updateTag(communityTag(productId));
+  updateTag(MERCH_TAG); // 평점·후기 수가 바뀌었다
   return { ok: true, message: "후기를 등록했습니다." };
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb, getOrder } from "@mfg/db";
-import { OrderStatusForm } from "@/features/order-status";
+import { orderStatusLabel, OrderStatusForm } from "@/features/order-status";
 import { formatDateTime, formatWon } from "@/shared/lib";
 import { AdminShell } from "@/widgets/admin-shell";
 
@@ -102,6 +102,14 @@ export async function OrderDetailPage({ params }: OrderDetailProps) {
             <dt className="has-text-weight-semibold">조립 서비스</dt>
             <dd>{order.assembly ? "포함" : "없음"}</dd>
           </dl>
+          <h3 className="title is-6">상태 이력</h3>
+          <ol className="mb-4">
+            {order.events.map((event) => (
+              <li key={event.id}>
+                {orderStatusLabel[event.status]} · <span className="has-text-grey-dark">{formatDateTime(event.createdAt)}</span>
+              </li>
+            ))}
+          </ol>
           <h3 className="title is-6">상태 변경</h3>
           <OrderStatusForm orderId={order.id} status={order.status} />
         </section>

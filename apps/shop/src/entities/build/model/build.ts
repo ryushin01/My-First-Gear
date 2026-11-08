@@ -39,6 +39,10 @@ export function resetBuild() {
   store.set(EMPTY);
 }
 
+/** 회원 동기화용: 바뀔 때마다 알림을 받고, 현재 값을 읽는다. */
+export const onBuildChange = (listener: () => void) => store.subscribe(listener);
+export const readBuild = () => store.get();
+
 export function replaceBuild(next: BuildState) {
   store.set(next);
 }

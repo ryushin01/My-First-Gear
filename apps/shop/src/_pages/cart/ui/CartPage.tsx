@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { WithCatalog } from "@/entities/product/index.server";
 import { PageHeading } from "@/shared/ui";
 import { CartPanel } from "./CartPanel";
 import { CrtScreen } from "@/widgets/crt-screen";
@@ -10,7 +11,9 @@ export function CartPage() {
     <CrtScreen source="CART">
       <div className="flex flex-col gap-10 py-10">
         <PageHeading label="Cart" title="장바구니" />
-        <CartPanel />
+        <WithCatalog>
+          <CartPanel />
+        </WithCatalog>
       </div>
     </CrtScreen>
   );

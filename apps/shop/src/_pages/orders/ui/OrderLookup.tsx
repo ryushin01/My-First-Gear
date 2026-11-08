@@ -2,7 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { formatPrice } from "@mfg/catalog";
-import { lookupOrderAction, orderStatusLabel, type OrderSummary } from "@/entities/order";
+import { lookupOrderAction, orderStatusLabel, OrderTimeline, type OrderSummary } from "@/entities/order";
 import { useSubmitLock } from "@/shared/lib";
 import { TextField } from "@/shared/ui";
 
@@ -51,6 +51,7 @@ export function OrderLookup() {
           <section aria-label="조회 결과" className="flex flex-col gap-3">
             <p className="mono-label">[{state.order.id}]</p>
             <p className="font-display text-3xl">{orderStatusLabel[state.order.status]}</p>
+            <OrderTimeline events={state.order.events ?? []} assembly={Boolean(state.order.assembly)} />
             <ul className="flex flex-col gap-1 text-sm">
               {state.order.lines.map((line) => (
                 <li key={line.name} className="flex justify-between gap-3">

@@ -4,3 +4,5 @@ export * from "./products";
 export * from "./queries";
 export * from "./compatibility";
 export * from "./services";
+export * from "./search";
+export * from "./recommend";

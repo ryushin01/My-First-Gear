@@ -1,6 +1,7 @@
 @unocss;
 
 :root {
+  --ff-sans: "Pretendard Variable";
   --edge: 40px;
   --bezel-radius: 36px;
   --ink: #111111;

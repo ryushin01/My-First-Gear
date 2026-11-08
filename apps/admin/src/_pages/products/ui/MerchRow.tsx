@@ -15,6 +15,8 @@ type MerchRowProps = {
   stock: number;
   featured: boolean;
   visible: boolean;
+  /** 재입고 알림을 신청한 회원 수 */
+  restockRequests?: number;
 };
 
 /** 상품 한 줄 수정. 표 안에서는 form이 tr을 감쌀 수 없어 form 속성으로 입력을 묶는다. */
@@ -71,6 +73,7 @@ export function MerchRow(props: MerchRowProps) {
           <span className="is-sr-only">{props.name} 노출</span>
         </label>
       </td>
+      <td className="has-text-centered">{props.restockRequests ? <span className="tag is-warning is-light">{props.restockRequests}명</span> : "-"}</td>
       <td>
         <form id={formId} action={action} onSubmit={guardSubmit}>
           <input type="hidden" name="productId" value={props.productId} />

@@ -6,7 +6,7 @@ export async function listOrdersByUser(db: Db, userId: number) {
   return db.query.orders.findMany({
     where: eq(orders.userId, userId),
     orderBy: [desc(orders.createdAt)],
-    with: { lines: true },
+    with: { lines: true, events: { orderBy: (e, { asc }) => [asc(e.id)] } },
     limit: 50,
   });
 }

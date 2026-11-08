@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { categories, getCategory, isCategoryId, products } from "@mfg/catalog";
-import { getDb, listMerch } from "@mfg/db";
+import { getDb, listMerch, restockCounts } from "@mfg/db";
 import { MerchRow } from "./MerchRow";
 import { AdminShell } from "@/widgets/admin-shell";
 
@@ -12,7 +12,9 @@ type ProductsPageProps = { searchParams: Promise<{ category?: string }> };
 export async function ProductsPage({ searchParams }: ProductsPageProps) {
   const { category } = await searchParams;
   const current = category && isCategoryId(category) ? category : undefined;
-  const merch = new Map((await listMerch(getDb())).map((m) => [m.productId, m]));
+  const db = getDb();
+  const [merchRows, restock] = await Promise.all([listMerch(db), restockCounts(db)]);
+  const merch = new Map(merchRows.map((m) => [m.productId, m]));
   const rows = products.filter((p) => !current || p.categoryId === current);
 
   return (
@@ -47,6 +49,7 @@ export async function ProductsPage({ searchParams }: ProductsPageProps) {
               <th scope="col">재고</th>
               <th scope="col">추천</th>
               <th scope="col">노출</th>
+              <th scope="col">재입고 알림</th>
               <th scope="col">
                 <span className="is-sr-only">저장</span>
               </th>
@@ -67,6 +70,7 @@ export async function ProductsPage({ searchParams }: ProductsPageProps) {
                   stock={m?.stock ?? p.stock}
                   featured={m?.featured ?? Boolean(p.featured)}
                   visible={m?.visible ?? true}
+                  restockRequests={restock[p.id] ?? 0}
                 />
               );
             })}

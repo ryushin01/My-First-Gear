@@ -55,6 +55,8 @@ export async function lookupOrderAction(id: string, name: string): Promise<Resul
       status: order.status,
       total: order.total,
       lines: order.lines.map((l) => ({ name: l.name, price: l.price, quantity: l.quantity })),
+      assembly: order.assembly,
+      events: order.events.map((e) => ({ status: e.status, createdAt: e.createdAt.toISOString() })),
     },
   };
 }

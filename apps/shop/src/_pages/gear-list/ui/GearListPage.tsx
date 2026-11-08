@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { WithCatalog } from "@/entities/product/index.server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { categories, channelOf, getCategory, isCategoryId, type CategoryId } from "@mfg/catalog";
@@ -24,9 +25,11 @@ function GearList({ categoryId }: { categoryId?: CategoryId }) {
             <p className="mono-label">[CH {channel} · {category?.code ?? "ALL GEAR"}]</p>
             <h1 className="font-display text-5xl leading-none md:text-7xl">{category?.name ?? "전체 기어"}</h1>
           </header>
-          <Suspense fallback={<ProductBrowserFallback categoryId={categoryId} />}>
-            <ProductBrowser categoryId={categoryId} />
-          </Suspense>
+          <WithCatalog>
+            <Suspense fallback={<ProductBrowserFallback categoryId={categoryId} />}>
+              <ProductBrowser categoryId={categoryId} />
+            </Suspense>
+          </WithCatalog>
         </div>
       </div>
   );

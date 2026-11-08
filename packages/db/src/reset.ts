@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import type { Db } from "./client";
 import { seedMerch } from "./merch";
-import { consultRequests, orders, productMerch, questions, reviews, users } from "./schema";
+import { consultRequests, loginAttempts, orders, productMerch, questions, reviews, users } from "./schema";
 import { SEED_MEMBERS, SEED_QUESTIONS, SEED_REVIEWS } from "./seed";
 
 /**
@@ -12,7 +12,8 @@ export async function resetDemoData(db: Db) {
   await db.transaction(async (tx) => {
     await tx.delete(orders);
     await tx.delete(consultRequests);
-    await tx.delete(users); // 후기, 질문, 문의, 찜, 저장한 견적은 cascade로 함께 지워진다.
+    await tx.delete(loginAttempts);
+    await tx.delete(users); // 후기·질문·문의·찜·견적·세션·장바구니 동기화·재입고 알림은 cascade로 함께 지워진다.
     await tx.delete(productMerch);
     await tx.insert(productMerch).values(seedMerch());
     await tx.insert(users).values(SEED_MEMBERS);

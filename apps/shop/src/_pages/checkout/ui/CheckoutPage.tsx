@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { WithCatalog } from "@/entities/product/index.server";
 import { CheckoutForm } from "./CheckoutForm";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
@@ -12,7 +13,9 @@ export function CheckoutPage() {
         <PageHeading label="Checkout" title="주문하기">
           <span className="text-brand">*</span> 표시는 꼭 입력해야 하는 항목입니다.
         </PageHeading>
-        <CheckoutForm />
+        <WithCatalog>
+          <CheckoutForm />
+        </WithCatalog>
       </div>
     </CrtScreen>
   );
