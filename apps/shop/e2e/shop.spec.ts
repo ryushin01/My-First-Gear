@@ -15,18 +15,16 @@ test("캐러셀을 키보드로 넘기고 상세를 연다", async ({ page, isMo
 });
 
 test("목록 필터와 정렬이 주소에 남는다", async ({ page }) => {
-  await page.goto("/gear/gpu", { waitUntil: "networkidle" });
-  // 하이드레이션 전 클릭은 되돌아갈 수 있어 체크될 때까지 다시 시도한다.
-  await expect(async () => {
-    await page.getByRole("checkbox", { name: "NVIDIA" }).check({ timeout: 1000 });
-  }).toPass({ timeout: 10_000 });
+  await page.goto("/gear/gpu");
+  // 필터는 비제어 입력이라 하이드레이션 전에 눌러도 상태가 되돌아가지 않는다.
+  await page.getByRole("checkbox", { name: "NVIDIA" }).check();
   await expect(page.getByRole("status").filter({ hasText: "개 상품" })).toHaveText("2개 상품");
   await page.getByLabel("[Sort]").selectOption("price-asc");
   await expect(page).toHaveURL(/brand=NVIDIA/);
   await expect(page).toHaveURL(/sort=price-asc/);
   await page.reload();
   await expect(page.getByRole("checkbox", { name: "NVIDIA" })).toBeChecked();
-  const names = await page.locator("main ul li h3").allTextContents();
+  const names = await page.locator("main:visible ul li h3").allTextContents();
   expect(names[0]).toContain("RTX 5060");
 });
 
@@ -38,7 +36,7 @@ test("장바구니에 담고 모의 결제 후 주문을 조회한다", async ({
 
   await page.goto("/cart");
   // 단가는 어드민에서 바뀔 수 있으므로 화면의 단가로 합계를 확인한다.
-  const unitText = await page.locator("main li").first().locator(".text-mute-200.font-mono").textContent();
+  const unitText = await page.locator("main:visible li").first().locator(".text-mute-200.font-mono").textContent();
   const unit = Number(unitText!.replace(/[^0-9]/g, ""));
   await page.getByLabel("수량").fill("2");
   await expect(page.getByText(`${(unit * 2).toLocaleString("ko-KR")}원`).first()).toBeVisible();
@@ -46,7 +44,7 @@ test("장바구니에 담고 모의 결제 후 주문을 조회한다", async ({
 
   // 빈 칸으로 제출하면 오류 요약에 초점이 간다
   await page.getByRole("button", { name: /결제하기/ }).click();
-  await expect(page.locator(".error-summary")).toBeFocused();
+  await expect(page.locator(".error-summary:visible")).toBeFocused();
   await expect(page.getByLabel("받는 분")).toHaveAttribute("aria-invalid", "true");
 
   await page.getByLabel("받는 분").fill("김기어");
@@ -54,7 +52,7 @@ test("장바구니에 담고 모의 결제 후 주문을 조회한다", async ({
   await page.getByLabel("배송 주소").fill("서울시 가상구 데모로 1");
   await page.getByRole("button", { name: /결제하기/ }).click();
   await expect(page.getByText("주문이 접수되었습니다.")).toBeVisible();
-  const orderId = (await page.locator("dt:has-text('[Order no.]') + dd").textContent())!.trim();
+  const orderId = (await page.locator("dt:visible:has-text('[Order no.]') + dd").textContent())!.trim();
   expect(orderId).toMatch(/^MFG-\d{6}-\d{6}$/);
   await expect(page.getByRole("link", { name: /장바구니/ }).first()).not.toContainText("[");
 
@@ -92,7 +90,7 @@ test("PC 견적에서 호환성 오류를 알리고 해결하면 담을 수 있�
   await page.getByRole("button", { name: "견적 전체 장바구니 담기" }).click();
   await page.goto("/cart");
   await expect(page.getByText("조립 서비스 · 기본 조립", { exact: true })).toBeVisible();
-  await expect(page.locator("main li")).toHaveCount(9);
+  await expect(page.locator("main:visible li")).toHaveCount(9);
 });
 
 test("고가 상품은 상담 신청으로 받는다", async ({ page }) => {

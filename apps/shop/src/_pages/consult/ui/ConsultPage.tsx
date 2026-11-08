@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ConsultForm } from "@/features/consult";
+import { ConsultForm } from "./ConsultForm";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 import { ConsultTarget } from "./ConsultTarget";

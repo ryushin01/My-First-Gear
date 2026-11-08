@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeading } from "@/shared/ui";
-import { CartPanel } from "@/widgets/cart-panel";
+import { CartPanel } from "./CartPanel";
 import { CrtScreen } from "@/widgets/crt-screen";
 
 export const cartMetadata: Metadata = { title: "장바구니" };

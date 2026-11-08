@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { categories, getCategory, isCategoryId, products } from "@mfg/catalog";
 import { getDb, listMerch } from "@mfg/db";
-import { MerchRow } from "@/features/merch-edit";
+import { MerchRow } from "./MerchRow";
 import { AdminShell } from "@/widgets/admin-shell";
 
 export const productsMetadata: Metadata = { title: "상품 판매 정보" };

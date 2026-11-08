@@ -15,6 +15,20 @@
       "when": 1794046307031,
       "tag": "20261107101147_seed_merch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794054799606,
+      "tag": "20261107123319_members_reviews_inquiries",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794054867588,
+      "tag": "20261107123427_seed_community",
+      "breakpoints": true
     }
   ]
 }

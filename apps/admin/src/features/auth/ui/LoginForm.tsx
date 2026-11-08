@@ -1,13 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
+import { useActionFormLock } from "@/shared/lib";
 import { ActionMessage, SubmitButton } from "@/shared/ui";
 import { loginAction } from "../api/actions";
 
 export function LoginForm({ next, hint }: { next: string; hint: string | null }) {
   const [state, action] = useActionState(loginAction, null);
+  const guardSubmit = useActionFormLock(state, true);
   return (
-    <form action={action} className="box">
+    <form action={action} onSubmit={guardSubmit} className="box">
       <input type="hidden" name="next" value={next} />
       <div className="field">
         <label className="label" htmlFor="password">

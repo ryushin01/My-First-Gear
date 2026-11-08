@@ -9,7 +9,10 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? "github" : "list",
   use: { baseURL: `http://localhost:${ADMIN}`, trace: "retain-on-failure" },
-  projects: [{ name: "desktop", use: { ...devices["Desktop Chrome"], channel: process.env.CI ? undefined : "chrome" } }],
+  projects: [
+    { name: "desktop", use: { ...devices["Desktop Chrome"], channel: process.env.CI ? undefined : "chrome" } },
+    { name: "mobile", use: { ...devices["Pixel 7"], channel: process.env.CI ? undefined : "chrome" } },
+  ],
   webServer: {
     command: "node ../../packages/db/scripts/with-db.mjs -- node e2e/serve-both.mjs",
     url: `http://localhost:${ADMIN}/login`,

@@ -2,7 +2,7 @@ import { connection } from "next/server";
 import type { Metadata } from "next";
 import { getProductBySlug } from "@mfg/catalog";
 import { getDb, listConsults } from "@mfg/db";
-import { ConsultStatusForm } from "@/features/consult-status";
+import { ConsultStatusForm } from "./ConsultStatusForm";
 import { formatDateTime } from "@/shared/lib";
 import { AdminShell } from "@/widgets/admin-shell";
 

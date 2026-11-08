@@ -1,15 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
+import { useActionFormLock } from "@/shared/lib";
 import { ActionMessage, SubmitButton } from "@/shared/ui";
 import { updateOrderStatusAction } from "../api/actions";
 import { orderStatusOptions } from "../model/labels";
 
 export function OrderStatusForm({ orderId, status }: { orderId: string; status: string }) {
   const [state, action] = useActionState(updateOrderStatusAction, null);
+  const guardSubmit = useActionFormLock(state);
   const selectId = `status-${orderId}`;
   return (
-    <form action={action}>
+    <form action={action} onSubmit={guardSubmit}>
       <input type="hidden" name="orderId" value={orderId} />
       <div className="field has-addons mb-0">
         <div className="control">

@@ -38,7 +38,7 @@ export function BwToggle() {
       type="button"
       aria-pressed={on}
       onClick={() => write(!on)}
-      className="min-h-6 justify-self-start font-mono uppercase text-label hover:text-cream"
+      className="min-h-8 justify-self-start font-mono uppercase text-label hover:text-cream"
     >
       B&amp;W <span aria-hidden="true">[{on ? "ON" : "OFF"}]</span>
     </button>

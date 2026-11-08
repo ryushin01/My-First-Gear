@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { BuildPlanner } from "@/features/pc-build";
+import { BuildPlanner } from "./BuildPlanner";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 

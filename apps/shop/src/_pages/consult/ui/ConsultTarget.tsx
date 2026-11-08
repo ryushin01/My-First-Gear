@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { getProductBySlug } from "@mfg/catalog";
-import { ConsultForm } from "@/features/consult";
+import { ConsultForm } from "./ConsultForm";
 
 export function ConsultTarget() {
   const slug = useSearchParams().get("product");

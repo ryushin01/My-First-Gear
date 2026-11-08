@@ -8,6 +8,7 @@ export type OrderLine = typeof orderLines.$inferSelect;
 export type OrderWithLines = Order & { lines: OrderLine[] };
 
 export type PlaceOrderInput = {
+  userId?: number | null;
   lines: { itemId: string; quantity: number }[];
   buyer: { name: string; phone: string; email: string; address: string; memo: string };
   payment: string;
@@ -16,7 +17,8 @@ export type PlaceOrderInput = {
 export class OrderError extends Error {}
 
 function newOrderId() {
-  const date = new Date().toISOString().slice(2, 10).replaceAll("-", "");
+  // 주문 번호의 날짜는 한국 시간 기준 (YYMMDD)
+  const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date()).slice(2).replaceAll("-", "");
   const random = Math.floor(Math.random() * 1_000_000)
     .toString()
     .padStart(6, "0");
@@ -60,6 +62,7 @@ export async function placeOrder(db: Db, input: PlaceOrderInput): Promise<Order>
       .insert(orders)
       .values({
         id: newOrderId(),
+        userId: input.userId ?? null,
         status: assembly ? "assembling" : "paid",
         buyerName: input.buyer.name,
         buyerPhone: input.buyer.phone,

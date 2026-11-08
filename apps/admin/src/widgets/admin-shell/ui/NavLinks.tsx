@@ -8,6 +8,8 @@ const LINKS = [
   { href: "/products", label: "상품 판매 정보" },
   { href: "/orders", label: "주문" },
   { href: "/consults", label: "구매 상담" },
+  { href: "/inquiries", label: "문의" },
+  { href: "/members", label: "회원" },
 ];
 
 export function NavLinks() {

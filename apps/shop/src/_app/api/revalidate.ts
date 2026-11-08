@@ -18,6 +18,10 @@ export async function POST(request: Request) {
   if (!secret || !safeEqual(given, secret)) {
     return Response.json({ ok: false }, { status: 401 });
   }
-  revalidateTag(MERCH_TAG, { expire: 0 });
-  return Response.json({ ok: true });
+  // 본문에 tags가 있으면 그 태그만, 없으면 판매 정보 캐시를 비운다. 허용한 태그 형식만 받는다.
+  const body = (await request.json().catch(() => null)) as { tags?: unknown } | null;
+  const requested = Array.isArray(body?.tags) ? body.tags.filter((t): t is string => typeof t === "string") : [MERCH_TAG];
+  const tags = requested.filter((tag) => tag === MERCH_TAG || /^community:p-[a-z]+-\d{3}$/.test(tag)).slice(0, 20);
+  for (const tag of tags) revalidateTag(tag, { expire: 0 });
+  return Response.json({ ok: true, tags });
 }

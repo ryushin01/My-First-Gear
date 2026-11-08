@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { assemblyServices, formatPrice } from "@mfg/catalog";
-import { PageHeading } from "@/shared/ui";
+import { PageHeading, TitledSection } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 
 export const assemblyMetadata: Metadata = { title: "조립 서비스" };
@@ -22,10 +22,7 @@ export function AssemblyPage() {
           부품만 고르면 조립과 설치, 테스트까지 맡길 수 있습니다. 조립 서비스는 PC 견적에서 함께 주문합니다.
         </PageHeading>
 
-        <section aria-labelledby="fee-title" className="flex flex-col gap-4">
-          <h2 id="fee-title" className="font-display text-3xl md:text-4xl">
-            요금
-          </h2>
+        <TitledSection id="assembly-fee" title="요금" className="flex flex-col gap-4" titleClassName="font-display text-3xl md:text-4xl">
           <table className="w-full max-w-3xl border-collapse text-sm">
             <caption className="sr-only">조립 서비스 항목별 요금 (가상 요금)</caption>
             <thead>
@@ -54,12 +51,9 @@ export function AssemblyPage() {
               ))}
             </tbody>
           </table>
-        </section>
+        </TitledSection>
 
-        <section aria-labelledby="steps-title" className="flex flex-col gap-4">
-          <h2 id="steps-title" className="font-display text-3xl md:text-4xl">
-            진행 순서
-          </h2>
+        <TitledSection id="assembly-steps" title="진행 순서" className="flex flex-col gap-4" titleClassName="font-display text-3xl md:text-4xl">
           <ol className="grid gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 md:grid-cols-5">
             {steps.map((step, i) => (
               <li key={step.title} className="flex flex-col gap-2 bg-ink p-5">
@@ -69,7 +63,7 @@ export function AssemblyPage() {
               </li>
             ))}
           </ol>
-        </section>
+        </TitledSection>
 
         <Link href="/build" className="inline-flex min-h-12 w-fit items-center rounded-md bg-cream px-6 font-medium text-ink hover:bg-white">
           PC 견적에서 조립 맡기기

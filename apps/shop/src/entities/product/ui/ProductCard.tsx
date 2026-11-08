@@ -4,7 +4,8 @@ import { GearArt } from "@mfg/gear-art";
 import { PriceTag } from "./PriceTag";
 
 /** 목록용 상품 카드. 카드 전체가 하나의 링크다. */
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, headingLevel = 3 }: { product: Product; headingLevel?: 2 | 3 | 4 }) {
+  const Heading = `h${headingLevel}` as const;
   const category = getCategory(product.categoryId);
   const soldOut = product.stock === 0;
 
@@ -26,11 +27,11 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
       <div className="flex flex-1 flex-col gap-1">
         <p className="font-mono text-xs uppercase text-label">{product.brand}</p>
-        <h3 className="text-base font-medium leading-snug">
+        <Heading className="text-base font-medium leading-snug">
           <Link href={`/product/${product.slug}`} className="after:absolute after:inset-0 after:content-['']">
             {product.name}
           </Link>
-        </h3>
+        </Heading>
         <p className="text-sm text-mute-200">{product.tagline}</p>
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           <PriceTag product={product} />

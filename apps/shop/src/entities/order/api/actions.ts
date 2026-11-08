@@ -5,6 +5,7 @@ import { getProductBySlug } from "@mfg/catalog";
 import { createConsult, findOrderForBuyer, getDb, hasDatabase, OrderError, placeOrder } from "@mfg/db";
 import { EMAIL_PATTERN, PHONE_PATTERN } from "@/shared/lib";
 import { MERCH_TAG } from "@/entities/product/@x/order";
+import { getSessionUserId } from "@/entities/member/@x/order";
 import type { OrderSummary, PlaceOrderRequest, Result } from "../model/types";
 
 const NO_DB = "지금은 주문 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.";
@@ -22,6 +23,7 @@ export async function placeOrderAction(request: PlaceOrderRequest): Promise<Resu
 
   try {
     const order = await placeOrder(getDb(), {
+      userId: await getSessionUserId(),
       lines: request.lines.slice(0, 50),
       buyer: {
         name: buyer.name.trim().slice(0, 50),

@@ -32,7 +32,7 @@ export function AdminShell({ title, children }: { title: string; children: React
             <NavLinks />
           </nav>
         </aside>
-        <main id="main" tabIndex={-1} className="column px-5 py-5">
+        <main id="main" tabIndex={-1} className="column admin-main px-5 py-5">
           <h1 className="title">{title}</h1>
           {children}
         </main>

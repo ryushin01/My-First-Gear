@@ -1,7 +1,7 @@
 import { connection } from "next/server";
 import Link from "next/link";
 import { getProductById } from "@mfg/catalog";
-import { dashboardStats, getDb, listOrders } from "@mfg/db";
+import { countUnanswered, dashboardStats, getDb, listOrders } from "@mfg/db";
 import { orderStatusLabel, orderStatusTag } from "@/features/order-status";
 import { formatDateTime, formatWon } from "@/shared/lib";
 import { AdminShell } from "@/widgets/admin-shell";
@@ -9,19 +9,20 @@ import { AdminShell } from "@/widgets/admin-shell";
 export async function DashboardPage() {
   await connection(); // 요청마다 DB를 읽는다
   const db = getDb();
-  const [stats, recent] = await Promise.all([dashboardStats(db), listOrders(db, { limit: 5 })]);
+  const [stats, recent, unanswered] = await Promise.all([dashboardStats(db), listOrders(db, { limit: 5 }), countUnanswered(db)]);
   const cards = [
     { label: "최근 24시간 주문", value: `${stats.ordersLast24h}건` },
     { label: "누적 매출 (취소 제외)", value: formatWon(stats.revenue) },
     { label: "조립 중", value: `${stats.assembling}건`, href: "/orders?status=assembling" },
     { label: "새 상담 신청", value: `${stats.newConsults}건`, href: "/consults" },
+    { label: "답변 대기 문의", value: `${unanswered.inquiries + unanswered.questions}건`, href: "/inquiries" },
   ];
 
   return (
     <AdminShell title="대시보드">
       <div className="columns is-multiline">
         {cards.map((card) => (
-          <div key={card.label} className="column is-6-tablet is-3-desktop">
+          <div key={card.label} className="column is-6-tablet is-one-fifth-desktop">
             <div className="box">
               <p className="heading">{card.label}</p>
               <p className="title is-4">{card.href ? <Link href={card.href}>{card.value}</Link> : card.value}</p>

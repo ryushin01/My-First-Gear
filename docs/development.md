@@ -12,7 +12,12 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 | `packages/gear-art` | 상품 SVG 그림 (`<GearArt art={…} />`) |
 | `packages/db` | Drizzle 스키마, 주문·판매 정보·상담 쿼리, 로컬 DB 실행 스크립트 |
 
-두 앱은 Feature-Sliced Design v2.1을 따릅니다. Next.js와 이름이 겹치지 않도록 계층 이름은 `_app`, `_pages`를 쓰고, Next의 `app/` 라우트 파일은 `_pages`를 다시 내보내기만 합니다. 같은 계층의 교차 import는 `@x` 공개 API로만 합니다 (`entities/product/@x/cart.ts` 등). `pnpm lint`가 steiger로 이 규칙을 검사합니다.
+두 앱은 Feature-Sliced Design v2.1을 따릅니다. Next.js와 이름이 겹치지 않도록 계층 이름은 `_app`, `_pages`를 쓰고, Next의 `app/` 라우트 파일은 `_pages`를 다시 내보내기만 합니다.
+
+- 한 페이지에서만 쓰는 코드는 그 페이지 슬라이스의 `ui`·`api`·`model`에 둡니다 (예: PC 견적은 `_pages/pc-build`, 후기·Q&A·찜은 `_pages/product`). 두 곳 이상에서 쓰게 되면 features·widgets로 올립니다. 지금 features에는 로그인(`auth`), 어드민의 주문 상태 변경(`order-status`)만 있습니다.
+- 같은 계층의 교차 import는 `@x` 공개 API로만 합니다 (`entities/product/@x/cart.ts`, `entities/member/@x/order.ts` 등).
+- 서버 전용 코드는 `index.server.ts`로 내보냅니다 (`entities/product`, `entities/member`).
+- `pnpm lint`가 steiger로 이 규칙을 검사합니다. `fsd/typo-in-layer-name`만 끕니다.
 
 ## 데이터 흐름
 
@@ -20,7 +25,10 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - 쇼핑몰은 `getCatalog()`(`"use cache"`, 태그 `merch`)로 두 값을 합쳐 읽고, `CatalogProvider`로 클라이언트 컴포넌트에 나눠 줍니다. DB에 연결할 수 없으면 코드의 기본값을 씁니다.
 - 주문은 서버 액션 `placeOrderAction`이 처리합니다. 클라이언트가 보낸 가격은 쓰지 않고, 한 트랜잭션 안에서 DB 가격으로 다시 계산하고 재고를 줄입니다. 그 뒤 `updateTag("merch")`로 캐시를 갱신합니다.
 - 어드민이 판매 정보를 바꾸면 쇼핑몰의 `POST /api/revalidate`(헤더 `x-revalidate-secret`)를 호출해 캐시를 비웁니다.
-- 장바구니와 PC 견적은 브라우저 `localStorage`에 둡니다. 견적은 `/build?b=…` 주소로 공유할 수 있습니다.
+- 장바구니와 PC 견적은 브라우저 `localStorage`에 둡니다. 견적은 `/build?b=…` 주소로 공유하고, 회원은 마이페이지에 저장할 수 있습니다.
+- **회원 세션:** 이메일·비밀번호(scrypt 해시) 로그인. 서명한 `httpOnly` 쿠키 `mfg_session`으로 인증하고, 화면 표시용 이름만 `mfg_member` 쿠키에 둡니다. 세션을 읽는 코드는 `connection()`으로 요청 시점에만 실행합니다. 로그인 상태가 바뀌면 전체 페이지를 다시 불러옵니다 (Cache Components가 숨겨 둔 이전 화면이 남지 않게).
+- **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
+- 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `apps/shop/netlify/database/migrations`에 마이그레이션을 만듭니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
 
 ## 로컬 개발
@@ -38,6 +46,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 |---|---|---|
 | `MFG_DATABASE_URL` | 두 앱 | Postgres 연결 문자열. 쇼핑몰은 Netlify에서 `NETLIFY_DB_URL`을 자동으로 쓴다 |
 | `MFG_REVALIDATE_SECRET` | 두 앱 | 쇼핑몰 캐시 갱신 엔드포인트의 비밀 값 |
+| `MFG_SESSION_SECRET` | 쇼핑몰 | 회원 세션 쿠키 서명 키 (Netlify 운영 필수, 로컬은 개발용 기본값) |
 | `MFG_SHOP_URL` | 어드민 | 쇼핑몰 주소 (캐시 갱신 호출용) |
 | `MFG_ADMIN_SECRET` | 어드민 | 세션 쿠키 서명 키 (운영 필수) |
 | `MFG_ADMIN_PASSWORD` | 어드민 | 로그인 비밀번호. 없으면 공개 데모 비밀번호 `demo-admin` |
@@ -54,20 +63,25 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 ## 접근성 (KWCAG 2.2)
 
-- 본문 바로가기, `lang="ko"`, 페이지별 제목, 제목 순서, 표 `caption`·`th scope`
-- 캐러셀은 APG Carousel 패턴(자동 넘김 없음, 이전·다음 버튼, ← → 키, 현재 슬라이드만 초점 가능)
-- 부품 선택은 네이티브 `<dialog>`로 초점을 가두고 닫으면 원래 버튼으로 돌아갑니다.
-- 폼은 레이블·필수 표시·도움말·오류를 `aria-describedby`로 연결하고, 제출 실패 시 오류 요약에 초점을 둡니다. `autocomplete`를 지정합니다.
-- 깜빡임은 밝기 변화를 아주 작게 두고, `prefers-reduced-motion`이면 애니메이션을 끕니다.
-- 저장 버튼은 처리 중에 비활성화해 중복 제출을 막습니다.
+33개 항목 대조 결과는 [접근성 점검표](accessibility.md)에 있습니다. 개발할 때 지키는 것:
+
+- 폼은 레이블·필수 표시·도움말·오류를 `aria-describedby`로 연결하고, 제출에 실패하면 오류 요약으로 초점을 옮깁니다. 실패해도 입력값을 돌려받아 다시 채웁니다 (React 폼 액션은 제출 뒤 폼을 비우므로).
+- 중복 제출은 `useSubmitLock`/`useActionFormLock`(`shared/lib`)의 `useRef` 잠금으로 막습니다. 상태 값(`pending`)은 다음 렌더에야 바뀌어 빠른 연속 클릭을 못 막기 때문입니다. 성공 뒤 화면을 떠나는 폼은 실패했을 때만 잠금을 풉니다.
+- 고정 id를 쓰지 않습니다. Cache Components가 이전 화면을 숨긴 채 DOM에 남겨 id가 겹칩니다. 클라이언트 컴포넌트는 `useId`, 서버 컴포넌트는 화면마다 다른 접두사를 씁니다.
+- 움직이는 효과는 하단 "효과" 토글과 `prefers-reduced-motion`으로 멈출 수 있어야 합니다.
+- 조작 요소는 24×24px 이상(헤더 링크 32px, 버튼 44px)으로 둡니다.
 
 ## 테스트
 
 | 명령 | 내용 |
 |---|---|
-| `pnpm test` | `packages/catalog` 호환성 검사, `packages/db` 로컬 Postgres 통합 테스트(주문 재계산, 재고, 조회, 대시보드) |
-| `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB. 10개 화면 가로 넘침·axe, 캐러셀 키보드, 필터, 장바구니→결제→조회, PC 견적 호환성, 상담, 흑백 토글 (데스크톱·모바일) |
-| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 함께 띄워 로그인, 가격 변경 반영, 주문 상태 변경, 상담 처리, axe |
+| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres 통합 테스트(10), 쇼핑몰 컴포넌트·스토리 테스트(28), 어드민 컴포넌트·세션 테스트(4) |
+| `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 50개. 13개 화면의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
+| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 22개. 로그인, 가격 변경 반영, 주문·상담 상태, 문의 답변 반영, 가로 넘침·axe |
 | `pnpm storybook` | `entities`, `shared`, `widgets` 컴포넌트 옆 `*.stories.tsx`. a11y 애드온 포함 |
 
-E2E는 먼저 `pnpm build`로 두 앱을 빌드해 둡니다. 로컬에서는 설치된 Chrome을, CI에서는 Playwright Chromium을 씁니다.
+- 컴포넌트 테스트는 컴포넌트 옆 `*.test.tsx`에 둡니다 (Vitest + Testing Library, jsdom).
+- `src/stories.test.tsx`가 모든 스토리를 렌더링해 axe로 검사합니다. 명도 대비는 jsdom에서 판단할 수 없어 E2E에서 검사합니다.
+- Node 26의 실험 기능인 전역 `localStorage`가 jsdom 저장소를 가리므로, Vitest는 `--no-experimental-webstorage`로 실행합니다 (`vitest.config.mts`).
+- E2E는 먼저 `pnpm build`로 두 앱을 빌드해 둡니다. 다시 빌드할 때는 예전 서버를 끄고 `.next`를 지웁니다. 서버가 떠 있으면 재생성한 페이지를 새 `.next`에 덮어쓸 수 있습니다.
+- Cache Components가 숨겨 둔 화면 때문에 E2E 선택자는 `getByRole`처럼 보이는 요소만 고르는 것을 씁니다.

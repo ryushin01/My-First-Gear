@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CheckoutForm } from "@/features/checkout";
+import { CheckoutForm } from "./CheckoutForm";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 

@@ -6,7 +6,9 @@ import { channelOf, getCategory, getProductBySlug, nextInCategory, products } fr
 import { getCatalog } from "@/entities/product/index.server";
 import { GearArt } from "@mfg/gear-art";
 import { PriceTag } from "@/entities/product";
-import { AddToCartButton } from "@/features/add-to-cart";
+import { AddToCartButton } from "./AddToCartButton";
+import { ProductCommunity } from "./ProductCommunity";
+import { WishButton } from "./WishButton";
 import { CrtScreen } from "@/widgets/crt-screen";
 
 type ProductPageProps = { params: Promise<{ slug: string }> };
@@ -40,6 +42,7 @@ async function ProductContent({ slug }: { slug: string }) {
   const soldOut = product.stock === 0;
 
   return (
+    <>
       <article className="grid gap-10 py-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
         <div className="flex flex-col gap-6">
           <nav aria-label="현재 위치" className="font-mono text-xs uppercase text-label">
@@ -92,6 +95,7 @@ async function ProductContent({ slug }: { slug: string }) {
           ) : (
             <AddToCartButton productId={product.id} productName={product.name} disabled={soldOut} />
           )}
+          <WishButton productId={product.id} productName={product.name} />
         </div>
 
         <div className="flex flex-col gap-8">
@@ -102,8 +106,8 @@ async function ProductContent({ slug }: { slug: string }) {
             </figcaption>
           </figure>
 
-          <section aria-labelledby="spec-title" className="flex flex-col gap-3">
-            <h2 id="spec-title" className="mono-label">
+          <section aria-labelledby={`${product.id}-spec`} className="flex flex-col gap-3">
+            <h2 id={`${product.id}-spec`} className="mono-label">
               [Spec]
             </h2>
             <table className="w-full border-collapse text-sm">
@@ -134,6 +138,10 @@ async function ProductContent({ slug }: { slug: string }) {
           )}
         </div>
       </article>
+      <div className="pb-16">
+        <ProductCommunity productId={product.id} reviewCount={product.reviewCount} />
+      </div>
+    </>
   );
 }
 

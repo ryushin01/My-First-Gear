@@ -2,7 +2,7 @@ import Link from "next/link";
 import { categories, channelOf, featuredProducts } from "@mfg/catalog";
 import { getCatalog } from "@/entities/product/index.server";
 import { CrtScreen } from "@/widgets/crt-screen";
-import { TapeCarousel } from "@/widgets/tape-carousel";
+import { TapeCarousel } from "./TapeCarousel";
 
 export async function HomePage() {
   const products = await getCatalog();
@@ -12,12 +12,12 @@ export async function HomePage() {
       <div className="flex flex-col gap-20 py-6">
         <TapeCarousel products={featuredProducts(products)} />
 
-        <section aria-labelledby="channels-title" className="flex flex-col gap-6">
+        <section aria-labelledby="home-channels" className="flex flex-col gap-6">
           <div className="flex items-end justify-between gap-4">
-            <h2 id="channels-title" className="font-display text-4xl md:text-6xl">
+            <h2 id="home-channels" className="font-display text-4xl md:text-6xl">
               채널 목록
             </h2>
-            <Link href="/gear" className="font-mono text-xs uppercase text-label hover:text-cream">
+            <Link href="/gear" className="inline-flex min-h-8 items-center font-mono text-xs uppercase text-label hover:text-cream">
               전체 기어 보기 <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -36,10 +36,10 @@ export async function HomePage() {
           </ul>
         </section>
 
-        <section aria-labelledby="build-title" className="grid gap-6 border-t border-white/10 pt-10 md:grid-cols-2">
+        <section aria-labelledby="home-build" className="grid gap-6 border-t border-white/10 pt-10 md:grid-cols-2">
           <div className="flex flex-col gap-3">
             <p className="mono-label">[PC Build · Assembly]</p>
-            <h2 id="build-title" className="font-display text-4xl md:text-6xl">
+            <h2 id="home-build" className="font-display text-4xl md:text-6xl">
               부품을 고르면
               <br />
               조립까지

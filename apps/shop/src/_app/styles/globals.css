@@ -117,6 +117,12 @@ html[data-bw="on"] .crt-screen {
     1.5px 0 rgb(40 150 255 / 0.55);
 }
 
+/* 효과 끄기 토글: 노이즈와 깜빡임을 멈춘다 */
+html[data-fx="off"] .crt-overlay::after,
+html[data-fx="off"] .crt-content {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .crt-overlay::after,
   .crt-content {

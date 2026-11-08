@@ -27,3 +27,7 @@
     min-height: 0;
   }
 }
+/* 본문 열이 표·탭 내용만큼 넓어져 화면을 넘지 않게 한다 (표는 .table-container 안에서 스크롤) */
+.admin-main {
+  min-width: 0;
+}

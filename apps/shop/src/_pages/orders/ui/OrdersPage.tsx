@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { OrderLookup } from "@/features/order-lookup";
+import { OrderLookup } from "./OrderLookup";
 import { PageHeading } from "@/shared/ui";
 import { CrtScreen } from "@/widgets/crt-screen";
 

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, index, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, pgTable, primaryKey, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * 상품의 판매 정보. 상품 설명, 사양, 그림은 @mfg/catalog 코드에 있고
@@ -15,6 +15,15 @@ export const productMerch = pgTable("product_merch", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** 쇼핑몰 회원. 비밀번호는 scrypt 해시로만 저장한다. */
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const orderStatuses = ["paid", "preparing", "assembling", "shipped", "delivered", "cancelled"] as const;
 export type OrderStatus = (typeof orderStatuses)[number];
 
@@ -22,6 +31,7 @@ export const orders = pgTable(
   "orders",
   {
     id: text("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
     status: text("status").$type<OrderStatus>().notNull().default("paid"),
     buyerName: text("buyer_name").notNull(),
     buyerPhone: text("buyer_phone").notNull(),
@@ -35,7 +45,7 @@ export const orders = pgTable(
     assembly: boolean("assembly").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [index("orders_created_at_idx").on(table.createdAt)],
+  (table) => [index("orders_created_at_idx").on(table.createdAt), index("orders_user_id_idx").on(table.userId)],
 );
 
 export const orderLines = pgTable(
@@ -53,7 +63,10 @@ export const orderLines = pgTable(
   (table) => [index("order_lines_order_id_idx").on(table.orderId)],
 );
 
-export const ordersRelations = relations(orders, ({ many }) => ({ lines: many(orderLines) }));
+export const ordersRelations = relations(orders, ({ many, one }) => ({
+  lines: many(orderLines),
+  user: one(users, { fields: [orders.userId], references: [users.id] }),
+}));
 export const orderLinesRelations = relations(orderLines, ({ one }) => ({
   order: one(orders, { fields: [orderLines.orderId], references: [orders.id] }),
 }));
@@ -71,3 +84,90 @@ export const consultRequests = pgTable("consult_requests", {
   status: text("status").$type<ConsultStatus>().notNull().default("new"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** 상품 후기. 회원 한 명이 상품마다 하나만 쓴다. */
+export const reviews = pgTable(
+  "reviews",
+  {
+    id: serial("id").primaryKey(),
+    productId: text("product_id").notNull(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rating: integer("rating").notNull(),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("reviews_user_product_idx").on(table.userId, table.productId), index("reviews_product_idx").on(table.productId)],
+);
+
+/** 상품 Q&A. 답변은 어드민이 단다. */
+export const questions = pgTable(
+  "questions",
+  {
+    id: serial("id").primaryKey(),
+    productId: text("product_id").notNull(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    answer: text("answer"),
+    answeredAt: timestamp("answered_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("questions_product_idx").on(table.productId)],
+);
+
+export const inquiryCategories = ["order", "delivery", "assembly", "as", "etc"] as const;
+export type InquiryCategory = (typeof inquiryCategories)[number];
+
+/** 1:1 문의. 작성한 회원과 어드민만 본다. */
+export const inquiries = pgTable(
+  "inquiries",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    category: text("category").$type<InquiryCategory>().notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    answer: text("answer"),
+    answeredAt: timestamp("answered_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("inquiries_user_idx").on(table.userId)],
+);
+
+export const wishlists = pgTable(
+  "wishlists",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: text("product_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.productId] })],
+);
+
+/** 저장한 PC 견적. encoded는 /build?b= 주소에 쓰는 값과 같다. */
+export const savedBuilds = pgTable(
+  "saved_builds",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    encoded: text("encoded").notNull(),
+    total: integer("total").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("saved_builds_user_idx").on(table.userId)],
+);
+
+export const usersRelations = relations(users, ({ many }) => ({ orders: many(orders) }));
+export const reviewsRelations = relations(reviews, ({ one }) => ({ user: one(users, { fields: [reviews.userId], references: [users.id] }) }));
+export const questionsRelations = relations(questions, ({ one }) => ({ user: one(users, { fields: [questions.userId], references: [users.id] }) }));
+export const inquiriesRelations = relations(inquiries, ({ one }) => ({ user: one(users, { fields: [inquiries.userId], references: [users.id] }) }));

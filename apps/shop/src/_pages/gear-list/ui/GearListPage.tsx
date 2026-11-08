@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { categories, channelOf, getCategory, isCategoryId, type CategoryId } from "@mfg/catalog";
-import { ProductBrowser, ProductBrowserFallback } from "@/features/product-filter";
-import { CategoryNav } from "@/widgets/category-nav";
+import { ProductBrowser, ProductBrowserFallback } from "./ProductBrowser";
+import { CategoryNav } from "./CategoryNav";
 import { CrtScreen } from "@/widgets/crt-screen";
 
 function sourceOf(categoryId?: CategoryId) {

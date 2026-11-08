@@ -12,15 +12,16 @@
 | Package directory | `apps/shop` |
 | 설정 파일 | `apps/shop/netlify.toml` (빌드 명령, publish, 함수 폴더) |
 
-- `@netlify/database`가 의존성에 있으므로 첫 배포 때 DB가 만들어지고, `apps/shop/netlify/database/migrations`의 마이그레이션(테이블 생성, 상품 판매 정보 시드)이 배포 직전에 적용됩니다.
+- `@netlify/database`가 의존성에 있으므로 첫 배포 때 DB가 만들어지고, `apps/shop/netlify/database/migrations`의 마이그레이션(테이블 생성, 상품 판매 정보·데모 회원·후기 시드)이 배포 직전에 적용됩니다.
 - Deploy Preview마다 DB 브랜치가 생깁니다. 프리뷰 링크는 공개되므로 운영 데이터가 섞이지 않게 주의하세요.
-- 예약 함수 `reset-demo`가 매일 04:00(KST)에 주문·상담을 지우고 판매 정보를 시드 값으로 되돌립니다.
+- 예약 함수 `reset-demo`가 매일 04:00(KST)에 주문·상담·회원(후기·문의·찜·견적 포함)을 지우고, 판매 정보와 데모 회원·후기·질문을 시드 값으로 되돌립니다.
 
 환경 변수:
 
 | 이름 | 값 |
 |---|---|
 | `MFG_REVALIDATE_SECRET` | 임의의 긴 문자열 (어드민과 같게) |
+| `MFG_SESSION_SECRET` | 회원 세션 서명용 임의의 긴 문자열 (Secret) |
 
 ## 2. 어드민 사이트
 
