@@ -15,7 +15,7 @@ export async function loginAction(_: ActionState, formData: FormData): Promise<A
   }
   const jar = await cookies();
   // https로 들어온 요청에서만 Secure를 붙인다. (로컬 http 프로덕션 빌드에서도 로그인되게)
-  const secure = (await headers()).get("x-forwarded-proto") === "https" || Boolean(process.env.URL?.startsWith("https"));
+  const secure = (await headers()).get("x-forwarded-proto") === "https";
   jar.set(SESSION_COOKIE, await createSessionValue(), {
     httpOnly: true,
     sameSite: "lax",

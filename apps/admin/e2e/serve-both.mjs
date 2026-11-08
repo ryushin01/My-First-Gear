@@ -9,6 +9,7 @@ const env = {
   MFG_SHOP_URL: `http://localhost:${shopPort}`,
   MFG_REVALIDATE_SECRET: "e2e-secret",
   MFG_ADMIN_SECRET: "e2e-admin-secret",
+  CRON_SECRET: "e2e-cron-secret",
 };
 const apps = [
   ["../../shop", shopPort],

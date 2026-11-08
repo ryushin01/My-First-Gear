@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.2.0-ff3131)
+![version](https://img.shields.io/badge/version-0.3.0-ff3131)
 ![Storybook](https://img.shields.io/badge/Storybook-10-FF4785?logo=storybook&logoColor=white)
 
 컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
@@ -54,16 +54,16 @@
 
 ## 기술 스택
 
-![Next.js, React, TypeScript, UnoCSS, Bulma, PostgreSQL, pnpm, Vitest, Netlify](https://skillicons.dev/icons?i=nextjs,react,ts,unocss,bulma,postgres,pnpm,vitest,netlify)
+![Next.js, React, TypeScript, UnoCSS, Bulma, PostgreSQL, pnpm, Vitest, Vercel](https://skillicons.dev/icons?i=nextjs,react,ts,unocss,bulma,postgres,pnpm,vitest,vercel)
 
 | 구분 | 사용 기술 |
 |---|---|
 | 프레임워크 | Next.js 16 (App Router, Cache Components), React 19, TypeScript |
 | 구조 | pnpm 워크스페이스 + Turborepo 모노레포, Feature-Sliced Design v2.1 (steiger 검사) |
 | 스타일 | 쇼핑몰 UnoCSS (`presetWind4`), 어드민 Bulma 1 |
-| 데이터 | PostgreSQL (Netlify Database), Drizzle ORM, 서버 액션 |
+| 데이터 | PostgreSQL (Neon, 로컬·테스트는 PGlite), Drizzle ORM, 서버 액션 |
 | 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·스토리 axe·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사), Storybook 10 (`@storybook/nextjs-vite`) |
-| 배포 | Netlify (쇼핑몰·어드민 두 사이트, 예약 함수), GitHub Actions |
+| 배포 | Vercel (쇼핑몰·어드민 두 프로젝트, Cron), GitHub Actions |
 
 ## 시작하기
 
@@ -73,7 +73,7 @@ Node.js 24(`.nvmrc`)와 pnpm 12가 필요합니다.
 nvm use
 corepack enable pnpm
 pnpm install
-pnpm --filter shop dev:db    # 로컬 Postgres + 쇼핑몰 http://localhost:3000
+pnpm --filter shop dev:db    # 로컬 Postgres(PGlite) + 쇼핑몰 http://localhost:3000
 pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비밀번호 demo-admin)
 ```
 
@@ -92,12 +92,12 @@ apps/
 ├─ shop/            쇼핑몰 (UnoCSS)
 │  ├─ app/          Next 라우트 (src/_pages를 다시 내보내기만)
 │  ├─ src/          FSD: _app, _pages, widgets, features, entities, shared (컴포넌트 옆에 *.stories.tsx, *.test.tsx)
-│  └─ netlify/      DB 마이그레이션, 데모 초기화 예약 함수
+│  └─ vercel.json   빌드(마이그레이션 적용), 데모 초기화 크론
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
 ├─ catalog/         상품·카테고리·호환성 검사 (순수 TS)
 ├─ gear-art/        상품 SVG 그림 18종
-└─ db/              Drizzle 스키마와 쿼리, 로컬 DB 실행 스크립트
+└─ db/              Drizzle 스키마·쿼리·마이그레이션, 로컬 DB(PGlite) 실행 스크립트
 ```
 
 ## 문서
@@ -106,5 +106,5 @@ packages/
 |---|---|
 | [개발 가이드](docs/development.md) | 구조, 데이터 흐름, 디자인 기준, 접근성, 테스트 |
 | [접근성 점검표](docs/accessibility.md) | KWCAG 2.2 33개 항목 대조 결과, Cache Components 주의점 |
-| [배포](docs/deploy.md) | Netlify 두 사이트 설정, 환경 변수, 마이그레이션, CI |
+| [배포](docs/deploy.md) | Vercel 두 프로젝트와 Neon 설정, 환경 변수, 마이그레이션, CI |
 | [버전 기록](CHANGELOG.md) | 버전별 변경 내용 |

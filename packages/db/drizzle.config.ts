@@ -1,9 +1,9 @@
 import { defineConfig } from "drizzle-kit";
 
-// 마이그레이션은 쇼핑몰(Netlify 사이트) 폴더에 둔다. Netlify가 배포할 때 적용한다.
+// 마이그레이션은 쇼핑몰 운영 배포(Vercel 빌드) 때 scripts/migrate.mjs가 적용한다.
 export default defineConfig({
   dialect: "postgresql",
   schema: "./src/schema.ts",
-  out: "../../apps/shop/netlify/database/migrations",
+  out: "./migrations",
   migrations: { prefix: "timestamp" },
 });

@@ -11,7 +11,7 @@ const MAX_AGE = 60 * 60 * 24 * 7;
 function secret(): string {
   const value = process.env.MFG_SESSION_SECRET;
   if (value) return value;
-  if (process.env.NODE_ENV === "production" && process.env.NETLIFY) throw new Error("MFG_SESSION_SECRET이 필요합니다.");
+  if (process.env.NODE_ENV === "production" && process.env.VERCEL) throw new Error("MFG_SESSION_SECRET이 필요합니다.");
   return "dev-only-session-secret";
 }
 
@@ -44,7 +44,7 @@ export async function startSession(user: PublicUser) {
   const jar = await cookies();
   const expires = Date.now() + MAX_AGE * 1000;
   const payload = `${user.id}.${expires}`;
-  const secure = (await headers()).get("x-forwarded-proto") === "https" || Boolean(process.env.URL?.startsWith("https"));
+  const secure = (await headers()).get("x-forwarded-proto") === "https";
   jar.set(SESSION_COOKIE, `${payload}.${sign(payload)}`, { httpOnly: true, sameSite: "lax", secure, path: "/", maxAge: MAX_AGE });
   // 화면 표시용 이름. 인증에는 쓰지 않는다.
   jar.set(MEMBER_COOKIE, encodeURIComponent(user.name), { httpOnly: false, sameSite: "lax", secure, path: "/", maxAge: MAX_AGE });

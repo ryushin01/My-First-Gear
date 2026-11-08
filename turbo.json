@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["MFG_*", "NETLIFY_DB_URL"],
+      "env": ["MFG_*", "DATABASE_URL", "DATABASE_URL_UNPOOLED", "VERCEL_ENV"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "dev": { "cache": false, "persistent": true },

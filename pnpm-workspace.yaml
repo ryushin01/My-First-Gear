@@ -5,7 +5,3 @@ allowBuilds:
   esbuild: true
   sharp: false
   unrs-resolver: false
-minimumReleaseAgeExclude:
-  - '@netlify/database-dev@1.0.2'
-  - '@netlify/database@2.0.3'
-  - '@netlify/runtime-utils@3.0.1'

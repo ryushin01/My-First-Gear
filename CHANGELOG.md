@@ -1,5 +1,12 @@
 # 버전 기록
 
+## 0.3.0 (2026-11-08)
+
+- 배포 대상을 Netlify에서 Vercel(쇼핑몰·어드민 두 프로젝트) + Neon(Postgres)으로 변경
+- 마이그레이션을 `packages/db/migrations`로 옮기고, 운영 배포와 로컬 DB 모두 Drizzle 마이그레이터로 적용
+- 매일 데모 초기화를 Netlify 예약 함수에서 Vercel Cron(`/api/cron/reset-demo`, `CRON_SECRET`)으로 변경
+- 로컬·테스트 DB를 Netlify 패키지 대신 PGlite + pg-gateway로 실행
+
 ## 0.2.0 (2026-11-08)
 
 - 회원 가입·로그인(데모 계정), 상품 후기·Q&A·찜, 마이페이지(회원 주문 내역, 저장한 견적, 찜, 1:1 문의)

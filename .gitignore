@@ -51,3 +51,6 @@ playwright-report/
 
 # storybook
 storybook-static/
+
+# local database (PGlite)
+.local-db/

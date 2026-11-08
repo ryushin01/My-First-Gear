@@ -10,7 +10,7 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 | `apps/admin` | 어드민. Bulma 기본 스타일만 사용, 요청마다 DB를 읽는 동적 화면 |
 | `packages/catalog` | 상품·카테고리 콘텐츠, 정렬·필터 쿼리, PC 호환성 검사, 조립 서비스 요금 |
 | `packages/gear-art` | 상품 SVG 그림 (`<GearArt art={…} />`) |
-| `packages/db` | Drizzle 스키마, 주문·판매 정보·상담 쿼리, 로컬 DB 실행 스크립트 |
+| `packages/db` | Drizzle 스키마·마이그레이션(`migrations/`), 쿼리, 로컬 DB(PGlite) 실행 스크립트 |
 
 두 앱은 Feature-Sliced Design v2.1을 따릅니다. Next.js와 이름이 겹치지 않도록 계층 이름은 `_app`, `_pages`를 쓰고, Next의 `app/` 라우트 파일은 `_pages`를 다시 내보내기만 합니다.
 
@@ -29,14 +29,14 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - **회원 세션:** 이메일·비밀번호(scrypt 해시) 로그인. 서명한 `httpOnly` 쿠키 `mfg_session`으로 인증하고, 화면 표시용 이름만 `mfg_member` 쿠키에 둡니다. 세션을 읽는 코드는 `connection()`으로 요청 시점에만 실행합니다. 로그인 상태가 바뀌면 전체 페이지를 다시 불러옵니다 (Cache Components가 숨겨 둔 이전 화면이 남지 않게).
 - **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
 - 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
-- 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `apps/shop/netlify/database/migrations`에 마이그레이션을 만듭니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
+- 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 마이그레이션을 만듭니다. 운영 배포(Vercel 빌드)와 로컬 DB 모두 `scripts/migrate.mjs`(Drizzle 마이그레이터)로 적용합니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
 
 ## 로컬 개발
 
-`packages/db/scripts/with-db.mjs`가 `@netlify/database-dev`로 로컬 Postgres를 띄우고, 마이그레이션을 적용한 뒤 명령에 `MFG_DATABASE_URL`을 넘깁니다.
+`packages/db/scripts/with-db.mjs`가 PGlite(WASM Postgres)를 `pg-gateway`로 감싸 로컬 Postgres를 띄우고, 마이그레이션을 적용한 뒤 명령에 `MFG_DATABASE_URL`을 넘깁니다. 계정이나 Docker가 필요 없습니다.
 
 ```bash
-pnpm --filter shop dev:db     # DB 파일은 apps/shop/.netlify/db-dev에 남는다
+pnpm --filter shop dev:db     # DB 파일은 apps/shop/.local-db에 남는다
 pnpm --filter admin dev:db    # 같은 DB 폴더를 쓴다
 ```
 
@@ -44,9 +44,11 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 | 환경 변수 | 쓰는 곳 | 설명 |
 |---|---|---|
-| `MFG_DATABASE_URL` | 두 앱 | Postgres 연결 문자열. 쇼핑몰은 Netlify에서 `NETLIFY_DB_URL`을 자동으로 쓴다 |
+| `DATABASE_URL` | 두 앱 | 운영 Postgres(Neon) 연결 문자열. Vercel의 Neon 연동이 넣어 준다 |
+| `MFG_DATABASE_URL` | 두 앱 | 로컬·테스트 DB 연결 문자열 (`with-db.mjs`가 넣어 줌, `DATABASE_URL`보다 우선) |
 | `MFG_REVALIDATE_SECRET` | 두 앱 | 쇼핑몰 캐시 갱신 엔드포인트의 비밀 값 |
-| `MFG_SESSION_SECRET` | 쇼핑몰 | 회원 세션 쿠키 서명 키 (Netlify 운영 필수, 로컬은 개발용 기본값) |
+| `MFG_SESSION_SECRET` | 쇼핑몰 | 회원 세션 쿠키 서명 키 (Vercel 운영 필수, 로컬은 개발용 기본값) |
+| `CRON_SECRET` | 쇼핑몰 | 데모 초기화 크론(`/api/cron/reset-demo`) 확인용 |
 | `MFG_SHOP_URL` | 어드민 | 쇼핑몰 주소 (캐시 갱신 호출용) |
 | `MFG_ADMIN_SECRET` | 어드민 | 세션 쿠키 서명 키 (운영 필수) |
 | `MFG_ADMIN_PASSWORD` | 어드민 | 로그인 비밀번호. 없으면 공개 데모 비밀번호 `demo-admin` |
@@ -75,9 +77,9 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 | 명령 | 내용 |
 |---|---|
-| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres 통합 테스트(10), 쇼핑몰 컴포넌트·스토리 테스트(28), 어드민 컴포넌트·세션 테스트(4) |
+| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(10), 쇼핑몰 컴포넌트·스토리 테스트(28), 어드민 컴포넌트·세션 테스트(4) |
 | `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 50개. 13개 화면의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
-| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 22개. 로그인, 가격 변경 반영, 주문·상담 상태, 문의 답변 반영, 가로 넘침·axe |
+| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 24개. 로그인, 가격 변경 반영, 주문·상담 상태, 문의 답변 반영, 가로 넘침·axe, 데모 초기화 크론 |
 | `pnpm storybook` | `entities`, `shared`, `widgets` 컴포넌트 옆 `*.stories.tsx`. a11y 애드온 포함 |
 
 - 컴포넌트 테스트는 컴포넌트 옆 `*.test.tsx`에 둡니다 (Vitest + Testing Library, jsdom).

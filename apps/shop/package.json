@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist .netlify/db-dev -- next dev --port 3000",
+    "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist .local-db -- next dev --port 3000",
     "start:db": "node ../../packages/db/scripts/with-db.mjs -- next start",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -27,8 +27,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
-    "@netlify/database-dev": "1.0.2",
-    "@netlify/functions": "^6.1.0",
     "@playwright/test": "1.58.0",
     "@storybook/addon-a11y": "10.6.6",
     "@storybook/nextjs-vite": "10.6.6",

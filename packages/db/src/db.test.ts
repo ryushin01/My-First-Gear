@@ -1,4 +1,5 @@
-import { NetlifyDB } from "@netlify/database-dev";
+// @ts-expect-error 로컬 DB 스크립트는 JS 모듈이다
+import { startLocalDb } from "../scripts/local-db.mjs";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createDb, type Db } from "./client";
 import { applyMerch, listMerch, updateMerch } from "./merch";
@@ -6,17 +7,13 @@ import { dashboardStats, findOrderForBuyer, listOrders, OrderError, placeOrder, 
 import { createConsult, listConsults } from "./consults";
 import { resetDemoData } from "./reset";
 
-const MIGRATIONS = new URL("../../../apps/shop/netlify/database/migrations", import.meta.url).pathname;
-
-let server: NetlifyDB;
+let server: { url: string; stop: () => Promise<void> };
 let db: Db;
 let close: () => Promise<void>;
 
 beforeAll(async () => {
-  server = new NetlifyDB();
-  const url = await server.start();
-  await server.applyMigrations(MIGRATIONS);
-  ({ db, close } = createDb(url));
+  server = await startLocalDb();
+  ({ db, close } = createDb(server.url));
 }, 60_000);
 
 afterAll(async () => {
