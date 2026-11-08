@@ -59,7 +59,7 @@
 
 ## 기술 스택
 
-![Next.js, React, TypeScript, UnoCSS, Bulma, PostgreSQL, pnpm, Vitest, Vercel](https://skillicons.dev/icons?i=nextjs,react,ts,unocss,bulma,postgres,pnpm,vitest,vercel)
+![Next.js, React, TypeScript, PostgreSQL, pnpm, Vitest, Vercel](https://skillicons.dev/icons?i=nextjs,react,ts,postgres,pnpm,vitest,vercel)
 
 | 구분 | 사용 기술 |
 |---|---|
