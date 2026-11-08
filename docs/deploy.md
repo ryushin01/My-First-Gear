@@ -64,4 +64,4 @@
 4. `pnpm build`
 5. 쇼핑몰 E2E, 어드민 + 쇼핑몰 E2E (실패하면 결과를 아티팩트로 올림)
 
-`.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `deployment_status` 이벤트에 맞춰, 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.
+`.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `repository_dispatch`(`vercel.deployment.success`) 이벤트에 맞춰(프로젝트 Git 설정에서 저장소 이벤트를 켜 둠), 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.

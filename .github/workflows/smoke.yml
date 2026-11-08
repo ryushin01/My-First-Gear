@@ -1,15 +1,19 @@
 name: Production smoke
 
-# Vercel이 운영 배포를 마치면 GitHub에 deployment_status를 보낸다. 그때 실제 주소를 검사한다.
+# Vercel이 배포를 마치면 저장소로 repository_dispatch(vercel.deployment.success)를 보낸다.
+# 운영 배포일 때 실제 주소를 읽기 전용으로 검사한다.
 on:
-  deployment_status:
+  repository_dispatch:
+    types: [vercel.deployment.success]
   workflow_dispatch:
+
+concurrency:
+  group: smoke
+  cancel-in-progress: true
 
 jobs:
   smoke:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment.environment, 'Production'))
+    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.environment == 'production'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
