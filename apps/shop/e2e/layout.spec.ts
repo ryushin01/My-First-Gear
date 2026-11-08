@@ -6,6 +6,8 @@ const pages = ["/", "/gear", "/gear/gpu", "/product/antec-torque", "/build", "/a
 for (const path of pages) {
   test(`${path}: 가로 넘침, 작은 조작 요소, axe 위반이 없다`, async ({ page }) => {
     await page.goto(path);
+    // 로그인이 필요한 화면은 로그인 화면으로 이동이 끝난 뒤 검사한다.
+    if (path === "/my") await page.waitForURL(/\/login\?next=/);
     await expect(page.getByRole("main")).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
