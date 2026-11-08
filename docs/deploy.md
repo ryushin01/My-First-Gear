@@ -57,6 +57,6 @@
 
 1. `pnpm lint` (ESLint + steiger FSD 검사)
 2. `pnpm typecheck`
-3. `pnpm test` (컴포넌트·스토리·호환성 테스트, 로컬 Postgres(PGlite) 통합 테스트)
-4. `pnpm build`, Storybook 빌드
+3. `pnpm test` (컴포넌트·접근성·호환성 테스트, 로컬 Postgres(PGlite) 통합 테스트)
+4. `pnpm build`
 5. 쇼핑몰 E2E, 어드민 + 쇼핑몰 E2E (실패하면 결과를 아티팩트로 올림)

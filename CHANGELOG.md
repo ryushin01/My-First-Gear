@@ -1,5 +1,10 @@
 # 버전 기록
 
+## 0.3.1 (2026-11-08)
+
+- Storybook 제거 (설정, 스토리, 의존성, CI 단계, README 화면)
+- 스토리로 하던 axe 검사를 컴포넌트 접근성 테스트(`components.a11y.test.tsx`)로 옮김
+
 ## 0.3.0 (2026-11-08)
 
 - 배포 대상을 Netlify에서 Vercel(쇼핑몰·어드민 두 프로젝트) + Neon(Postgres)으로 변경

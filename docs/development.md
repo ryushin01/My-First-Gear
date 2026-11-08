@@ -77,13 +77,12 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 | 명령 | 내용 |
 |---|---|
-| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(10), 쇼핑몰 컴포넌트·스토리 테스트(28), 어드민 컴포넌트·세션 테스트(4) |
+| `pnpm test` | `packages/catalog` 호환성 검사(8), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(10), 쇼핑몰 컴포넌트·접근성 테스트(21), 어드민 컴포넌트·세션 테스트(4) |
 | `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 50개. 13개 화면의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
 | `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 24개. 로그인, 가격 변경 반영, 주문·상담 상태, 문의 답변 반영, 가로 넘침·axe, 데모 초기화 크론 |
-| `pnpm storybook` | `entities`, `shared`, `widgets` 컴포넌트 옆 `*.stories.tsx`. a11y 애드온 포함 |
 
 - 컴포넌트 테스트는 컴포넌트 옆 `*.test.tsx`에 둡니다 (Vitest + Testing Library, jsdom).
-- `src/stories.test.tsx`가 모든 스토리를 렌더링해 axe로 검사합니다. 명도 대비는 jsdom에서 판단할 수 없어 E2E에서 검사합니다.
+- `src/components.a11y.test.tsx`가 공용 컴포넌트(상품 카드의 할인·품절·상담 상태, 테이프 표지, 상품 그림 40종, 입력 칸과 오류 요약 등)를 렌더링해 axe로 검사합니다. 명도 대비는 jsdom에서 판단할 수 없어 E2E에서 검사합니다.
 - Node 26의 실험 기능인 전역 `localStorage`가 jsdom 저장소를 가리므로, Vitest는 `--no-experimental-webstorage`로 실행합니다 (`vitest.config.mts`).
 - E2E는 먼저 `pnpm build`로 두 앱을 빌드해 둡니다. 다시 빌드할 때는 예전 서버를 끄고 `.next`를 지웁니다. 서버가 떠 있으면 재생성한 페이지를 새 `.next`에 덮어쓸 수 있습니다.
 - Cache Components가 숨겨 둔 화면 때문에 E2E 선택자는 `getByRole`처럼 보이는 요소만 고르는 것을 씁니다.

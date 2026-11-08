@@ -49,8 +49,6 @@ next-env.d.ts
 test-results/
 playwright-report/
 
-# storybook
-storybook-static/
 
 # local database (PGlite)
 .local-db/

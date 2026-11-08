@@ -24,9 +24,6 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
-      - run: pnpm --filter shop build-storybook
-        env:
-          STORYBOOK_DISABLE_TELEMETRY: "1"
       - run: pnpm --filter shop exec playwright install --with-deps chromium
       - name: E2E (쇼핑몰)
         run: pnpm --filter shop test:e2e

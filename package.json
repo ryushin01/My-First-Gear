@@ -1,6 +1,6 @@
 {
   "name": "my-first-gear",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
@@ -8,8 +8,7 @@
     "lint": "turbo run lint && steiger apps/shop/src && steiger apps/admin/src",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:e2e": "turbo run test:e2e --concurrency=1",
-    "storybook": "pnpm --filter shop storybook"
+    "test:e2e": "turbo run test:e2e --concurrency=1"
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.8.2",

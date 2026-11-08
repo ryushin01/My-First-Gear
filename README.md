@@ -1,8 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.3.0-ff3131)
-![Storybook](https://img.shields.io/badge/Storybook-10-FF4785?logo=storybook&logoColor=white)
+![version](https://img.shields.io/badge/version-0.3.1-ff3131)
 
 컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -28,9 +27,9 @@
 |---|---|
 | ![최근 주문, 매출, 조립 중, 상담 신청 건수 카드와 재고 부족 목록](docs/images/admin-dashboard.jpg) | ![그래픽카드 상품의 판매가, 정가, 재고, 추천, 노출을 표에서 바로 고치는 화면](docs/images/admin-products.jpg) |
 
-| 모바일 홈 | 어드민 문의 답변 | Storybook |
-|---|---|---|
-| <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면의 테이프 캐러셀과 채널 목록" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) | ![상품 그림 40종을 모아 보는 Storybook 갤러리 스토리](docs/images/storybook.jpg) |
+| 모바일 홈 | 어드민 문의 답변 |
+|---|---|
+| <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면의 테이프 캐러셀과 채널 목록" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
 
 ## 주요 기능
 
@@ -64,7 +63,7 @@
 | 구조 | pnpm 워크스페이스 + Turborepo 모노레포, Feature-Sliced Design v2.1 (steiger 검사) |
 | 스타일 | 쇼핑몰 UnoCSS (`presetWind4`), 어드민 Bulma 1 |
 | 데이터 | PostgreSQL (Neon, 로컬·테스트는 PGlite), Drizzle ORM, 서버 액션 |
-| 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·스토리 axe·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사), Storybook 10 (`@storybook/nextjs-vite`) |
+| 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·접근성(axe)·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사) |
 | 배포 | Vercel (쇼핑몰·어드민 두 프로젝트, Cron), GitHub Actions |
 
 ## 시작하기
@@ -83,9 +82,8 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 |---|---|
 | `pnpm build` | 두 앱 프로덕션 빌드 |
 | `pnpm lint` / `typecheck` | ESLint + FSD 검사 / 타입 검사 |
-| `pnpm test` | 컴포넌트·스토리·호환성·DB 통합 테스트 |
+| `pnpm test` | 컴포넌트·접근성·호환성·DB 통합 테스트 |
 | `pnpm test:e2e` | 프로덕션 빌드를 로컬 DB로 띄워 쇼핑몰·어드민 E2E |
-| `pnpm storybook` | Storybook (`http://localhost:6006`) |
 
 ## 프로젝트 구조
 
@@ -93,7 +91,7 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 apps/
 ├─ shop/            쇼핑몰 (UnoCSS)
 │  ├─ app/          Next 라우트 (src/_pages를 다시 내보내기만)
-│  ├─ src/          FSD: _app, _pages, widgets, features, entities, shared (컴포넌트 옆에 *.stories.tsx, *.test.tsx)
+│  ├─ src/          FSD: _app, _pages, widgets, features, entities, shared (컴포넌트 옆에 *.test.tsx)
 │  └─ vercel.json   빌드(마이그레이션 적용), 데모 초기화 크론
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
