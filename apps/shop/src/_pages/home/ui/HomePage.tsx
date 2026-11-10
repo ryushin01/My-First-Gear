@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { categories, channelOf, featuredProducts } from "@mfg/catalog";
 import { getCatalog } from "@/entities/product/index.server";
-import { RecentlyViewed } from "@/entities/product";
+import { ProductCard, RecentlyViewed } from "@/entities/product";
 import { CrtScreen } from "@/widgets/crt-screen";
 import { TapeCarousel } from "./TapeCarousel";
 
 export async function HomePage() {
   const products = await getCatalog();
+  const monitors = products.filter((p) => p.categoryId === "monitor");
   return (
     <CrtScreen source="CH 01 · HOME">
       <h1 className="sr-only">My First Gear, 첫 장비를 고르는 기어 숍</h1>
@@ -14,6 +15,30 @@ export async function HomePage() {
         <TapeCarousel products={featuredProducts(products)} />
 
         <RecentlyViewed />
+
+        {monitors.length > 0 && (
+          <section aria-labelledby="home-monitors" className="flex flex-col gap-6">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="flex flex-col gap-3">
+                <p className="mono-label">[Gaming Monitor Zone]</p>
+                <h2 id="home-monitors" className="font-display text-4xl md:text-6xl">
+                  게이밍 모니터 존
+                </h2>
+                <p className="text-mute-100">49인치 32:9 슈퍼 울트라와이드부터 27인치 4K까지, OLED 게이밍 모니터를 모았습니다.</p>
+              </div>
+              <Link href="/gear/monitor" className="inline-flex min-h-8 items-center font-mono text-xs uppercase text-label hover:text-cream">
+                모니터 전체 보기 <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {monitors.map((product) => (
+                <li key={product.id}>
+                  <ProductCard product={product} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section aria-labelledby="home-channels" className="flex flex-col gap-6">
           <div className="flex items-end justify-between gap-4">

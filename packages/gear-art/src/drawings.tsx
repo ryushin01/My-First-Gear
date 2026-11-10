@@ -399,6 +399,21 @@ const car: Drawing = (a, v) => {
   );
 };
 
+const monitor: Drawing = (a, v) => {
+  const wide = v === "superwide" ? 186 : v === "ultrawide" ? 168 : 140;
+  const h = v === "superwide" ? 54 : v === "ultrawide" ? 72 : 84;
+  const bend = v === "flat" ? 0 : 8;
+  const x = 100 - wide / 2;
+  const y = 112 - h;
+  return (
+    <>
+      <path d={`M${x} ${y + bend} Q100 ${y - bend} ${x + wide} ${y + bend} V${y + h + bend} Q100 ${y + h - bend} ${x} ${y + h + bend} Z`} />
+      <path d={`M${x + 8} ${y + h * 0.7} Q100 ${y + h * 0.2} ${x + wide - 8} ${y + h * 0.5}`} stroke={a} strokeWidth="2" />
+      <path d="M100 116 V160 M70 166 L100 158 L130 166" />
+    </>
+  );
+};
+
 const watch: Drawing = (a, v) => (
   <>
     <path d="M78 20 h44 l-4 36 h-36 z M82 180 h36 l4 -36 h-44 z" />
@@ -436,6 +451,7 @@ export const drawings: Record<string, Drawing> = {
   case: pcCase,
   cooler,
   keyboard,
+  monitor,
   laptop,
   dap,
   earphone,
