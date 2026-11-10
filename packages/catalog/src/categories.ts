@@ -8,6 +8,7 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "play", name: "게임", code: "PLAY" },
   { id: "ride", name: "탈것", code: "RIDE" },
   { id: "watch", name: "시계", code: "WATCH" },
+  { id: "outdoor", name: "아웃도어", code: "OUTDOOR" },
 ];
 
 export const categories: Category[] = [
@@ -30,6 +31,7 @@ export const categories: Category[] = [
   { id: "motorcycle", group: "ride", name: "모터사이클", code: "MOTORCYCLE" },
   { id: "car", group: "ride", name: "자동차", code: "CAR" },
   { id: "watch", group: "watch", name: "시계", code: "WATCH" },
+  { id: "camping", group: "outdoor", name: "캠핑", code: "CAMPING" },
 ];
 
 const byId = new Map(categories.map((category) => [category.id, category]));

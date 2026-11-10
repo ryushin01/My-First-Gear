@@ -1118,4 +1118,30 @@ export const products: Product[] = [
     salesRank: 38,
     releasedAt: "2018-01-01",
   },
+
+  // 캠핑
+  {
+    id: "p-camp-001",
+    slug: "nordisk-asgard-12-6",
+    name: "노르디스크 아스가르드 12.6",
+    brand: "Nordisk",
+    categoryId: "camping",
+    price: 2_190_000,
+    stock: 3,
+    purchaseMode: "cart",
+    art: { kind: "tent", accent: "#c9b48a", variant: "bell", model: "nordisk-asgard-12-6" },
+    tagline: "면 캔버스로 지은 벨 텐트",
+    description: "가운데 기둥 하나와 A자 출입구 기둥으로 세우는 면 혼방 벨 텐트입니다. 숨을 쉬는 원단이라 여름엔 덜 덥고 겨울엔 결로가 적습니다.",
+    specs: [
+      { label: "바닥 지름", value: "약 4m (12.6㎡)" },
+      { label: "높이", value: "약 2.5m" },
+      { label: "원단", value: "면 혼방 캔버스 (Technical Cotton)" },
+      { label: "수용 인원", value: "4~6명" },
+      { label: "무게", value: "약 25kg" },
+    ],
+    rating: 4.8,
+    reviewCount: 57,
+    salesRank: 45,
+    releasedAt: "2019-03-01",
+  },
 ];
