@@ -13,8 +13,16 @@ describe("상품 검색", () => {
 
   it("카테고리의 다른 이름으로도 찾는다", () => {
     expect(searchProducts("허먼밀러 체어").map((p) => p.slug)).toEqual(["herman-miller-aeron"]);
-    expect(searchProducts("모션데스크").map((p) => p.slug)).toContain("secretlab-magnus-pro");
+    expect(searchProducts("시크릿랩 데스크").map((p) => p.slug)).toEqual(["secretlab-magnus-pro"]);
     expect(searchProducts("스틸시리즈 헤드셋").map((p) => p.slug)).toEqual(["steelseries-arctis-nova-pro-wireless"]);
+  });
+
+  it("별칭이 다른 카테고리 상품을 끌어오지 않는다", () => {
+    // 스튜디오 모니터 스피커는 소개에 "모니터"가 있어 찾히지만, 그렇지 않은 스피커는 빠진다.
+    const slugs = searchProducts("모니터").map((p) => p.slug);
+    expect(slugs).toContain("edifier-mr4");
+    expect(slugs).not.toContain("kef-r3-meta");
+    expect(slugs).not.toContain("creative-pebble-v3");
   });
 });
 
