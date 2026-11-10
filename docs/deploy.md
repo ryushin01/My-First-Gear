@@ -27,6 +27,7 @@
 | `MFG_SESSION_SECRET` | 회원 세션 서명용 임의의 긴 문자열 (Sensitive) |
 | `MFG_REVALIDATE_SECRET` | 캐시 갱신 엔드포인트 비밀 값 (어드민과 같게) |
 | `CRON_SECRET` | 크론 호출 확인용 임의의 긴 문자열 |
+| `NEXT_PUBLIC_SITE_URL` | 운영 주소 `https://my-first-gear-ryushin01.vercel.app`. 없으면 Vercel이 고른 운영 주소를 쓰는데, 주소가 여럿이면 짧은 옛 주소가 골라질 수 있어 지정합니다. |
 
 ## 2. 어드민 프로젝트
 
