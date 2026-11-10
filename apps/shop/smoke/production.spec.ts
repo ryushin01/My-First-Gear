@@ -4,8 +4,8 @@ import { expect, test } from "@playwright/test";
  * 운영 스모크 테스트: 배포 직후 실제 주소에서 읽기만 한다 (데이터를 바꾸지 않음).
  * SMOKE_SHOP_URL, SMOKE_ADMIN_URL로 주소를 바꿀 수 있다.
  */
-const SHOP = process.env.SMOKE_SHOP_URL ?? "https://my-first-gear.vercel.app";
-const ADMIN = process.env.SMOKE_ADMIN_URL ?? "https://my-first-gear-admin.vercel.app";
+const SHOP = process.env.SMOKE_SHOP_URL ?? "https://my-first-gear-ryushin01.vercel.app";
+const ADMIN = process.env.SMOKE_ADMIN_URL ?? "https://my-first-gear-admin-ryushin01.vercel.app";
 
 test("쇼핑몰 주요 화면이 응답한다", async ({ request }) => {
   for (const path of ["/", "/gear/gpu", "/product/antec-torque", "/build", "/build/quick", "/search?q=AM5", "/login"]) {

@@ -41,7 +41,7 @@
 | 이름 | 값 |
 |---|---|
 | `DATABASE_URL` | 쇼핑몰과 같은 Neon DB (같은 Neon 연동을 어드민 프로젝트에도 연결) |
-| `MFG_SHOP_URL` | 쇼핑몰 주소 (예: `https://my-first-gear.vercel.app`) |
+| `MFG_SHOP_URL` | 쇼핑몰 주소 (예: `https://my-first-gear-ryushin01.vercel.app`) |
 | `MFG_REVALIDATE_SECRET` | 쇼핑몰과 같은 값 |
 | `MFG_ADMIN_SECRET` | 세션 서명용 임의의 긴 문자열 |
 | `MFG_ADMIN_PASSWORD` | 선택. 비우면 공개 데모 비밀번호 `demo-admin` |
