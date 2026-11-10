@@ -5,7 +5,7 @@
 
 컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
-**[쇼핑몰 바로 보기](https://my-first-gear.vercel.app/)** · **[어드민](https://my-first-gear-admin.vercel.app/)** (비밀번호 `demo-admin`) · 데모 회원 `demo@myfirstgear.dev` / `demo1234`
+**[쇼핑몰 바로 보기](https://my-first-gear-ryushin01.vercel.app/)** · **[어드민](https://my-first-gear-admin-ryushin01.vercel.app/)** (비밀번호 `demo-admin`) · 데모 회원 `demo@myfirstgear.dev` / `demo1234`
 
 > **프로젝트 상태:** 실제로 판매하지 않는 **포트폴리오 프로젝트**입니다. 상품명은 실제 모델명이지만 가격, 재고, 평점, 주문은 모두 가상 데이터이고, 결제는 모의 결제입니다. 상품 이미지는 사진 대신 로고 없이 직접 그린 SVG입니다.
 

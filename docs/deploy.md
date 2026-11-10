@@ -27,6 +27,7 @@
 | `MFG_SESSION_SECRET` | 회원 세션 서명용 임의의 긴 문자열 (Sensitive) |
 | `MFG_REVALIDATE_SECRET` | 캐시 갱신 엔드포인트 비밀 값 (어드민과 같게) |
 | `CRON_SECRET` | 크론 호출 확인용 임의의 긴 문자열 |
+| `NEXT_PUBLIC_SITE_URL` | 운영 주소 `https://my-first-gear-ryushin01.vercel.app`. 없으면 Vercel이 고른 운영 주소를 쓰는데, 주소가 여럿이면 짧은 옛 주소가 골라질 수 있어 지정합니다. |
 
 ## 2. 어드민 프로젝트
 
@@ -41,7 +42,7 @@
 | 이름 | 값 |
 |---|---|
 | `DATABASE_URL` | 쇼핑몰과 같은 Neon DB (같은 Neon 연동을 어드민 프로젝트에도 연결) |
-| `MFG_SHOP_URL` | 쇼핑몰 주소 (예: `https://my-first-gear.vercel.app`) |
+| `MFG_SHOP_URL` | 쇼핑몰 주소 (예: `https://my-first-gear-ryushin01.vercel.app`) |
 | `MFG_REVALIDATE_SECRET` | 쇼핑몰과 같은 값 |
 | `MFG_ADMIN_SECRET` | 세션 서명용 임의의 긴 문자열 |
 | `MFG_ADMIN_PASSWORD` | 선택. 비우면 공개 데모 비밀번호 `demo-admin` |
