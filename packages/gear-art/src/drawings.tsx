@@ -441,6 +441,16 @@ const watch: Drawing = (a, v) => (
   </>
 );
 
+const tent: Drawing = (a) => (
+  <>
+    <path d="M100 36 L170 112 V154 H30 V112 Z" />
+    <path d="M30 112 H170" />
+    <path d="M100 36 V28" strokeWidth="3" />
+    <path d="M82 154 L100 104 L118 154" stroke={a} strokeWidth="2" />
+    <path d="M30 112 L8 158 M170 112 L192 158" strokeWidth="1" strokeDasharray="3 3" />
+  </>
+);
+
 export const drawings: Record<string, Drawing> = {
   cpu,
   mainboard,
@@ -461,4 +471,5 @@ export const drawings: Record<string, Drawing> = {
   motorcycle,
   car,
   watch,
+  tent,
 };

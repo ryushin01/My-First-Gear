@@ -43,6 +43,13 @@
       "when": 1794280057261,
       "tag": "20261110030737_seed_monitors",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794281528943,
+      "tag": "20261110033208_seed_camping",
+      "breakpoints": true
     }
   ]
 }
