@@ -19,7 +19,14 @@ export type ArtKind =
   | "motorcycle"
   | "car"
   | "watch"
-  | "tent";
+  | "tent"
+  | "mouse"
+  | "speaker"
+  | "microphone"
+  | "chair"
+  | "desk"
+  | "monitor-arm"
+  | "lamp";
 
 export type GearArt = {
   kind: ArtKind;
@@ -31,7 +38,7 @@ export type GearArt = {
   model?: string;
 };
 
-export type CategoryGroupId = "pc-parts" | "peripherals" | "computers" | "audio" | "play" | "ride" | "watch" | "outdoor";
+export type CategoryGroupId = "pc-parts" | "peripherals" | "computers" | "audio" | "play" | "ride" | "watch" | "outdoor" | "desk-setup";
 
 export type CategoryId =
   | "cpu"
@@ -53,7 +60,14 @@ export type CategoryId =
   | "motorcycle"
   | "car"
   | "watch"
-  | "camping";
+  | "camping"
+  | "mouse"
+  | "speaker"
+  | "microphone"
+  | "chair"
+  | "desk"
+  | "monitor-arm"
+  | "lighting";
 
 export type Category = {
   id: CategoryId;

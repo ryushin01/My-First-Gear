@@ -140,5 +140,6 @@ test("성능 예산: 홈 글꼴 700KB 이하, 홈에는 추천 상품만 싣는�
   const html = await (await page.request.get("/")).text();
   await page.goto("/", { waitUntil: "networkidle" });
   expect(fontBytes).toBeLessThan(700 * 1024);
-  expect(new Set(html.match(/p-[a-z]+-0\d\d/g)).size).toBeLessThanOrEqual(15);
+  // 추천 상품(14)과 모니터 존(4)만 싣고 전체 카탈로그(85)는 싣지 않는다.
+  expect(new Set(html.match(/p-[a-z]+-0\d\d/g)).size).toBeLessThanOrEqual(18);
 });

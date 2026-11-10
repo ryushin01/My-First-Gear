@@ -1,9 +1,9 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.6.0-ff3131)
+![version](https://img.shields.io/badge/version-0.7.0-ff3131)
 
-컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
+컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
 **[쇼핑몰 바로 보기](https://my-first-gear-ryushin01.vercel.app/)** · **[어드민](https://my-first-gear-admin-ryushin01.vercel.app/)** (비밀번호 `demo-admin`) · 데모 회원 `demo@myfirstgear.dev` / `demo1234`
 
@@ -41,7 +41,7 @@
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 게이밍 모니터 존, 20개 카테고리 채널 목록 |
+| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 게이밍 모니터 존, 27개 카테고리 채널 목록 |
 | 기어·검색 | 카테고리 목록, 필터·정렬(주소에 유지), 검색, 상품 비교(최대 4개), 최근 본 상품, 상품별 공유 이미지·구조화 데이터 |
 | PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·두께·전원 커넥터·쿨러 높이·파워 용량 검사, 예산·용도별 빠른 견적, 견적 주소·이미지 공유, 조립 옵션 |
 | 주문·상담 | 장바구니(담긴 부품 호환성 재검사), 모의 결제(서버에서 금액·재고 재계산), 주문 취소, 배송 단계, 비회원 조회, 고가 상품 상담 |
@@ -101,7 +101,7 @@ apps/
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
 ├─ catalog/         상품·카테고리·호환성 검사·검색·예산 추천 (순수 TS)
-├─ gear-art/        실제 제품을 보고 그린 상품 SVG 45종
+├─ gear-art/        실제 제품을 보고 그린 상품 SVG 85종
 └─ db/              Drizzle 스키마·쿼리·마이그레이션, 로컬 DB(PGlite) 실행 스크립트
 ```
 

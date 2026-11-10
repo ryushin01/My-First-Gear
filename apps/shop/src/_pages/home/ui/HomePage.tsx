@@ -7,7 +7,11 @@ import { TapeCarousel } from "./TapeCarousel";
 
 export async function HomePage() {
   const products = await getCatalog();
-  const monitors = products.filter((p) => p.categoryId === "monitor");
+  // 판매량 순으로 한 줄(4개)만 싣고 나머지는 모니터 목록에서 본다.
+  const monitors = products
+    .filter((p) => p.categoryId === "monitor")
+    .sort((a, b) => a.salesRank - b.salesRank)
+    .slice(0, 4);
   return (
     <CrtScreen source="CH 01 · HOME">
       <h1 className="sr-only">My First Gear, 첫 장비를 고르는 기어 숍</h1>
