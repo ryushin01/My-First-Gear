@@ -118,6 +118,21 @@ test("데스크 셋업에서 모니터암·책상 조합을 확인하고 한 번
   await expect(page.locator("main:visible li")).toHaveCount(3);
 });
 
+test("공유받은 셋업을 열면 고르던 셋업으로 되돌릴 수 있다", async ({ page }) => {
+  await page.goto("/setup");
+  await page.getByRole("button", { name: /고르기\s*:\s*마우스$/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /MX Master 3S/ }).click();
+
+  await page.goto(`/setup?s=${encodeURIComponent("chair:p-chair-001")}`);
+  await expect(page.getByText("공유받은 셋업을 불러왔습니다")).toBeVisible();
+  await expect(page).toHaveURL(/\/setup$/);
+  await expect(page.getByText("허먼밀러 뉴 에어론")).toBeVisible();
+
+  await page.getByRole("button", { name: "이전 셋업으로 되돌리기" }).click();
+  await expect(page.getByText("로지텍 MX Master 3S")).toBeVisible();
+  await expect(page.getByText("허먼밀러 뉴 에어론")).toBeHidden();
+});
+
 test("고가 상품은 상담 신청으로 받는다", async ({ page }) => {
   await page.goto("/product/lamborghini-aventador");
   await expect(page.getByRole("button", { name: "장바구니 담기" })).toHaveCount(0);

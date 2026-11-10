@@ -7,11 +7,21 @@ import { checkSetup, decodeSetup, encodeSetup, formatPrice, setupSlots, setupTot
 import { GearArt } from "@mfg/gear-art";
 import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
-import { clearSetupItem, pickSetupItem, replaceSetup, resetSetup, useSetupState } from "../model/setupStore";
+import {
+  applySharedSetup,
+  clearSetupItem,
+  dismissPreviousSetup,
+  pickSetupItem,
+  resetSetup,
+  restorePreviousSetup,
+  usePreviousSetup,
+  useSetupState,
+} from "../model/setupStore";
 import { SetupPicker } from "./SetupPicker";
 
 export function SetupPlanner() {
   const state = useSetupState();
+  const previous = usePreviousSetup();
   const catalog = useCatalog();
   const params = useSearchParams();
   const uid = useId();
@@ -24,7 +34,9 @@ export function SetupPlanner() {
   useEffect(() => {
     if (!shared) return;
     const decoded = decodeSetup(shared);
-    if (decoded) replaceSetup(decoded);
+    if (decoded) applySharedSetup(decoded);
+    // 새로고침할 때 다시 덮어쓰지 않도록 주소에서 공유 값을 지운다.
+    window.history.replaceState(null, "", "/setup");
   }, [shared]);
 
   const setup = toSetup(state, catalog);
@@ -54,6 +66,17 @@ export function SetupPlanner() {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section aria-labelledby={`${uid}slots`} className="flex flex-col gap-4">
+        {previous && (
+          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[#f2c230]/50 p-3 text-sm">
+            <p className="flex-1">공유받은 셋업을 불러왔습니다. 고르던 셋업은 따로 남겨 두었습니다.</p>
+            <button type="button" onClick={restorePreviousSetup} className="min-h-11 rounded-md border border-white/30 px-4 hover:border-white">
+              이전 셋업으로 되돌리기
+            </button>
+            <button type="button" onClick={dismissPreviousSetup} className="min-h-11 rounded-md px-3 text-mute-200 hover:text-cream">
+              닫기<span className="sr-only">: 이전 셋업 안내</span>
+            </button>
+          </div>
+        )}
         <h2 id={`${uid}slots`} className="mono-label">
           [Desk Setup · {filled} / {setupSlots.length}]
         </h2>

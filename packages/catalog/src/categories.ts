@@ -24,7 +24,7 @@ export const categories: Category[] = [
   { id: "keyboard", group: "peripherals", name: "키보드", code: "KEYBOARD", aliases: ["기계식", "키캡"] },
   { id: "monitor", group: "peripherals", name: "게이밍 모니터", code: "MONITOR", aliases: ["게이밍 모니터", "디스플레이", "display"] },
   { id: "mouse", group: "peripherals", name: "마우스", code: "MOUSE", aliases: ["게이밍 마우스"] },
-  { id: "chair", group: "desk-setup", name: "의자", code: "CHAIR", aliases: ["체어", "게이밍 의자", "사무용 의자", "chair"] },
+  { id: "chair", group: "desk-setup", name: "의자", code: "CHAIR", aliases: ["체어", "chair"] },
   { id: "desk", group: "desk-setup", name: "책상", code: "DESK", aliases: ["데스크", "모션데스크", "스탠딩 데스크", "desk"] },
   { id: "monitor-arm", group: "desk-setup", name: "모니터암", code: "MONITOR ARM", aliases: ["모니터 암", "거치대", "arm"] },
   { id: "lighting", group: "desk-setup", name: "조명", code: "LIGHTING", aliases: ["라이트", "램프", "무드등", "스크린바", "light"] },
