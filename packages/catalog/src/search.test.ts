@@ -10,6 +10,12 @@ describe("상품 검색", () => {
     expect(searchProducts("  ")).toEqual([]);
     expect(searchProducts("없는상품이름")).toEqual([]);
   });
+
+  it("카테고리의 다른 이름으로도 찾는다", () => {
+    expect(searchProducts("허먼밀러 체어").map((p) => p.slug)).toEqual(["herman-miller-aeron"]);
+    expect(searchProducts("모션데스크").map((p) => p.slug)).toContain("secretlab-magnus-pro");
+    expect(searchProducts("스틸시리즈 헤드셋").map((p) => p.slug)).toEqual(["steelseries-arctis-nova-pro-wireless"]);
+  });
 });
 
 describe("예산별 빠른 견적", () => {

@@ -78,7 +78,7 @@ export async function HomePage() {
             </h2>
           </div>
           <div className="flex flex-col justify-end gap-4 text-mute-100">
-            <p>CPU부터 케이스까지 칸을 채우면 소켓, 메모리 규격, 파워 용량, 그래픽카드 길이를 바로 확인합니다.</p>
+            <p>CPU부터 케이스까지 칸을 채우면 소켓, 메모리 규격, 파워 용량, 그래픽카드 길이를 바로 확인합니다. 책상·모니터·모니터암도 데스크 셋업에서 크기와 무게를 맞춰 볼 수 있습니다.</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/build" className="inline-flex min-h-11 items-center rounded-md bg-cream px-5 text-ink hover:bg-white">
                 PC 견적 시작
@@ -88,6 +88,9 @@ export async function HomePage() {
               </Link>
               <Link href="/assembly" className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-5 hover:border-white">
                 조립 서비스 안내
+              </Link>
+              <Link href="/setup" className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-5 hover:border-white">
+                데스크 셋업 조합
               </Link>
             </div>
           </div>

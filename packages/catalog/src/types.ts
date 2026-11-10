@@ -75,6 +75,8 @@ export type Category = {
   name: string;
   /** 테이프 라벨과 채널 번호에 쓰는 짧은 영문 이름 */
   code: string;
+  /** 검색에서 같은 카테고리로 보는 다른 이름 (예: 의자 → 체어) */
+  aliases?: string[];
 };
 
 export type CategoryGroup = {

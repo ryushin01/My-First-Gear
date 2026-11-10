@@ -4,11 +4,11 @@ import type { Product } from "./types";
 
 const normalize = (text: string) => text.toLowerCase().normalize("NFC").replace(/\s+/g, " ").trim();
 
-/** 상품에서 검색에 쓰는 글자: 이름, 브랜드, 카테고리, 한 줄 소개, 사양 값 */
+/** 상품에서 검색에 쓰는 글자: 이름, 브랜드, 카테고리와 그 별칭, 한 줄 소개, 사양 값 */
 function haystack(product: Product) {
   const category = getCategory(product.categoryId);
   return normalize(
-    [product.name, product.brand, category.name, category.code, product.tagline, ...product.specs.map((s) => `${s.label} ${s.value}`)].join(" "),
+    [product.name, product.brand, category.name, category.code, ...(category.aliases ?? []), product.tagline, ...product.specs.map((s) => `${s.label} ${s.value}`)].join(" "),
   );
 }
 
