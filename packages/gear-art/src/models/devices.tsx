@@ -311,7 +311,7 @@ function ps5Pro(): ReactNode {
 
 /* ───────────── 게이밍 모니터 ───────────── */
 
-function monitor({
+export function monitor({
   w,
   h,
   curve,

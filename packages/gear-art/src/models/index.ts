@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { deskModels } from "./desk";
 import { deviceModels } from "./devices";
 import { outdoorModels } from "./outdoor";
 import { pcModels } from "./pc";
@@ -12,4 +13,5 @@ export const models: Record<string, () => ReactNode> = {
   ...vehicleModels,
   ...watchModels,
   ...outdoorModels,
+  ...deskModels,
 };

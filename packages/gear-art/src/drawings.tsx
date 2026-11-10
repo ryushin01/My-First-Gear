@@ -451,6 +451,78 @@ const tent: Drawing = (a) => (
   </>
 );
 
+const mouse: Drawing = (a) => (
+  <>
+    <path d="M100 40 C 132 40, 140 70, 140 108 C 140 146, 124 164, 100 164 C 76 164, 60 146, 60 108 C 60 70, 68 40, 100 40 Z" />
+    <path d="M100 40 V92 M60 92 H140" />
+    <rect x="96" y="56" width="8" height="18" rx="4" stroke={a} />
+  </>
+);
+
+const speaker: Drawing = (a) => (
+  <>
+    {[34, 112].map((x) => (
+      <g key={x}>
+        <rect x={x} y="40" width="54" height="120" rx="6" />
+        <circle cx={x + 27} cy="66" r="9" />
+        <circle cx={x + 27} cy="116" r="20" />
+        <circle cx={x + 27} cy="116" r="7" fill={a} fillOpacity="0.3" stroke={a} />
+      </g>
+    ))}
+  </>
+);
+
+const microphone: Drawing = (a) => (
+  <>
+    <rect x="80" y="30" width="40" height="80" rx="20" />
+    {range(5).map((i) => <path key={i} d={`M84 ${48 + i * 10} h32`} strokeWidth="1" />)}
+    <path d="M70 92 C 70 124, 130 124, 130 92 M100 118 V156 M76 162 h48" />
+    <circle cx="100" cy="102" r="3" fill={a} stroke="none" />
+  </>
+);
+
+const chair: Drawing = (a) => (
+  <>
+    <path d="M70 28 h60 l-6 74 h-48 z" />
+    <path d="M80 40 h40 M80 56 h40 M82 72 h36" strokeWidth="1" />
+    <path d="M60 110 h80 l-6 14 h-68 z" />
+    <path d="M62 96 v20 M138 96 v20" stroke={a} />
+    <path d="M100 124 V150 M100 150 L64 166 M100 150 L136 166 M100 150 V170" />
+    <circle cx="64" cy="168" r="3" />
+    <circle cx="136" cy="168" r="3" />
+    <circle cx="100" cy="172" r="3" />
+  </>
+);
+
+const desk: Drawing = (a) => (
+  <>
+    <rect x="18" y="74" width="164" height="12" rx="2" />
+    <path d="M44 86 V160 M156 86 V160 M30 160 h28 M142 160 h28" />
+    <rect x="40" y="104" width="8" height="40" fill={a} fillOpacity="0.25" stroke="none" />
+    <rect x="152" y="104" width="8" height="40" fill={a} fillOpacity="0.25" stroke="none" />
+    <rect x="150" y="86" width="16" height="6" rx="1" stroke={a} />
+  </>
+);
+
+const monitorArm: Drawing = (a) => (
+  <>
+    <path d="M40 164 h40 M60 164 V96 L110 70 L150 92" strokeWidth="5" />
+    <circle cx="60" cy="96" r="5" stroke={a} />
+    <circle cx="110" cy="70" r="5" stroke={a} />
+    <rect x="146" y="70" width="24" height="44" rx="2" />
+    <path d="M44 164 v10 h32 v-10" />
+  </>
+);
+
+const lamp: Drawing = (a) => (
+  <>
+    <rect x="30" y="92" width="140" height="70" rx="3" />
+    <rect x="44" y="64" width="112" height="10" rx="5" />
+    <path d="M60 74 L40 152 M140 74 L160 152" stroke={a} strokeDasharray="4 4" />
+    <rect x="94" y="74" width="12" height="20" />
+  </>
+);
+
 export const drawings: Record<string, Drawing> = {
   cpu,
   mainboard,
@@ -472,4 +544,11 @@ export const drawings: Record<string, Drawing> = {
   car,
   watch,
   tent,
+  mouse,
+  speaker,
+  microphone,
+  chair,
+  desk,
+  "monitor-arm": monitorArm,
+  lamp,
 };

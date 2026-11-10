@@ -1,6 +1,9 @@
 // 카탈로그 기본값으로 product_merch 시드 SQL을 만든다. 사용: node --experimental-strip-types scripts/seed-sql.ts <파일>
 import { writeFileSync } from "node:fs";
-import { products } from "../../catalog/src/products.ts";
+import { coreProducts } from "../../catalog/src/coreProducts.ts";
+import { deskSetupProducts } from "../../catalog/src/deskSetupProducts.ts";
+
+const products = [...coreProducts, ...deskSetupProducts];
 
 const q = (v: string) => `'${v.replaceAll("'", "''")}'`;
 const rows = products.map(

@@ -7,9 +7,9 @@ test("캐러셀을 키보드로 넘기고 상세를 연다", async ({ page, isMo
   const next = carousel.getByRole("button", { name: /다음/ });
   await next.focus();
   await page.keyboard.press("ArrowRight");
-  await expect(carousel.getByText("02 / 11")).toBeVisible();
+  await expect(carousel.getByText("02 / 14")).toBeVisible();
   await page.keyboard.press("ArrowLeft");
-  await expect(carousel.getByText("01 / 11")).toBeVisible();
+  await expect(carousel.getByText("01 / 14")).toBeVisible();
   await carousel.getByRole("link", { name: /재생/ }).click();
   await expect(page).toHaveURL(/\/product\//);
 });
