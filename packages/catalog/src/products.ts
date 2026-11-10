@@ -16,7 +16,7 @@ export const products: Product[] = [
     listPrice: 729_000,
     stock: 34,
     purchaseMode: "cart",
-    art: { kind: "cpu", accent: "#ff3131", variant: "am5" },
+    art: { kind: "cpu", accent: "#ff3131", variant: "am5", model: "amd-ryzen-7-9800x3d" },
     tagline: "게임 프레임을 끌어올리는 3D V-Cache",
     description: "8코어 16스레드에 큰 L3 캐시를 쌓아 게임에서 특히 강한 AM5 프로세서입니다.",
     specs: [
@@ -43,7 +43,7 @@ export const products: Product[] = [
     price: 289_000,
     stock: 58,
     purchaseMode: "cart",
-    art: { kind: "cpu", accent: "#f2a33a", variant: "am5" },
+    art: { kind: "cpu", accent: "#f2a33a", variant: "am5", model: "amd-ryzen-5-9600x" },
     tagline: "첫 조립 PC에 알맞은 6코어",
     description: "전력 소모가 낮아 공랭 쿨러로도 충분한 AM5 6코어 프로세서입니다.",
     specs: [
@@ -69,7 +69,7 @@ export const products: Product[] = [
     listPrice: 499_000,
     stock: 21,
     purchaseMode: "cart",
-    art: { kind: "cpu", accent: "#2896ff", variant: "lga" },
+    art: { kind: "cpu", accent: "#2896ff", variant: "lga", model: "intel-core-ultra-7-265k" },
     tagline: "작업과 게임을 함께 하는 20코어",
     description: "성능 코어 8개와 효율 코어 12개를 갖춘 LGA1851 프로세서입니다.",
     specs: [
@@ -96,7 +96,7 @@ export const products: Product[] = [
     price: 259_000,
     stock: 40,
     purchaseMode: "cart",
-    art: { kind: "mainboard", accent: "#f2a33a", variant: "atx" },
+    art: { kind: "mainboard", accent: "#f2a33a", variant: "atx", model: "asus-tuf-gaming-b650-plus" },
     tagline: "튼튼한 전원부의 AM5 ATX 보드",
     description: "DDR5 슬롯 4개와 M.2 슬롯 2개를 갖춘 AM5 ATX 메인보드입니다.",
     specs: [
@@ -121,7 +121,7 @@ export const products: Product[] = [
     price: 239_000,
     stock: 27,
     purchaseMode: "cart",
-    art: { kind: "mainboard", accent: "#b2aeab", variant: "matx" },
+    art: { kind: "mainboard", accent: "#b2aeab", variant: "matx", model: "msi-mag-b650m-mortar-wifi" },
     tagline: "작은 케이스에도 들어가는 M-ATX",
     description: "Wi-Fi를 내장한 AM5 M-ATX 메인보드입니다.",
     specs: [
@@ -146,7 +146,7 @@ export const products: Product[] = [
     price: 329_000,
     stock: 12,
     purchaseMode: "cart",
-    art: { kind: "mainboard", accent: "#2896ff", variant: "atx" },
+    art: { kind: "mainboard", accent: "#2896ff", variant: "atx", model: "asrock-z890-pro-rs" },
     tagline: "인텔 울트라 시리즈를 위한 Z890",
     description: "LGA1851 소켓의 Z890 ATX 메인보드입니다. 오버클럭을 지원합니다.",
     specs: [
@@ -172,7 +172,7 @@ export const products: Product[] = [
     price: 139_000,
     stock: 120,
     purchaseMode: "cart",
-    art: { kind: "memory", accent: "#3cb371" },
+    art: { kind: "memory", accent: "#3cb371", model: "samsung-ddr5-5600-32gb-kit" },
     tagline: "가장 많이 고르는 32GB 구성",
     description: "16GB 모듈 2개로 듀얼 채널을 구성하는 DDR5 메모리입니다.",
     specs: [
@@ -195,7 +195,7 @@ export const products: Product[] = [
     price: 289_000,
     stock: 18,
     purchaseMode: "cart",
-    art: { kind: "memory", accent: "#c000c0", variant: "rgb" },
+    art: { kind: "memory", accent: "#c000c0", variant: "rgb", model: "gskill-trident-z5-rgb-ddr5-6000-64gb" },
     tagline: "영상 편집과 3D 작업을 위한 64GB",
     description: "방열판과 RGB 조명을 갖춘 DDR5-6000 64GB 키트입니다.",
     specs: [
@@ -222,7 +222,7 @@ export const products: Product[] = [
     listPrice: 1_390_000,
     stock: 9,
     purchaseMode: "cart",
-    art: { kind: "gpu", accent: "#3cb371", variant: "triple" },
+    art: { kind: "gpu", accent: "#3cb371", variant: "triple", model: "geforce-rtx-5070-ti-16gb" },
     tagline: "QHD 고주사율 게임의 기준",
     description: "16GB 메모리와 팬 3개를 갖춘 그래픽카드입니다. 길이 304mm로 케이스 여유 공간을 확인하세요.",
     specs: [
@@ -249,7 +249,7 @@ export const products: Product[] = [
     price: 949_000,
     stock: 15,
     purchaseMode: "cart",
-    art: { kind: "gpu", accent: "#ff3131", variant: "triple" },
+    art: { kind: "gpu", accent: "#ff3131", variant: "triple", model: "radeon-rx-9070-xt-16gb" },
     tagline: "가격 대비 성능이 좋은 16GB",
     description: "16GB 메모리를 갖춘 라데온 그래픽카드입니다.",
     specs: [
@@ -273,7 +273,7 @@ export const products: Product[] = [
     price: 469_000,
     stock: 42,
     purchaseMode: "cart",
-    art: { kind: "gpu", accent: "#b2aeab", variant: "dual" },
+    art: { kind: "gpu", accent: "#b2aeab", variant: "dual", model: "geforce-rtx-5060-8gb" },
     tagline: "FHD 게임에 알맞은 짧은 카드",
     description: "팬 2개의 짧은 그래픽카드로 작은 케이스에도 들어갑니다.",
     specs: [
@@ -300,7 +300,7 @@ export const products: Product[] = [
     listPrice: 279_000,
     stock: 76,
     purchaseMode: "cart",
-    art: { kind: "storage", accent: "#fcf8ef" },
+    art: { kind: "storage", accent: "#fcf8ef", model: "samsung-990-pro-2tb" },
     tagline: "게임과 OS를 한 번에 담는 2TB",
     description: "PCIe 4.0 NVMe M.2 SSD입니다.",
     specs: [
@@ -324,7 +324,7 @@ export const products: Product[] = [
     price: 139_000,
     stock: 64,
     purchaseMode: "cart",
-    art: { kind: "storage", accent: "#ff3131" },
+    art: { kind: "storage", accent: "#ff3131", model: "wd-black-sn850x-1tb" },
     tagline: "빠른 로딩의 1TB",
     description: "PCIe 4.0 NVMe M.2 SSD입니다.",
     specs: [
@@ -349,7 +349,7 @@ export const products: Product[] = [
     price: 179_000,
     stock: 31,
     purchaseMode: "cart",
-    art: { kind: "psu", accent: "#f2a33a", variant: "atx" },
+    art: { kind: "psu", accent: "#f2a33a", variant: "atx", model: "seasonic-focus-gx-850" },
     tagline: "고성능 그래픽카드도 넉넉한 850W",
     description: "80 PLUS GOLD 인증의 풀 모듈러 ATX 파워입니다.",
     specs: [
@@ -373,7 +373,7 @@ export const products: Product[] = [
     price: 239_000,
     stock: 7,
     purchaseMode: "cart",
-    art: { kind: "psu", accent: "#b2aeab", variant: "sfx" },
+    art: { kind: "psu", accent: "#b2aeab", variant: "sfx", model: "corsair-sf750" },
     tagline: "작은 케이스용 SFX 750W",
     description: "ITX 케이스에 맞는 SFX 규격 파워입니다.",
     specs: [
@@ -396,7 +396,7 @@ export const products: Product[] = [
     price: 69_000,
     stock: 95,
     purchaseMode: "cart",
-    art: { kind: "psu", accent: "#3cb371", variant: "atx" },
+    art: { kind: "psu", accent: "#3cb371", variant: "atx", model: "micronics-classic-ii-600" },
     tagline: "가벼운 구성에 맞는 600W",
     description: "80 PLUS BRONZE 인증의 ATX 파워입니다.",
     specs: [
@@ -421,7 +421,7 @@ export const products: Product[] = [
     price: 459_000,
     stock: 4,
     purchaseMode: "cart",
-    art: { kind: "case", accent: "#ff3131", variant: "open" },
+    art: { kind: "case", accent: "#ff3131", variant: "open", model: "antec-torque" },
     tagline: "부품이 그대로 보이는 알루미늄 오픈 프레임",
     description: "옆판 없이 부품을 드러내는 오픈 프레임 케이스입니다. 조립 서비스와 함께 고르는 경우가 많습니다.",
     specs: [
@@ -454,7 +454,7 @@ export const products: Product[] = [
     price: 189_000,
     stock: 22,
     purchaseMode: "cart",
-    art: { kind: "case", accent: "#c08a4a", variant: "wood" },
+    art: { kind: "case", accent: "#c08a4a", variant: "wood", model: "fractal-north" },
     tagline: "원목 전면의 미들 타워",
     description: "전면에 원목 패널을 단 ATX 미들 타워 케이스입니다.",
     specs: [
@@ -485,7 +485,7 @@ export const products: Product[] = [
     price: 129_000,
     stock: 15,
     purchaseMode: "cart",
-    art: { kind: "case", accent: "#2896ff", variant: "itx" },
+    art: { kind: "case", accent: "#2896ff", variant: "itx", model: "cooler-master-nr200p" },
     tagline: "책상 위에 올리는 ITX",
     description: "SFX 파워와 ITX 보드를 쓰는 소형 케이스입니다.",
     specs: [
@@ -519,7 +519,7 @@ export const products: Product[] = [
     price: 49_000,
     stock: 88,
     purchaseMode: "cart",
-    art: { kind: "cooler", accent: "#b2aeab", variant: "air" },
+    art: { kind: "cooler", accent: "#b2aeab", variant: "air", model: "thermalright-peerless-assassin-120-se" },
     tagline: "가격 대비 성능의 듀얼 타워",
     description: "히트싱크 2개와 팬 2개의 공랭 쿨러입니다.",
     specs: [
@@ -543,7 +543,7 @@ export const products: Product[] = [
     price: 219_000,
     stock: 10,
     purchaseMode: "cart",
-    art: { kind: "cooler", accent: "#c08a4a", variant: "air" },
+    art: { kind: "cooler", accent: "#c08a4a", variant: "air", model: "noctua-nh-d15-g2" },
     tagline: "조용하고 큰 공랭의 끝",
     description: "높이 168mm의 대형 공랭 쿨러입니다. 케이스 쿨러 높이를 확인하세요.",
     specs: [
@@ -569,7 +569,7 @@ export const products: Product[] = [
     price: 239_000,
     stock: 25,
     purchaseMode: "cart",
-    art: { kind: "keyboard", accent: "#ff3131", variant: "tkl" },
+    art: { kind: "keyboard", accent: "#ff3131", variant: "tkl", model: "phoenix-keyboard" },
     tagline: "손끝이 즐거운 텐키리스",
     description: "알루미늄 하우징의 텐키리스 기계식 키보드입니다.",
     specs: [
@@ -585,6 +585,106 @@ export const products: Product[] = [
     featured: true,
   },
 
+  // 게이밍 모니터
+  {
+    id: "p-mon-001",
+    slug: "samsung-odyssey-oled-g9",
+    name: "삼성 오디세이 OLED G9",
+    brand: "Samsung",
+    categoryId: "monitor",
+    price: 1_790_000,
+    listPrice: 2_090_000,
+    stock: 7,
+    purchaseMode: "cart",
+    art: { kind: "monitor", accent: "#7b3fe4", variant: "superwide", model: "samsung-odyssey-oled-g9" },
+    tagline: "듀얼 QHD를 한 화면에 펼친 49인치",
+    description: "1800R로 휘어진 49인치 32:9 OLED 모니터입니다. 모니터 두 대를 붙인 너비를 이음매 없이 씁니다.",
+    specs: [
+      { label: "크기", value: "49인치 32:9" },
+      { label: "해상도", value: "5120 × 1440 (DQHD)" },
+      { label: "패널", value: "QD-OLED, 1800R 곡면" },
+      { label: "주사율", value: "240Hz" },
+      { label: "응답 속도", value: "0.03ms (GtG)" },
+    ],
+    rating: 4.8,
+    reviewCount: 214,
+    salesRank: 41,
+    releasedAt: "2025-02-20",
+  },
+  {
+    id: "p-mon-002",
+    slug: "lg-ultragear-oled-32gs95ue",
+    name: "LG 울트라기어 OLED 32GS95UE",
+    brand: "LG전자",
+    categoryId: "monitor",
+    price: 1_490_000,
+    stock: 11,
+    purchaseMode: "cart",
+    art: { kind: "monitor", accent: "#d6283c", variant: "flat", model: "lg-ultragear-oled-32gs95ue" },
+    tagline: "4K와 고주사율을 오가는 듀얼 모드",
+    description: "4K 240Hz와 FHD 480Hz를 버튼 하나로 바꾸는 32인치 OLED 모니터입니다.",
+    specs: [
+      { label: "크기", value: "31.5인치 16:9" },
+      { label: "해상도", value: "3840 × 2160" },
+      { label: "패널", value: "WOLED" },
+      { label: "주사율", value: "240Hz (FHD 480Hz)" },
+      { label: "응답 속도", value: "0.03ms (GtG)" },
+    ],
+    rating: 4.7,
+    reviewCount: 138,
+    salesRank: 42,
+    releasedAt: "2024-06-10",
+  },
+  {
+    id: "p-mon-003",
+    slug: "asus-rog-swift-oled-pg27ucdm",
+    name: "ASUS ROG Swift OLED PG27UCDM",
+    brand: "ASUS",
+    categoryId: "monitor",
+    price: 1_390_000,
+    stock: 5,
+    purchaseMode: "cart",
+    art: { kind: "monitor", accent: "#00c2a8", variant: "flat", model: "asus-rog-swift-oled-pg27ucdm" },
+    tagline: "27인치에 담은 촘촘한 4K",
+    description: "27인치 4K QD-OLED 패널에 240Hz를 더한 모니터입니다. 삼각대 받침이 책상 자리를 적게 차지합니다.",
+    specs: [
+      { label: "크기", value: "26.5인치 16:9" },
+      { label: "해상도", value: "3840 × 2160" },
+      { label: "패널", value: "QD-OLED" },
+      { label: "주사율", value: "240Hz" },
+      { label: "응답 속도", value: "0.03ms (GtG)" },
+    ],
+    rating: 4.7,
+    reviewCount: 96,
+    salesRank: 43,
+    releasedAt: "2025-01-15",
+  },
+  {
+    id: "p-mon-004",
+    slug: "alienware-aw3423dwf",
+    name: "에일리언웨어 AW3423DWF",
+    brand: "Dell",
+    categoryId: "monitor",
+    price: 989_000,
+    listPrice: 1_190_000,
+    stock: 14,
+    purchaseMode: "cart",
+    art: { kind: "monitor", accent: "#2e7dff", variant: "ultrawide", model: "alienware-aw3423dwf" },
+    tagline: "입문하기 좋은 34인치 울트라와이드 OLED",
+    description: "1800R 곡면의 34인치 21:9 QD-OLED 모니터입니다. 몰입감과 가격의 균형이 좋습니다.",
+    specs: [
+      { label: "크기", value: "34인치 21:9" },
+      { label: "해상도", value: "3440 × 1440" },
+      { label: "패널", value: "QD-OLED, 1800R 곡면" },
+      { label: "주사율", value: "165Hz" },
+      { label: "응답 속도", value: "0.1ms (GtG)" },
+    ],
+    rating: 4.6,
+    reviewCount: 327,
+    salesRank: 44,
+    releasedAt: "2022-11-08",
+  },
+
   // 노트북
   {
     id: "p-lt-001",
@@ -595,7 +695,7 @@ export const products: Product[] = [
     price: 1_590_000,
     stock: 19,
     purchaseMode: "cart",
-    art: { kind: "laptop", accent: "#9ec5e8", variant: "thin" },
+    art: { kind: "laptop", accent: "#9ec5e8", variant: "thin", model: "macbook-air-13-m4" },
     tagline: "어디든 들고 가는 첫 노트북",
     description: "팬 없이 조용한 13인치 노트북입니다.",
     specs: [
@@ -621,7 +721,7 @@ export const products: Product[] = [
     listPrice: 2_090_000,
     stock: 11,
     purchaseMode: "cart",
-    art: { kind: "laptop", accent: "#fcf8ef", variant: "wide" },
+    art: { kind: "laptop", accent: "#fcf8ef", variant: "wide", model: "lg-gram-16" },
     tagline: "큰 화면에 가벼운 무게",
     description: "16인치 화면에 1.2kg대 무게의 노트북입니다.",
     specs: [
@@ -646,7 +746,7 @@ export const products: Product[] = [
     price: 4_990_000,
     stock: 3,
     purchaseMode: "cart",
-    art: { kind: "dap", accent: "#c0c0c0", variant: "angular" },
+    art: { kind: "dap", accent: "#c0c0c0", variant: "angular", model: "astell-kern-sp3000" },
     tagline: "음악만을 위한 스테인리스 플레이어",
     description: "각진 스테인리스 바디의 하이엔드 디지털 오디오 플레이어입니다.",
     specs: [
@@ -670,7 +770,7 @@ export const products: Product[] = [
     price: 899_000,
     stock: 9,
     purchaseMode: "cart",
-    art: { kind: "dap", accent: "#2896ff", variant: "angular" },
+    art: { kind: "dap", accent: "#2896ff", variant: "angular", model: "astell-kern-a-norma-sr35" },
     tagline: "입문용 하이파이 플레이어",
     description: "가벼운 무게의 하이파이 플레이어입니다.",
     specs: [
@@ -692,7 +792,7 @@ export const products: Product[] = [
     price: 4_190_000,
     stock: 4,
     purchaseMode: "cart",
-    art: { kind: "dap", accent: "#d4a95a", variant: "walkman" },
+    art: { kind: "dap", accent: "#d4a95a", variant: "walkman", model: "sony-nw-wm1zm2" },
     tagline: "금빛 무산소 구리 바디의 워크맨",
     description: "무산소 구리 섀시에 금 도금을 한 플래그십 워크맨입니다. 묵직한 무게만큼 차분한 소리를 냅니다.",
     specs: [
@@ -717,7 +817,7 @@ export const products: Product[] = [
     listPrice: 499_000,
     stock: 23,
     purchaseMode: "cart",
-    art: { kind: "dap", accent: "#9ec5e8", variant: "walkman" },
+    art: { kind: "dap", accent: "#9ec5e8", variant: "walkman", model: "sony-nw-a306" },
     tagline: "주머니에 들어가는 첫 워크맨",
     description: "작고 가벼운 안드로이드 워크맨입니다. 스트리밍 앱과 고음질 파일을 함께 씁니다.",
     specs: [
@@ -742,7 +842,7 @@ export const products: Product[] = [
     price: 329_000,
     stock: 44,
     purchaseMode: "cart",
-    art: { kind: "earphone", accent: "#c08a4a", variant: "tws" },
+    art: { kind: "earphone", accent: "#c08a4a", variant: "tws", model: "sony-wf-1000xm5" },
     tagline: "소음을 지우는 무선 이어폰",
     description: "노이즈 캔슬링을 지원하는 무선 이어폰입니다.",
     specs: [
@@ -764,7 +864,7 @@ export const products: Product[] = [
     price: 449_000,
     stock: 13,
     purchaseMode: "cart",
-    art: { kind: "earphone", accent: "#9ec5e8", variant: "iem" },
+    art: { kind: "earphone", accent: "#9ec5e8", variant: "iem", model: "moondrop-blessing-3" },
     tagline: "DAP와 짝을 이루는 유선 IEM",
     description: "하이브리드 드라이버를 쓴 유선 인이어 모니터입니다.",
     specs: [
@@ -788,7 +888,7 @@ export const products: Product[] = [
     price: 499_000,
     stock: 16,
     purchaseMode: "cart",
-    art: { kind: "headphone", accent: "#2896ff", variant: "open" },
+    art: { kind: "headphone", accent: "#2896ff", variant: "open", model: "sennheiser-hd-600" },
     tagline: "오래 사랑받은 오픈형 레퍼런스",
     description: "자연스러운 소리의 오픈형 유선 헤드폰입니다.",
     specs: [
@@ -810,7 +910,7 @@ export const products: Product[] = [
     price: 559_000,
     stock: 28,
     purchaseMode: "cart",
-    art: { kind: "headphone", accent: "#fcf8ef", variant: "closed" },
+    art: { kind: "headphone", accent: "#fcf8ef", variant: "closed", model: "sony-wh-1000xm6" },
     tagline: "이동하며 듣는 노이즈 캔슬링 헤드폰",
     description: "노이즈 캔슬링을 지원하는 무선 헤드폰입니다.",
     specs: [
@@ -834,7 +934,7 @@ export const products: Product[] = [
     price: 648_000,
     stock: 0,
     purchaseMode: "cart",
-    art: { kind: "console", accent: "#ff3131", variant: "handheld" },
+    art: { kind: "console", accent: "#ff3131", variant: "handheld", model: "nintendo-switch-2" },
     tagline: "들고 다니는 거실 게임기",
     description: "TV와 휴대 모드를 오가는 게임기입니다. 지금은 품절입니다.",
     specs: [
@@ -856,7 +956,7 @@ export const products: Product[] = [
     price: 1_118_000,
     stock: 6,
     purchaseMode: "cart",
-    art: { kind: "console", accent: "#2896ff", variant: "tower" },
+    art: { kind: "console", accent: "#2896ff", variant: "tower", model: "playstation-5-pro" },
     tagline: "4K 거실 게임의 최상위",
     description: "그래픽 성능을 높인 거치형 게임기입니다.",
     specs: [
@@ -880,7 +980,7 @@ export const products: Product[] = [
     price: 690_000,
     stock: 8,
     purchaseMode: "cart",
-    art: { kind: "bicycle", accent: "#f2a33a", variant: "triangle" },
+    art: { kind: "bicycle", accent: "#f2a33a", variant: "triangle", model: "strida-lt" },
     tagline: "삼각형으로 접히는 출퇴근 자전거",
     description: "체인 대신 벨트를 쓰고 삼각형 프레임으로 접히는 접이식 자전거입니다.",
     specs: [
@@ -906,7 +1006,7 @@ export const products: Product[] = [
     price: 48_900_000,
     stock: 1,
     purchaseMode: "consult",
-    art: { kind: "motorcycle", accent: "#ff3131", variant: "superbike" },
+    art: { kind: "motorcycle", accent: "#ff3131", variant: "superbike", model: "ducati-panigale-v4-s" },
     tagline: "트랙에서 내려온 V4 슈퍼바이크",
     description: "V4 엔진의 슈퍼바이크입니다. 구매는 상담 신청 후 전시장에서 진행합니다.",
     specs: [
@@ -932,7 +1032,7 @@ export const products: Product[] = [
     price: 59_000_000,
     stock: 3,
     purchaseMode: "consult",
-    art: { kind: "car", accent: "#b2aeab", variant: "sedan" },
+    art: { kind: "car", accent: "#b2aeab", variant: "sedan", model: "genesis-g80" },
     tagline: "조용하고 넉넉한 대형 세단",
     description: "대형 세단입니다. 구매는 상담 신청 후 시승과 계약으로 진행합니다.",
     specs: [
@@ -955,7 +1055,7 @@ export const products: Product[] = [
     price: 620_000_000,
     stock: 1,
     purchaseMode: "consult",
-    art: { kind: "car", accent: "#f2c230", variant: "supercar" },
+    art: { kind: "car", accent: "#f2c230", variant: "supercar", model: "lamborghini-aventador" },
     tagline: "V12 자연흡기 슈퍼카",
     description: "V12 엔진의 슈퍼카입니다. 구매는 상담 신청 후 진행합니다.",
     specs: [
@@ -981,7 +1081,7 @@ export const products: Product[] = [
     price: 2_150_000,
     stock: 5,
     purchaseMode: "cart",
-    art: { kind: "watch", accent: "#fcf8ef", variant: "field" },
+    art: { kind: "watch", accent: "#fcf8ef", variant: "field", model: "sinn-556-i" },
     tagline: "단정한 독일 파일럿 워치",
     description: "검은 다이얼에 흰 숫자를 넣은 38.5mm 자동 시계입니다.",
     specs: [
@@ -1004,7 +1104,7 @@ export const products: Product[] = [
     price: 2_590_000,
     stock: 2,
     purchaseMode: "cart",
-    art: { kind: "watch", accent: "#2896ff", variant: "bezel" },
+    art: { kind: "watch", accent: "#2896ff", variant: "bezel", model: "sinn-104-st-sa-a" },
     tagline: "회전 베젤의 파일럿 워치",
     description: "양방향 회전 베젤을 단 41mm 자동 시계입니다.",
     specs: [

@@ -36,6 +36,13 @@
       "when": 1794105645978,
       "tag": "20261108024045_sessions_states_restock_events",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794280057261,
+      "tag": "20261110030737_seed_monitors",
+      "breakpoints": true
     }
   ]
 }

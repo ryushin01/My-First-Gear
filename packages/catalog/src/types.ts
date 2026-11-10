@@ -9,6 +9,7 @@ export type ArtKind =
   | "case"
   | "cooler"
   | "keyboard"
+  | "monitor"
   | "laptop"
   | "dap"
   | "earphone"
@@ -25,6 +26,8 @@ export type GearArt = {
   accent: string;
   /** 같은 종류 안에서 모양을 바꾸는 값 (예: 자동차의 sedan, supercar) */
   variant?: string;
+  /** 실사풍 그림 키 (상품 slug). @mfg/gear-art에 그림이 있으면 그것을 쓴다. */
+  model?: string;
 };
 
 export type CategoryGroupId = "pc-parts" | "peripherals" | "computers" | "audio" | "play" | "ride" | "watch";
@@ -39,6 +42,7 @@ export type CategoryId =
   | "case"
   | "cooler"
   | "keyboard"
+  | "monitor"
   | "laptop"
   | "dap"
   | "earphone"

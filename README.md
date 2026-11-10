@@ -1,19 +1,19 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.4.0-ff3131)
+![version](https://img.shields.io/badge/version-0.5.0-ff3131)
 
 컴퓨터 부품부터 오디오, 게임기, 자전거, 자동차, 시계까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
 **[쇼핑몰 바로 보기](https://my-first-gear-ryushin01.vercel.app/)** · **[어드민](https://my-first-gear-admin-ryushin01.vercel.app/)** (비밀번호 `demo-admin`) · 데모 회원 `demo@myfirstgear.dev` / `demo1234`
 
-> **프로젝트 상태:** 실제로 판매하지 않는 **포트폴리오 프로젝트**입니다. 상품명은 실제 모델명이지만 가격, 재고, 평점, 주문은 모두 가상 데이터이고, 결제는 모의 결제입니다. 상품 이미지는 사진 대신 로고 없이 직접 그린 SVG입니다.
+> **프로젝트 상태:** 실제로 판매하지 않는 **포트폴리오 프로젝트**입니다. 상품명은 실제 모델명이지만 가격, 재고, 평점, 주문은 모두 가상 데이터이고, 결제는 모의 결제입니다. 상품 이미지는 사진 대신 실제 제품을 보고 로고 없이 직접 그린 SVG입니다.
 
 ## 화면
 
-| 홈 (VHS 테이프 캐러셀) | 카테고리 목록 |
+| 홈 (VHS 테이프 캐러셀) | 게이밍 모니터 존 |
 |---|---|
-| ![브라운관 화면 안에 VHS 표지처럼 꾸민 소니 NW-WM1ZM2 그림이 가운데 놓인 캐러셀](docs/images/shop-home.jpg) | ![DAP 카테고리의 채널 목록, 브랜드 필터, 상품 카드 그리드](docs/images/shop-list.jpg) |
+| ![브라운관 화면 안에 VHS 표지처럼 꾸민 AMD 라이젠 7 9800X3D 그림이 가운데 놓이고 양옆에 시계, 그래픽카드 테이프가 보이는 캐러셀](docs/images/shop-home.jpg) | ![49인치 곡면 오디세이 OLED G9, 평면 32인치, 삼각대 받침 27인치, 곡면 34인치 모니터 그림이 놓인 상품 카드 네 장](docs/images/shop-monitors.jpg) |
 
 | PC 견적 | 예산별 빠른 견적 |
 |---|---|
@@ -21,7 +21,7 @@
 
 | 상품 상세 | 상품 비교 |
 |---|---|
-| ![대괄호 라벨, 큰 세리프 상품명, 작은 TV 화면 속 워크맨 그림과 사양 표](docs/images/shop-detail.jpg) | ![헤드폰 두 개와 이어폰 하나의 가격, 평점, 사양을 나란히 놓은 비교 표](docs/images/shop-compare.jpg) |
+| ![대괄호 라벨, 큰 세리프 상품명, 작은 TV 화면 속 흰색 곡면 오디세이 OLED G9 그림과 사양 표](docs/images/shop-detail.jpg) | ![게이밍 모니터 세 대의 가격, 평점, 크기, 해상도, 패널, 주사율을 나란히 놓은 비교 표](docs/images/shop-compare.jpg) |
 
 | 마이페이지 | 상품 후기·Q&A |
 |---|---|
@@ -33,7 +33,7 @@
 
 | 모바일 홈 | 어드민 문의 답변 |
 |---|---|
-| <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면의 테이프 캐러셀과 채널 목록" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
+| <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면 속 CPU 그림 테이프 캐러셀과 넘김 버튼" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
 
 ## 주요 기능
 
@@ -41,7 +41,7 @@
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 18개 카테고리 채널 목록 |
+| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 게이밍 모니터 존, 19개 카테고리 채널 목록 |
 | 기어·검색 | 카테고리 목록, 필터·정렬(주소에 유지), 검색, 상품 비교(최대 4개), 최근 본 상품, 상품별 공유 이미지·구조화 데이터 |
 | PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·두께·전원 커넥터·쿨러 높이·파워 용량 검사, 예산·용도별 빠른 견적, 견적 주소·이미지 공유, 조립 옵션 |
 | 주문·상담 | 장바구니(담긴 부품 호환성 재검사), 모의 결제(서버에서 금액·재고 재계산), 주문 취소, 배송 단계, 비회원 조회, 고가 상품 상담 |
@@ -101,7 +101,7 @@ apps/
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
 ├─ catalog/         상품·카테고리·호환성 검사·검색·예산 추천 (순수 TS)
-├─ gear-art/        상품 SVG 그림 18종
+├─ gear-art/        실제 제품을 보고 그린 상품 SVG 44종
 └─ db/              Drizzle 스키마·쿼리·마이그레이션, 로컬 DB(PGlite) 실행 스크립트
 ```
 

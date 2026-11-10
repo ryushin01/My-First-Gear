@@ -20,6 +20,7 @@ export const categories: Category[] = [
   { id: "case", group: "pc-parts", name: "케이스", code: "CASE" },
   { id: "cooler", group: "pc-parts", name: "쿨러", code: "COOLER" },
   { id: "keyboard", group: "peripherals", name: "키보드", code: "KEYBOARD" },
+  { id: "monitor", group: "peripherals", name: "게이밍 모니터", code: "MONITOR" },
   { id: "laptop", group: "computers", name: "노트북", code: "LAPTOP" },
   { id: "dap", group: "audio", name: "DAP", code: "DAP" },
   { id: "earphone", group: "audio", name: "이어폰", code: "EARPHONE" },

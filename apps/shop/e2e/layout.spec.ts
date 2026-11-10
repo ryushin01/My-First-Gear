@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const pages = ["/", "/gear", "/gear/gpu", "/product/antec-torque", "/build", "/assembly", "/cart", "/checkout", "/orders", "/consult", "/login", "/signup", "/my", "/search?q=AM5", "/build/quick", "/compare"];
+const pages = ["/", "/gear", "/gear/gpu", "/gear/monitor", "/product/antec-torque", "/product/samsung-odyssey-oled-g9", "/build", "/assembly", "/cart", "/checkout", "/orders", "/consult", "/login", "/signup", "/my", "/search?q=AM5", "/build/quick", "/compare"];
 
 for (const path of pages) {
   test(`${path}: 가로 넘침, 작은 조작 요소, axe 위반이 없다`, async ({ page }) => {
