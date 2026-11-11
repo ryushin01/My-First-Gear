@@ -1,5 +1,9 @@
 # 버전 기록
 
+## 0.8.2 (2026-11-11)
+
+- 대체 글꼴: 큰 제목 영문은 Courier New(브라운관 화면 글씨), 라벨은 SF Mono·Menlo·Consolas·D2Coding, 한글은 Noto Sans CJK KR까지 이음
+
 ## 0.8.1 (2026-11-11)
 
 - 쇼핑몰 글꼴 교체: 큰 제목은 VT323(영문)과 블랙 앤 화이트 픽처(한글), 본문은 Gothic A1, 라벨과 견적 금액은 나눔고딕코딩. Instrument Serif·고운바탕·JetBrains Mono·Pretendard(본문)를 뺌
