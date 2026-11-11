@@ -64,7 +64,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 [Arc Marumo](https://www.arcmarumo.com/)의 브라운관 TV와 VHS 테이프 콘셉트를 참고했습니다. 로고와 레이아웃은 복제하지 않았습니다.
 
 - 색: 배경 `#111`, 포인트 `#ff3131`, 크림 `#fcf8ef`, 회색 `#e4dfd9`·`#b2aeab`, 색 번짐 `#ff2846`·`#2896ff` (`uno.config.ts`)
-- 글꼴: 큰 제목 Instrument Serif + Gowun Batang, 라벨 JetBrains Mono, 본문 Pretendard. Pretendard는 글자 묶음별로 나눈 파일(dynamic subset, 92조각)을 써서 화면에 쓰인 글자만 받습니다. 홈 글꼴 전송량 약 2.2MB → 0.5MB
+- 글꼴: 큰 제목 VT323(영문, 브라운관 픽셀) + Black And White Picture(한글, 흑백 영화 자막), 본문 Gothic A1, 라벨과 견적 금액 Nanum Gothic Coding. 모두 `next/font/google`로 빌드 때 받아 함께 배포하고, 한글 글꼴은 화면에 쓰인 글자 묶음의 조각만 받습니다. 공유 이미지(`next/og`)는 그대로 Pretendard Bold를 씁니다.
 - 장치: 화면 전체 브라운관 프레임(주사선·노이즈·비네트), 타임코드, `[대괄호]` 고정폭 라벨, 흑백 토글, 눈금 진행 막대, "Next tape"
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.
 - 상품 그림은 `packages/gear-art`에 있습니다. `art.model`(상품 slug)에 맞는 실사풍 그림이 `src/models/`(PC 부품 `pc.tsx`, 기기·모니터 `devices.tsx`, 탈것 `vehicles.tsx`, 시계 `watches.tsx`, 아웃도어 `outdoor.tsx`, 데스크 셋업 `desk.tsx`)에 있으면 그것을, 없으면 `art.kind`별 선 그림(`drawings.tsx`)을 씁니다.

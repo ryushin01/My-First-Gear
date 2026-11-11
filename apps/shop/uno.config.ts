@@ -15,9 +15,9 @@ export default defineConfig({
       rgb: { red: "#ff2846", blue: "#2896ff" },
     },
     font: {
-      display: "var(--ff-display-en), var(--ff-display-ko), Georgia, serif",
-      mono: "var(--ff-mono), var(--ff-sans), ui-monospace, monospace",
-      sans: "var(--ff-sans), system-ui, sans-serif",
+      display: "var(--ff-display-en), var(--ff-display-ko), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+      mono: "var(--ff-mono), ui-monospace, Menlo, Consolas, monospace",
+      sans: "var(--ff-sans), 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif",
     },
   },
   shortcuts: {

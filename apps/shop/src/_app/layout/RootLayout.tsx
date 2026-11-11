@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/shared/config";
 import { fontVariables } from "../fonts";
-import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "../styles/globals.css";
 
 export const rootMetadata: Metadata = {
