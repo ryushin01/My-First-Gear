@@ -93,6 +93,46 @@ test("PC 견적에서 호환성 오류를 알리고 해결하면 담을 수 있�
   await expect(page.locator("main:visible li")).toHaveCount(9);
 });
 
+test("데스크 셋업에서 모니터암·책상 조합을 확인하고 한 번에 담는다", async ({ page }) => {
+  await page.goto("/setup");
+  const pick = async (slot: string, product: string) => {
+    await page.getByRole("button", { name: new RegExp(`(고르기|바꾸기)\\s*:\\s*${slot}$`) }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: new RegExp(product) }).click();
+    await expect(dialog).toBeHidden();
+  };
+
+  await pick("모니터", "오디세이 OLED G9");
+  await pick("모니터암", "펠로우즈");
+  await expect(page.getByText(/모니터암은 32인치까지 받칩니다/).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "셋업 전체 장바구니 담기" })).toBeDisabled();
+
+  await page.getByRole("button", { name: /빼기\s*:\s*모니터암$/ }).click();
+  await pick("책상", "MAGNUS Pro");
+  await pick("스피커", "에디파이어 MR4");
+  await expect(page.getByText(/스피커를 놓기 빠듯합니다/).first()).toBeVisible();
+  await expect(page.getByText("조합 확인을 마쳤습니다")).toBeVisible();
+
+  await page.getByRole("button", { name: "셋업 전체 장바구니 담기" }).click();
+  await page.goto("/cart");
+  await expect(page.locator("main:visible li")).toHaveCount(3);
+});
+
+test("공유받은 셋업을 열면 고르던 셋업으로 되돌릴 수 있다", async ({ page }) => {
+  await page.goto("/setup");
+  await page.getByRole("button", { name: /고르기\s*:\s*마우스$/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /MX Master 3S/ }).click();
+
+  await page.goto(`/setup?s=${encodeURIComponent("chair:p-chair-001")}`);
+  await expect(page.getByText("공유받은 셋업을 불러왔습니다")).toBeVisible();
+  await expect(page).toHaveURL(/\/setup$/);
+  await expect(page.getByText("허먼밀러 뉴 에어론")).toBeVisible();
+
+  await page.getByRole("button", { name: "이전 셋업으로 되돌리기" }).click();
+  await expect(page.getByText("로지텍 MX Master 3S")).toBeVisible();
+  await expect(page.getByText("허먼밀러 뉴 에어론")).toBeHidden();
+});
+
 test("고가 상품은 상담 신청으로 받는다", async ({ page }) => {
   await page.goto("/product/lamborghini-aventador");
   await expect(page.getByRole("button", { name: "장바구니 담기" })).toHaveCount(0);

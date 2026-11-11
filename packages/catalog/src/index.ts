@@ -6,3 +6,4 @@ export * from "./compatibility";
 export * from "./services";
 export * from "./search";
 export * from "./recommend";
+export * from "./setup";
