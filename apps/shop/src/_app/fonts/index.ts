@@ -1,27 +1,45 @@
-import { Gowun_Batang, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import {
+  Black_And_White_Picture,
+  Gothic_A1,
+  Nanum_Gothic_Coding,
+  VT323,
+} from "next/font/google";
 
-export const displayEn = Instrument_Serif({
+/** 큰 제목의 영문: 브라운관 픽셀 글꼴 */
+export const displayEn = VT323({
   weight: "400",
   subsets: ["latin"],
   variable: "--ff-display-en",
 });
 
-export const displayKo = Gowun_Batang({
-  weight: ["400", "700"],
+/** 큰 제목의 한글: 흑백 영화 자막 같은 블랙 앤 화이트 픽처 */
+export const displayKo = Black_And_White_Picture({
+  weight: "400",
   subsets: ["latin"],
   variable: "--ff-display-ko",
   preload: false,
 });
 
-export const mono = JetBrains_Mono({
+/** 본문 */
+export const sans = Gothic_A1({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--ff-sans",
+  preload: false,
+});
+
+/** 라벨과 견적 금액: 모니터 글씨 같은 고정폭 */
+export const mono = Nanum_Gothic_Coding({
+  weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--ff-mono",
+  preload: false,
 });
 
 /**
- * 본문 글꼴 Pretendard는 글자 묶음별로 나눈 파일(dynamic subset)을 globals.css에서 불러온다.
- * 전체 파일(약 2MB) 대신 화면에 쓰인 글자의 조각만 받는다. --ff-sans는 globals.css에서 정한다.
+ * 한글 글꼴은 글자 묶음별로 나눈 조각 파일이라 화면에 쓰인 글자의 조각만 받는다.
+ * 그래서 미리 받지 않는다(preload: false).
  */
-export const fontVariables = [displayEn, displayKo, mono]
+export const fontVariables = [displayEn, displayKo, sans, mono]
   .map((font) => font.variable)
   .join(" ");
