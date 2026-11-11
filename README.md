@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.8.1-ff3131)
+![version](https://img.shields.io/badge/version-0.9.0-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -31,6 +31,10 @@
 |---|---|
 | ![최근 주문, 매출, 조립 중, 상담 신청 건수 카드와 재고 부족 목록](docs/images/admin-dashboard.jpg) | ![그래픽카드 상품의 판매가, 정가, 재고, 추천, 노출을 표에서 바로 고치는 화면](docs/images/admin-products.jpg) |
 
+| 홈 조립 장면 (스크롤 고정) | 모바일 조립 장면 |
+|---|---|
+| ![화면을 고정한 채 스크롤하면 메인보드, i9 CPU, DDR5 메모리 네 개, NVMe SSD 세 개, 360mm 수랭 쿨러, 세로 장착 RTX 3090, 1200W 파워가 차례로 날아와 흰색 오픈 프레임 케이스 안에 조립된 모습과 네 단계 설명](docs/images/shop-assembly.jpg) | <img src="docs/images/mobile-assembly.jpg" alt="모바일에서 단계 설명이 하나씩 바뀌고 아래에 조립이 끝난 흰색 오픈 프레임 PC 그림이 보이는 화면" width="240"> |
+
 | 모바일 홈 | 어드민 문의 답변 |
 |---|---|
 | <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면 속 CPU 그림 테이프 캐러셀과 넘김 버튼" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
@@ -41,7 +45,7 @@
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 게이밍 모니터 존, 27개 카테고리 채널 목록 |
+| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 스크롤하면 부품이 케이스 안으로 모이는 조립 장면(화면 고정, CSS 스크롤 타임라인), 게이밍 모니터 존, 27개 카테고리 채널 목록 |
 | 기어·검색 | 카테고리 목록, 필터·정렬(주소에 유지), 검색(카테고리 별칭 포함), 상품 비교(최대 4개), 최근 본 상품, 상품별 공유 이미지·구조화 데이터 |
 | PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·두께·전원 커넥터·쿨러 높이·파워 용량 검사, 예산·용도별 빠른 견적, 견적 주소·이미지 공유, 조립 옵션 |
 | 데스크 셋업 | 책상·의자·모니터·모니터암·조명 등 9칸 선택, 모니터암 크기·무게와 책상 폭 검사, 주소 공유, 한 번에 담기 |
