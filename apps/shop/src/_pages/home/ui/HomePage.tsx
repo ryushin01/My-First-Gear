@@ -3,6 +3,7 @@ import { categories, channelOf, featuredProducts } from "@mfg/catalog";
 import { getCatalog } from "@/entities/product/index.server";
 import { ProductCard, RecentlyViewed } from "@/entities/product";
 import { CrtScreen } from "@/widgets/crt-screen";
+import { AssemblySequence } from "./AssemblySequence";
 import { TapeCarousel } from "./TapeCarousel";
 
 export async function HomePage() {
@@ -67,6 +68,8 @@ export async function HomePage() {
             ))}
           </ul>
         </section>
+
+        <AssemblySequence />
 
         <section aria-labelledby="home-build" className="grid gap-6 border-t border-white/10 pt-10 md:grid-cols-2">
           <div className="flex flex-col gap-3">
