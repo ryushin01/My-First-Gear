@@ -8,9 +8,7 @@
     "lint": "turbo run lint && steiger apps/shop/src && steiger apps/admin/src",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:e2e": "turbo run test:e2e --concurrency=1",
-    "size": "size-limit",
-    "lhci": "lhci autorun"
+    "test:e2e": "turbo run test:e2e --concurrency=1"
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.8.2",
