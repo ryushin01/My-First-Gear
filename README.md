@@ -72,7 +72,8 @@
 | 구조 | pnpm 워크스페이스 + Turborepo 모노레포, Feature-Sliced Design v2.1 (steiger 검사) |
 | 스타일 | 쇼핑몰 UnoCSS (`presetWind4`), 어드민 Bulma 1 |
 | 데이터 | PostgreSQL (Neon 싱가포르, 로컬·테스트는 PGlite), Drizzle ORM, 서버 액션, `next/og` 공유 이미지 |
-| 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·접근성(axe)·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사) |
+| 품질 | ESLint, Steiger, Vitest + Testing Library(컴포넌트·접근성(axe)·호환성·로컬 Postgres 통합 테스트), Playwright E2E(데스크톱·모바일, axe, 조작 크기·중복 id·더블 클릭 검사), eslint-plugin-jsx-a11y, size-limit, Lighthouse CI |
+| 모니터링 | Sentry(쇼핑몰, DSN이 있을 때만), web-vitals |
 | 배포 | Vercel (쇼핑몰·어드민 두 프로젝트, 싱가포르 함수, Cron), GitHub Actions (CI, 배포 직후 운영 스모크 테스트) |
 
 ## 시작하기
@@ -93,6 +94,7 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 | `pnpm lint` / `typecheck` | ESLint + FSD 검사 / 타입 검사 |
 | `pnpm test` | 컴포넌트·접근성·호환성·DB 통합 테스트 |
 | `pnpm test:e2e` | 프로덕션 빌드를 로컬 DB로 띄워 쇼핑몰·어드민 E2E |
+| `pnpm --filter shop size` / `lhci` | 쇼핑몰 번들 크기 / Lighthouse 기준 검사 (먼저 `build` 필요) |
 | `pnpm --filter shop test:smoke` | 운영 주소 스모크 테스트 (읽기 전용) |
 
 ## 프로젝트 구조

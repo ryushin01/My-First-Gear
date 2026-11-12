@@ -12,17 +12,21 @@
     "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist .local-db -- next dev --port 3000",
     "start:db": "node ../../packages/db/scripts/with-db.mjs -- next start",
     "test": "vitest run",
-    "test:smoke": "playwright test -c playwright.smoke.config.ts"
+    "test:smoke": "playwright test -c playwright.smoke.config.ts",
+    "size": "size-limit",
+    "lhci": "lhci autorun"
   },
   "dependencies": {
     "@mfg/catalog": "workspace:*",
     "@mfg/db": "workspace:*",
     "@mfg/gear-art": "workspace:*",
+    "@sentry/browser": "^11.12.0",
     "next": "16.4.5",
     "pretendard": "1.3.9",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "web-vitals": "^6.2.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

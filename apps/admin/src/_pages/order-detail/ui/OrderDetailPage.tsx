@@ -27,7 +27,9 @@ export async function OrderDetailPage({ params }: OrderDetailProps) {
             <Link href="/orders">주문</Link>
           </li>
           <li className="is-active">
-            <a aria-current="page">{order.id}</a>
+            <Link href={`/orders/${order.id}`} aria-current="page">
+              {order.id}
+            </Link>
           </li>
         </ul>
       </nav>

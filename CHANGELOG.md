@@ -1,5 +1,13 @@
 # 버전 기록
 
+## 0.9.1 - 2026-11-12
+
+- 접근성 린트: eslint-plugin-jsx-a11y의 recommended 규칙을 모두 켬
+- 모니터링: `NEXT_PUBLIC_SENTRY_DSN`이 있으면 처리하지 못한 오류와 나쁜 Web Vitals를 Sentry로 보냄. 오류 내용만 보내고, Sentry(약 31 kB gzip)와 web-vitals는 첫 화면 뒤에 따로 받음
+- 성능 예산: CI에서 size-limit(쇼핑몰 전체 JS 400 kB, CSS 92 kB)과 Lighthouse CI(쇼핑몰의 첫 화면·상품 상세·데스크 셋업·PC 견적이 데스크톱 기준 성능 90·접근성 100·권장 사항 95·SEO 90점, LCP 2.5초·TBT 200ms·CLS 0.1 이하)로 검사
+- Dependabot: npm 매주, GitHub Actions 매월 업데이트 PR
+- 어드민 주문 상세의 현재 위치 표시를 href 없는 a에서 현재 쪽 링크(aria-current="page")로 바꿈
+
 ## 0.9.0 (2026-11-12)
 
 - 홈 조립 장면: 애플 제품 페이지처럼 화면을 고정해 두고, 스크롤에 따라 부품이 흩어진 자리에서 케이스 안으로 날아와 조립됨
