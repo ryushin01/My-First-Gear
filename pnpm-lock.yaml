@@ -193,9 +193,6 @@ importers:
       '@mfg/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@mfg/gear-art':
-        specifier: workspace:*
-        version: link:../../packages/gear-art
       '@mfg/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks

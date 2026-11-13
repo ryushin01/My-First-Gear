@@ -15,7 +15,6 @@
   "dependencies": {
     "@mfg/catalog": "workspace:*",
     "@mfg/db": "workspace:*",
-    "@mfg/gear-art": "workspace:*",
     "@mfg/hooks": "workspace:*",
     "bulma": "1.0.4",
     "next": "16.4.5",
