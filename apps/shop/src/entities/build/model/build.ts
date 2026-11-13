@@ -56,4 +56,3 @@ export function toBuild(state: BuildState, catalog: Product[]): Build {
   return build;
 }
 
-export { decodeBuild, encodeBuild } from "./codec";

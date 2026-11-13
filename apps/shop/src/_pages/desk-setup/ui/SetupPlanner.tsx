@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { checkSetup, decodeSetup, encodeSetup, formatPrice, setupSlots, setupTotal, toSetup, type SetupSlotId } from "@mfg/catalog";
-import { GearArt } from "@mfg/gear-art";
 import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
+import { PlannerSlot } from "@/widgets/gear-planner";
 import {
   applySharedSetup,
   clearSetupItem,
@@ -85,49 +85,20 @@ export function SetupPlanner() {
             const product = setup[slot.id];
             const slotIssues = issues.filter((issue) => issue.slots.includes(slot.id));
             return (
-              <li
+              <PlannerSlot
                 key={slot.id}
-                className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-lg border border-white/10 p-3 sm:grid-cols-[auto_1fr_auto]"
-              >
-                <div className="grid size-16 place-items-center rounded-md bg-black/40 text-cream">
-                  {product ? (
-                    <GearArt art={product.art} className="size-14" />
-                  ) : (
-                    <span className="font-mono text-xs text-label">{String(i + 1).padStart(2, "0")}</span>
-                  )}
-                </div>
-                <div className="flex min-w-0 flex-col gap-0.5">
-                  <p className="font-mono text-[11px] uppercase text-label">
-                    [{String(i + 1).padStart(2, "0")} · {slot.label}]
-                  </p>
-                  <p className={product ? "text-cream" : "text-mute-200"}>{product?.name ?? "고르지 않음"}</p>
-                  {product && <p className="font-mono text-sm tabular-nums text-mute-100">{formatPrice(product.price)}</p>}
-                  {slotIssues.map((issue) => (
-                    <p key={issue.message} className={issue.level === "error" ? "text-sm text-brand" : "text-sm text-[#f2c230]"}>
-                      {issue.level === "error" ? "맞지 않음: " : "주의: "}
-                      {issue.message}
-                    </p>
-                  ))}
-                </div>
-                <div className="col-span-2 flex gap-2 sm:col-span-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPickerSlot(slot.id);
-                      setPicking(slot.id);
-                    }}
-                    className="min-h-11 rounded-md border border-white/30 px-4 text-sm hover:border-white"
-                  >
-                    {product ? "바꾸기" : "고르기"}
-                    <span className="sr-only">: {slot.label}</span>
-                  </button>
-                  {product && (
-                    <button type="button" onClick={() => clearSetupItem(slot.id)} className="min-h-11 rounded-md px-3 text-sm text-mute-200 hover:text-cream">
-                      빼기<span className="sr-only">: {slot.label}</span>
-                    </button>
-                  )}
-                </div>
-              </li>
+                index={i}
+                label={slot.label}
+                product={product}
+                emptyText="고르지 않음"
+                issues={slotIssues}
+                errorPrefix="맞지 않음: "
+                onPick={() => {
+                  setPickerSlot(slot.id);
+                  setPicking(slot.id);
+                }}
+                onClear={() => clearSetupItem(slot.id)}
+              />
             );
           })}
         </ol>

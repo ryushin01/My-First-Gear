@@ -1,5 +1,38 @@
 # 버전 기록
 
+## 0.9.4 - 2026-11-13
+
+- 로컬 DB: PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 17 → 18) 예전 `.local-db` 폴더를 열지 못하고 "PGlite failed to initialize properly"만 나오던 것을, 폴더의 버전과 지금 버전, 할 일(폴더를 지우고 다시 실행)을 알려 주게 함(+테스트). 접속하는 클라이언트에 알리는 서버 버전도 고정값 16.3 대신 실제 값
+- 의존성: PGlite 0.5(PostgreSQL 18), Next.js 16.4.6, React 19.3.1, Playwright 1.65, steiger 0.10 등 부 버전·패치 묶음, vitest 5, GitHub Actions(checkout·setup-node 7, pnpm/action-setup 6, upload-artifact 7)
+- Dependabot: TypeScript 7(typescript-eslint 미지원), ESLint 10(eslint-config-next가 쓰는 플러그인이 9까지 지원), `@types/node` 26은 받지 않음. 두 앱의 `@types/node`는 20 → 24로 실행하는 Node에 맞춤. Actions 업데이트는 주 버전까지 한 PR로
+
+## 0.9.3 - 2026-11-13
+
+- 모니터링: load가 10초 안에 오지 않으면 한가할 때를 다시 기다리지 않고 그때 바로 Sentry를 받음(전에는 기한 뒤에도 한가할 때를 최대 3초 더 기다려 13초까지 늦어질 수 있었음). 끝내 부르지 않는 `requestIdleCallback`으로 확인하는 테스트로 바꿈. load가 10초 전에 오면 기한을 거두고 한가할 때를 기다림(+테스트)
+
+## 0.9.2 - 2026-11-13
+
+- 공통화: 쇼핑몰과 어드민에 똑같이 있던 중복 제출 잠금 훅(`useSubmitLock`, `useActionFormLock`)을 `packages/hooks`(`@mfg/hooks`) 하나로 모으고 테스트도 옮김
+- 공통화: 데스크 셋업과 PC 견적이 따로 그리던 칸 한 줄, 고르기 대화상자 틀, 후보 상품 버튼을 `widgets/gear-planner`(`PlannerSlot`, `PickerDialog`, `ProductOption`)로 모음(+테스트)
+- 접근성: 재입고 알림 버튼이 `aria-pressed`와 함께 이름도 "신청됨"으로 바꿔 상태를 두 번 읽던 문제. 이름은 그대로 두고 눈으로는 채운 배경과 ✓로 구분
+- 모니터링: Sentry를 페이지를 다 받은 뒤(load) 한가할 때 받음(load가 10초 안에 오지 않으면 그때). Error가 아닌 일반 객체로 거부된 Promise의 필드 값(`extra.__serialized__`)도 보내기 전에 지움
+- 정리: 슬라이스 공개 API의 쓰지 않는 내보내기(장바구니·상품·주문·빌드·어드민 주문 상태·세션 확인), 파일 안에서만 쓰는 글꼴·세션 쿠키 상수·DB `User` 타입의 export, 같은 값을 두 번 다시 내보내던 `decodeBuild`·`encodeBuild`, 어드민이 처음부터 쓰지 않던 `@mfg/gear-art` 의존성
+
+## 0.9.1 - 2026-11-12
+
+- 접근성 린트: eslint-plugin-jsx-a11y의 recommended 규칙을 모두 켬
+- 모니터링: `NEXT_PUBLIC_SENTRY_DSN`이 있으면 처리하지 못한 오류와 나쁜 Web Vitals를 Sentry로 보냄. 오류 내용만 보내고, Sentry(약 31 kB gzip)와 web-vitals는 첫 화면 뒤에 따로 받음
+- 성능 예산: CI에서 size-limit(쇼핑몰 전체 JS 400 kB, CSS 92 kB)과 Lighthouse CI(쇼핑몰의 첫 화면·상품 상세·데스크 셋업·PC 견적이 데스크톱 기준 성능 90·접근성 100·권장 사항 95·SEO 90점, LCP 2.5초·TBT 200ms·CLS 0.1 이하)로 검사
+- Dependabot: npm 매주, GitHub Actions 매월 업데이트 PR
+- 어드민 주문 상세의 현재 위치 표시를 href 없는 a에서 현재 쪽 링크(aria-current="page")로 바꿈
+
+## 0.9.0 (2026-11-12)
+
+- 홈 조립 장면: 애플 제품 페이지처럼 화면을 고정해 두고, 스크롤에 따라 부품이 흩어진 자리에서 케이스 안으로 날아와 조립됨
+  - 실제 견적 한 대를 그림으로 그림: 안텍 토크 화이트, ROG MAXIMUS Z690 EXTREME, i9-12900K, DDR5 16GB ×4, 980 PRO ×3, NZXT KRAKEN Z73 RGB, ROG STRIX RTX 3090(세로 거치대·라이저 케이블), ROG THOR 1200W (로고 없음)
+  - 조립 단계 네 개가 장면에 맞춰 차례로 강조되고, 좁은 화면에서는 한 자리에서 바뀜
+  - 라이브러리 없이 CSS 스크롤 타임라인(`animation-timeline: view()`)으로 만듦. 지원하지 않는 브라우저, 동작 줄이기, 하단 "효과" 끄기에서는 조립이 끝난 정지 화면과 단계 목록을 보여 줌
+
 ## 0.8.1 (2026-11-11)
 
 - 쇼핑몰 글꼴 교체: 큰 제목은 VT323(영문)과 블랙 앤 화이트 픽처(한글), 본문은 Gothic A1, 라벨과 견적 금액은 나눔고딕코딩. Instrument Serif·고운바탕·JetBrains Mono·Pretendard(본문)를 뺌
