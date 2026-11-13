@@ -106,7 +106,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 ## 모니터링
 
-쇼핑몰은 `apps/shop/instrumentation-client.ts`가 화면을 그리기 전에 `_app/monitoring`을 켜고, Sentry와 web-vitals는 나중에 따로 받습니다. Sentry는 페이지를 다 받은 뒤(load) 브라우저가 한가할 때 받고, load가 10초 안에 오지 않으면 그때 받습니다.
+쇼핑몰은 `apps/shop/instrumentation-client.ts`가 화면을 그리기 전에 `_app/monitoring`을 켜고, Sentry와 web-vitals는 나중에 따로 받습니다. Sentry는 페이지를 다 받은 뒤(load) 브라우저가 한가할 때 받고, load가 10초 안에 오지 않으면 그때 바로 받습니다.
 
 | 환경 변수 | 내용 |
 | --- | --- |
