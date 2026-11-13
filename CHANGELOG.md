@@ -4,7 +4,7 @@
 
 - 로컬 DB: PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 17 → 18) 예전 `.local-db` 폴더를 열지 못하고 "PGlite failed to initialize properly"만 나오던 것을, 폴더의 버전과 지금 버전, 할 일(폴더를 지우고 다시 실행)을 알려 주게 함(+테스트). 접속하는 클라이언트에 알리는 서버 버전도 고정값 16.3 대신 실제 값
 - 의존성: PGlite 0.5(PostgreSQL 18), Next.js 16.4.6, React 19.3.1, Playwright 1.65, steiger 0.10 등 부 버전·패치 묶음, vitest 5, GitHub Actions(checkout·setup-node 7, pnpm/action-setup 6, upload-artifact 7)
-- Dependabot: TypeScript 7(typescript-eslint 미지원), ESLint 10(eslint-config-next가 쓰는 플러그인이 9까지 지원), `@types/node` 26(Node 24 기준)은 받지 않음. Actions 업데이트는 한 PR로
+- Dependabot: TypeScript 7(typescript-eslint 미지원), ESLint 10(eslint-config-next가 쓰는 플러그인이 9까지 지원), `@types/node` 26은 받지 않음. 두 앱의 `@types/node`는 20 → 24로 실행하는 Node에 맞춤. Actions 업데이트는 주 버전까지 한 PR로
 
 ## 0.9.3 - 2026-11-13
 
