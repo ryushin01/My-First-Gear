@@ -118,7 +118,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 ## 의존성 갱신 (Dependabot)
 
-`.github/dependabot.yml`이 npm 패키지는 매주 부 버전·패치를 한 PR로 묶어 올리고, GitHub Actions는 매달 한 PR로 묶어 올립니다. 주 버전은 따로 PR이 열리므로 변경 내역을 확인하고 CI가 통과할 때만 병합합니다.
+`.github/dependabot.yml`이 npm 패키지는 매주 부 버전·패치를 한 PR로 묶어 올리고, 주 버전은 패키지마다 따로 PR을 엽니다. GitHub Actions는 주 버전까지 매달 한 PR로 묶어 올립니다. 주 버전이 든 PR은 변경 내역을 확인하고 CI가 통과할 때만 병합합니다.
 
 다음 주 버전은 받지 않습니다(이유는 설정 파일 주석).
 
