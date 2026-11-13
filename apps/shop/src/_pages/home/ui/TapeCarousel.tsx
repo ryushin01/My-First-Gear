@@ -29,6 +29,8 @@ export function TapeCarousel({ products }: { products: Product[] }) {
   }
 
   return (
+    // 화살표 키는 캐러셀 안 어디서나 쓰는 지름길이다. 키보드로는 아래 이전·다음 버튼으로도 넘긴다.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <section
       aria-roledescription="carousel"
       aria-label="추천 기어"
@@ -44,6 +46,8 @@ export function TapeCarousel({ products }: { products: Product[] }) {
           const active = offset === 0;
 
           return (
+            // 옆 테이프를 눌러 고르는 마우스 지름길이다. 키보드로는 이전·다음 버튼으로 같은 일을 한다.
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <div
               key={product.id}
               role="group"

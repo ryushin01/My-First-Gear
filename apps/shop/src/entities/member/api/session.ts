@@ -5,7 +5,7 @@ import { connection } from "next/server";
 import { createSession, deleteSession, getDb, getSessionUser as findSessionUser, getUser, hasDatabase, type PublicUser } from "@mfg/db";
 import { MEMBER_COOKIE } from "../model/cookie";
 
-export const SESSION_COOKIE = "mfg_session";
+const SESSION_COOKIE = "mfg_session";
 const MAX_AGE = 60 * 60 * 24 * 7;
 
 function secret(): string {
