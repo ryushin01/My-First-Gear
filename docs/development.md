@@ -48,6 +48,8 @@ pnpm --filter admin dev:db    # 같은 DB 폴더를 쓴다
 
 DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·조회·상담은 "서버에 연결할 수 없습니다"라고 안내합니다.
 
+PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 PostgreSQL 17 → 18) 예전 `.local-db` 폴더는 열 수 없습니다. 스크립트가 폴더의 버전과 지금 버전을 알려 주므로, 폴더를 지우고 다시 실행해 새로 만듭니다(로컬에서 넣은 주문·상담 등은 지워집니다).
+
 | 환경 변수 | 쓰는 곳 | 설명 |
 |---|---|---|
 | `DATABASE_URL` | 두 앱 | 운영 Postgres(Neon) 연결 문자열. Vercel의 Neon 연동이 넣어 준다 |
