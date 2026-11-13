@@ -193,9 +193,9 @@ importers:
       '@mfg/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@mfg/gear-art':
+      '@mfg/hooks':
         specifier: workspace:*
-        version: link:../../packages/gear-art
+        version: link:../../packages/hooks
       bulma:
         specifier: 1.0.4
         version: 1.0.4
@@ -266,6 +266,9 @@ importers:
       '@mfg/gear-art':
         specifier: workspace:*
         version: link:../../packages/gear-art
+      '@mfg/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@sentry/browser':
         specifier: ^11.12.0
         version: 11.12.0
@@ -394,6 +397,33 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/hooks:
+    devDependencies:
+      '@testing-library/react':
+        specifier: 16.3.3
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
+      '@vitejs/plugin-react':
+        specifier: 6.2.1
+        version: 6.2.1(vite@8.3.6(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+      jsdom:
+        specifier: 31.0.0
+        version: 31.0.0
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: 19.3.0
+        version: 19.3.0(react@19.3.0)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.12
+        version: 4.1.12(@opentelemetry/api@1.10.0)(@types/node@20.19.43)(jsdom@31.0.0)(vite@8.3.6(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
 
 packages:
 

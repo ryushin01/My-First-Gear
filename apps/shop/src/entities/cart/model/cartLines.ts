@@ -15,7 +15,7 @@ export type ResolvedLine = {
   product?: Product;
 };
 
-export function resolveLine(line: CartLine, catalog: Product[]): ResolvedLine | null {
+function resolveLine(line: CartLine, catalog: Product[]): ResolvedLine | null {
   const product = getProductById(line.productId, catalog);
   if (product) {
     return {

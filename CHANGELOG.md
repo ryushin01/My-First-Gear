@@ -1,5 +1,13 @@
 # 버전 기록
 
+## 0.9.2 - 2026-11-13
+
+- 공통화: 쇼핑몰과 어드민에 똑같이 있던 중복 제출 잠금 훅(`useSubmitLock`, `useActionFormLock`)을 `packages/hooks`(`@mfg/hooks`) 하나로 모으고 테스트도 옮김
+- 공통화: 데스크 셋업과 PC 견적이 따로 그리던 칸 한 줄, 고르기 대화상자 틀, 후보 상품 버튼을 `widgets/gear-planner`(`PlannerSlot`, `PickerDialog`, `ProductOption`)로 모음(+테스트)
+- 접근성: 재입고 알림 버튼이 `aria-pressed`와 함께 이름도 "신청됨"으로 바꿔 상태를 두 번 읽던 문제. 이름은 그대로 두고 눈으로는 채운 배경과 ✓로 구분
+- 모니터링: Sentry를 페이지를 다 받은 뒤(load) 한가할 때 받음(load가 10초 안에 오지 않으면 그때). Error가 아닌 일반 객체로 거부된 Promise의 필드 값(`extra.__serialized__`)도 보내기 전에 지움
+- 정리: 슬라이스 공개 API의 쓰지 않는 내보내기(장바구니·상품·주문·빌드·어드민 주문 상태·세션 확인), 파일 안에서만 쓰는 글꼴·세션 쿠키 상수·DB `User` 타입의 export, 같은 값을 두 번 다시 내보내던 `decodeBuild`·`encodeBuild`, 어드민이 처음부터 쓰지 않던 `@mfg/gear-art` 의존성
+
 ## 0.9.1 - 2026-11-12
 
 - 접근성 린트: eslint-plugin-jsx-a11y의 recommended 규칙을 모두 켬

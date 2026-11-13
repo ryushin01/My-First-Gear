@@ -1,6 +1,6 @@
 {
   "name": "my-first-gear",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",

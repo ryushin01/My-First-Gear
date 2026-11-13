@@ -10,6 +10,7 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 | `apps/admin` | 어드민. Bulma 기본 스타일만 사용, 요청마다 DB를 읽는 동적 화면 |
 | `packages/catalog` | 상품·카테고리 콘텐츠, 정렬·필터 쿼리, PC 호환성 검사, 조립 서비스 요금 |
 | `packages/gear-art` | 상품 SVG 그림 (`<GearArt art={…} />`) |
+| `packages/hooks` | 두 앱이 함께 쓰는 React 훅. 중복 제출 잠금(`useSubmitLock`, `useActionFormLock`) |
 | `packages/db` | Drizzle 스키마·마이그레이션(`migrations/`), 쿼리, 로컬 DB(PGlite) 실행 스크립트 |
 
 두 앱은 Feature-Sliced Design v2.1을 따릅니다. Next.js와 이름이 겹치지 않도록 계층 이름은 `_app`, `_pages`를 쓰고, Next의 `app/` 라우트 파일은 `_pages`를 다시 내보내기만 합니다.
@@ -75,7 +76,7 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 33개 항목 대조 결과는 [접근성 점검표](accessibility.md)에 있습니다. 개발할 때 지키는 것:
 
 - 폼은 레이블·필수 표시·도움말·오류를 `aria-describedby`로 연결하고, 제출에 실패하면 오류 요약으로 초점을 옮깁니다. 실패해도 입력값을 돌려받아 다시 채웁니다 (React 폼 액션은 제출 뒤 폼을 비우므로).
-- 중복 제출은 `useSubmitLock`/`useActionFormLock`(`shared/lib`)의 `useRef` 잠금으로 막습니다. 상태 값(`pending`)은 다음 렌더에야 바뀌어 빠른 연속 클릭을 못 막기 때문입니다. 성공 뒤 화면을 떠나는 폼은 실패했을 때만 잠금을 풉니다.
+- 중복 제출은 `useSubmitLock`/`useActionFormLock`(`packages/hooks`, 각 앱의 `shared/lib`이 다시 내보냄)의 `useRef` 잠금으로 막습니다. 상태 값(`pending`)은 다음 렌더에야 바뀌어 빠른 연속 클릭을 못 막기 때문입니다. 성공 뒤 화면을 떠나는 폼은 실패했을 때만 잠금을 풉니다.
 - 고정 id를 쓰지 않습니다. Cache Components가 이전 화면을 숨긴 채 DOM에 남겨 id가 겹칩니다. 클라이언트 컴포넌트는 `useId`, 서버 컴포넌트는 화면마다 다른 접두사를 씁니다.
 - 움직이는 효과는 하단 "효과" 토글과 `prefers-reduced-motion`으로 멈출 수 있어야 합니다.
 - 조작 요소는 24×24px 이상(헤더 링크 32px, 버튼 44px)으로 둡니다.
@@ -105,13 +106,13 @@ DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·
 
 ## 모니터링
 
-쇼핑몰은 `apps/shop/instrumentation-client.ts`가 화면을 그리기 전에 `_app/monitoring`을 켜고, Sentry와 web-vitals는 나중에 따로 받습니다.
+쇼핑몰은 `apps/shop/instrumentation-client.ts`가 화면을 그리기 전에 `_app/monitoring`을 켜고, Sentry와 web-vitals는 나중에 따로 받습니다. Sentry는 페이지를 다 받은 뒤(load) 브라우저가 한가할 때 받고, load가 10초 안에 오지 않으면 그때 받습니다.
 
 | 환경 변수 | 내용 |
 | --- | --- |
 | `NEXT_PUBLIC_SENTRY_DSN` | 있으면 처리하지 못한 오류와 나쁜(poor) Web Vitals를 Sentry로 보냅니다. 없으면 Sentry를 번들에 넣지 않고, 개발 모드에서 Web Vitals를 콘솔에만 찍습니다 |
 
-- Sentry에는 오류 내용만 보내고 사용자 정보·쿠키·헤더·쿼리 문자열, 방문 기록(세션), 이동·클릭 기록(브레드크럼), 콘솔 기록은 모으지 않습니다. Sentry를 받기 전에 난 오류는 모아 두었다가 처리되지 않은 오류로 보냅니다.
+- Sentry에는 오류 내용만 보내고 사용자 정보·쿠키·헤더·쿼리 문자열, 방문 기록(세션), 이동·클릭 기록(브레드크럼), 콘솔 기록은 모으지 않습니다. 오류에 붙는 콜백 인수, Error가 아닌 일반 객체로 거부된 Promise의 필드 값(`extra.__serialized__`), 주소의 `#` 뒤도 보내기 전에 지웁니다. Sentry를 받기 전에 난 오류는 20개까지 모아 두었다가 처리되지 않은 오류로 보냅니다.
 - 쓰는 함수만 `sentry.ts`에서 다시 내보내 약 31 kB(gzip)로 받습니다. 모듈 전체를 불러오면 리플레이·피드백까지 들어가 140 kB가 됩니다.
 - 브라우저 오류만 모읍니다. 서버에서 난 오류는 호스팅(Vercel 등)의 로그로 확인합니다.
 
