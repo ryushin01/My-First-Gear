@@ -29,7 +29,7 @@ const buyer = { name: "김기어", phone: "010-1234-5678", email: "", address: "
 
 describe("판매 정보", () => {
   it("시드 마이그레이션으로 모든 상품이 들어 있다", async () => {
-    expect(await listMerch(db)).toHaveLength(85);
+    expect(await listMerch(db)).toHaveLength(91);
     expect(await listReviews(db, "p-cpu-001")).toHaveLength(2);
   });
 

@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.9.3-ff3131)
+![version](https://img.shields.io/badge/version-0.10.0-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -108,7 +108,7 @@ apps/
 └─ admin/           어드민 (Bulma), proxy.ts 로그인 보호
 packages/
 ├─ catalog/         상품·카테고리·호환성 검사·데스크 셋업 조합·검색·예산 추천 (순수 TS)
-├─ gear-art/        실제 제품을 보고 그린 상품 SVG 85종
+├─ gear-art/        실제 제품을 보고 그린 상품 SVG 91종
 ├─ hooks/           쇼핑몰·어드민이 함께 쓰는 React 훅(중복 제출 잠금)
 └─ db/              Drizzle 스키마·쿼리·마이그레이션, 로컬 DB(PGlite) 실행 스크립트
 ```
