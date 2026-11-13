@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { logoutAction } from "@/features/auth";
@@ -13,7 +14,8 @@ export function AdminShell({ title, children }: { title: string; children: React
         <nav className="navbar is-dark" aria-label="어드민 상단">
           <div className="navbar-brand">
             <Link className="navbar-item has-text-weight-bold" href="/">
-              My First Gear 어드민
+              <Image src="/brand/logo.png" alt="My First Gear" width={28} height={28} className="mr-2" />
+              어드민
             </Link>
           </div>
           <div className="navbar-end is-flex is-align-items-center px-3">
