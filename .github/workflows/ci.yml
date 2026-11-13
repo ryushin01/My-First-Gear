@@ -33,9 +33,16 @@ jobs:
         run: pnpm --filter admin test:e2e
         env:
           CI: "1"
+      # 쇼핑몰의 번들 크기와 Lighthouse 점수
+      - run: pnpm --filter shop size
+      - run: pnpm --filter shop lhci
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-results
-          path: apps/*/test-results/
+          name: reports
+          # .lighthouseci는 숨김 폴더라 따로 켜야 올라간다.
+          include-hidden-files: true
+          path: |
+            apps/*/test-results/
+            apps/shop/.lighthouseci/
           retention-days: 7
