@@ -421,15 +421,15 @@ export const coreProducts: Product[] = [
     price: 459_000,
     stock: 4,
     purchaseMode: "cart",
-    art: { kind: "case", accent: "#ff3131", variant: "open", model: "antec-torque" },
+    art: { kind: "case", accent: "#e8e8e4", variant: "open", model: "antec-torque" },
     tagline: "부품이 그대로 보이는 알루미늄 오픈 프레임",
-    description: "옆판 없이 부품을 드러내는 오픈 프레임 케이스입니다. 조립 서비스와 함께 고르는 경우가 많습니다.",
+    description: "삼각 구멍이 뚫린 검은 뼈대에 흰 알루미늄 판을 각지게 두르고, 양옆에 짙은 강화유리를 띄워 단 오픈 프레임 케이스입니다. 조립 서비스와 함께 고르는 경우가 많습니다.",
     specs: [
       { label: "형태", value: "오픈 프레임" },
       { label: "지원 보드", value: "ATX, M-ATX, ITX" },
       { label: "그래픽카드 길이", value: "최대 330mm" },
       { label: "쿨러 높이", value: "최대 170mm" },
-      { label: "소재", value: "알루미늄" },
+      { label: "소재", value: "알루미늄, 강화유리" },
     ],
     compat: {
       part: "case",

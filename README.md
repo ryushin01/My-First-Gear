@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.10.1-ff3131)
+![version](https://img.shields.io/badge/version-0.10.2-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -122,3 +122,15 @@ packages/
 | [배포](docs/deploy.md) | Vercel 두 프로젝트와 Neon 설정, 환경 변수, 마이그레이션, CI |
 | [시퀀스 다이어그램](docs/sequence-diagrams.md) | PC 견적과 호환성 검사, 모의 결제 주문, 어드민 판매 정보 변경과 쇼핑몰 반영 |
 | [버전 기록](CHANGELOG.md) | 버전별 변경 내용 |
+
+## 출처
+
+| 자료 | 저작자 | 사용 허락 | 원본 |
+|---|---|---|---|
+| VT323 (영문 큰 제목) | Peter Hull | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/VT323) |
+| Black And White Picture (한글 큰 제목) | AsiaSoft Inc. | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Black+And+White+Picture) |
+| Gothic A1 (본문) | HanYang I&C Co | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Gothic+A1) |
+| Nanum Gothic Coding (라벨·금액) | Sandoll Communication (네이버 나눔글꼴) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Nanum+Gothic+Coding) |
+| Pretendard Bold (공유 이미지) | 길형진 (orioncactus) | SIL OFL 1.1 | [GitHub](https://github.com/orioncactus/pretendard) |
+
+상품 그림 SVG는 모두 실제 제품을 보고 직접 그렸고, 로고와 상표 문양은 넣지 않았습니다. 브라운관·VHS 화면 콘셉트는 [arc marumo](https://www.arcmarumo.com/)를 참고했으며 그 사이트의 자료는 가져오지 않았습니다.
