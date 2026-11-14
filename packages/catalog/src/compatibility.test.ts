@@ -38,7 +38,7 @@ describe("checkBuild", () => {
 
   it("그래픽카드가 케이스보다 길면 오류", () => {
     const issues = checkBuild({ ...goodBuild, gpu: p("radeon-rx-9070-xt-16gb"), case: p("antec-torque") });
-    expect(issues.some((i) => i.parts.join() === "gpu,case")).toBe(false); // 330mm = 허용 330mm
+    expect(issues.some((i) => i.parts.join() === "gpu,case")).toBe(false); // 330mm < 허용 450mm
     const longCase = { ...p("antec-torque"), compat: { ...goodBuild.case!.compat!, maxGpuLengthMm: 300 } } as typeof goodBuild.case;
     expect(checkBuild({ ...goodBuild, case: longCase }).some((i) => i.parts.join() === "gpu,case")).toBe(true);
   });
@@ -47,7 +47,7 @@ describe("checkBuild", () => {
     const issues = checkBuild({ ...goodBuild, cooler: p("noctua-nh-d15-g2"), case: p("fractal-north") });
     expect(issues).toEqual([]);
     const tall = checkBuild({ ...goodBuild, cooler: p("noctua-nh-d15-g2") });
-    expect(tall.some((i) => i.parts.join() === "cooler,case")).toBe(false); // 168 < 170
+    expect(tall.some((i) => i.parts.join() === "cooler,case")).toBe(false); // 168 < 215
   });
 
   it("파워가 예상 소비 전력보다 낮으면 오류, 여유가 적으면 주의", () => {
