@@ -120,4 +120,5 @@ packages/
 | [개발 가이드](docs/development.md) | 구조, 데이터 흐름, 디자인 기준, 접근성, 테스트 |
 | [접근성 점검표](docs/accessibility.md) | KWCAG 2.2 33개 항목 대조 결과, Cache Components 주의점 |
 | [배포](docs/deploy.md) | Vercel 두 프로젝트와 Neon 설정, 환경 변수, 마이그레이션, CI |
+| [시퀀스 다이어그램](docs/sequence-diagrams.md) | PC 견적과 호환성 검사, 모의 결제 주문, 어드민 판매 정보 변경과 쇼핑몰 반영 |
 | [버전 기록](CHANGELOG.md) | 버전별 변경 내용 |
