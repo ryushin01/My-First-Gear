@@ -19,6 +19,17 @@ test("로그인하지 않으면 들어갈 수 없다", async ({ page }) => {
   expect(response?.url()).toContain("/login");
 });
 
+test("탭 아이콘과 로고는 로그인 없이 받고, 로그인하면 머리글 로고가 그려진다", async ({ page, request }) => {
+  for (const path of ["/favicon.ico", "/icon.png", "/apple-icon.png", "/brand/logo.png"]) {
+    const response = await request.get(path, { maxRedirects: 0 });
+    expect(response.status(), path).toBe(200);
+  }
+  await login(page);
+  const logo = page.getByRole("img", { name: "My First Gear" });
+  await expect(logo).toBeVisible();
+  await expect.poll(() => logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+});
+
 test("가격과 노출을 바꾸면 쇼핑몰에 반영된다", async ({ page }) => {
   await login(page);
   await page.getByRole("link", { name: "SSD" }).click();

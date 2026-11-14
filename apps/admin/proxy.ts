@@ -10,6 +10,10 @@ export async function proxy(request: NextRequest) {
   return NextResponse.redirect(login);
 }
 
+/**
+ * 로그인 화면, Next 내부 파일, 정적 파일(탭 아이콘, public/brand의 로고)은 검사하지 않는다.
+ * 로고는 next/image 최적화가 쿠키 없이 가져가므로, 여기서 막으면 로그인해도 로고가 깨진다.
+ */
 export const config = {
-  matcher: ["/((?!login|_next/|favicon.ico).*)"],
+  matcher: ["/((?!login|_next/|favicon\\.ico|icon\\.png|apple-icon\\.png|brand/).*)"],
 };
