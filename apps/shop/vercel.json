@@ -8,9 +8,7 @@
       "schedule": "0 19 * * *"
     }
   ],
-  "regions": [
-    "sin1"
-  ],
+  "regions": ["sin1"],
   "git": {
     "deploymentEnabled": {
       "**": false,

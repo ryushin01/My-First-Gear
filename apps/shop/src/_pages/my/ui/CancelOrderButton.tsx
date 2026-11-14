@@ -31,7 +31,11 @@ export function CancelOrderButton({ orderId, cancellable }: { orderId: string; c
       className="flex flex-col gap-1"
     >
       <input type="hidden" name="orderId" value={orderId} />
-      <button type="submit" disabled={pending} className="min-h-11 w-fit rounded-md border border-white/30 px-3 text-sm hover:border-white disabled:opacity-60">
+      <button
+        type="submit"
+        disabled={pending}
+        className="min-h-11 w-fit rounded-md border border-white/30 px-3 text-sm hover:border-white disabled:opacity-60"
+      >
         {pending ? "취소 중…" : "주문 취소"}
         <span className="sr-only">: {orderId}</span>
       </button>

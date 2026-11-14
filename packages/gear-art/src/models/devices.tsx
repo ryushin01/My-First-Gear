@@ -29,8 +29,23 @@ function tklKeyboard(): ReactNode {
           const mod = i === 0 || i === row.n - 1;
           return (
             <g key={`${r}-${i}`}>
-              <rect x={row.x + i * (row.w + 1.4) - r * 1.2} y={row.y} width={mod ? row.w + 3 : row.w} height={10} rx={1.6} fill={mod ? "#5b5e66" : "#d9dbde"} />
-              <rect x={row.x + i * (row.w + 1.4) - r * 1.2} y={row.y} width={mod ? row.w + 3 : row.w} height={3} rx={1.4} fill="#ffffff" opacity={0.35} />
+              <rect
+                x={row.x + i * (row.w + 1.4) - r * 1.2}
+                y={row.y}
+                width={mod ? row.w + 3 : row.w}
+                height={10}
+                rx={1.6}
+                fill={mod ? "#5b5e66" : "#d9dbde"}
+              />
+              <rect
+                x={row.x + i * (row.w + 1.4) - r * 1.2}
+                y={row.y}
+                width={mod ? row.w + 3 : row.w}
+                height={3}
+                rx={1.4}
+                fill="#ffffff"
+                opacity={0.35}
+              />
             </g>
           );
         }),
@@ -59,7 +74,19 @@ function tklKeyboard(): ReactNode {
 
 /* ───────────── 노트북: 펼친 모습, 약간 비스듬히 ───────────── */
 
-function laptop({ body, deck, screenTone, notch, wide }: { body: string; deck: string; screenTone: [string, string]; notch?: boolean; wide?: boolean }): ReactNode {
+function laptop({
+  body,
+  deck,
+  screenTone,
+  notch,
+  wide,
+}: {
+  body: string;
+  deck: string;
+  screenTone: [string, string];
+  notch?: boolean;
+  wide?: boolean;
+}): ReactNode {
   const w = wide ? 156 : 140;
   const x = 100 - w / 2;
   return (
@@ -69,7 +96,11 @@ function laptop({ body, deck, screenTone, notch, wide }: { body: string; deck: s
       <rect x={x} y={34} width={w} height={96} rx={6} fill="#0c0c0e" />
       <rect x={x} y={34} width={w} height={96} rx={6} fill="none" stroke={body} strokeWidth={2.5} />
       <rect x={x + 5} y={39} width={w - 10} height={86} rx={2} fill={screenTone[0]} />
-      <path d={`M${x + 5} ${39 + 86} C ${x + w * 0.35} ${70}, ${x + w * 0.6} ${110}, ${x + w - 5} ${48} L${x + w - 5} ${125} Z`} fill={screenTone[1]} opacity={0.85} />
+      <path
+        d={`M${x + 5} ${39 + 86} C ${x + w * 0.35} ${70}, ${x + w * 0.6} ${110}, ${x + w - 5} ${48} L${x + w - 5} ${125} Z`}
+        fill={screenTone[1]}
+        opacity={0.85}
+      />
       <path d={`M${x + 5} 39 L${x + w * 0.45} 39 L${x + 5} 100 Z`} fill="#ffffff" opacity={0.08} />
       {notch && <rect x={95} y={39} width={10} height={4} rx={1.5} fill="#0c0c0e" />}
       {/* 메뉴 막대 */}
@@ -120,7 +151,17 @@ function astell({ body, edge, screen }: { body: string; edge: string; screen: [s
 }
 
 /** 소니 워크맨: 둥근 모서리 몸체, 위쪽 큰 화면, 오른쪽 옆 버튼 */
-function walkman({ body, bodyLight, screen, flagship }: { body: string; bodyLight: string; screen: [string, string]; flagship?: boolean }): ReactNode {
+function walkman({
+  body,
+  bodyLight,
+  screen,
+  flagship,
+}: {
+  body: string;
+  bodyLight: string;
+  screen: [string, string];
+  flagship?: boolean;
+}): ReactNode {
   const w = flagship ? 82 : 66;
   const h = flagship ? 160 : 138;
   const x = 100 - w / 2;
@@ -179,11 +220,21 @@ function wf1000xm5(): ReactNode {
 function blessing3(): ReactNode {
   const shell = (cx: number, flip: boolean) => (
     <g transform={flip ? `scale(-1 1) translate(${-2 * cx} 0)` : undefined}>
-      <path d={`M${cx - 28} 62 C ${cx - 34} 30, ${cx + 22} 24, ${cx + 30} 52 C ${cx + 36} 76, ${cx + 10} 104, ${cx - 14} 96 C ${cx - 26} 92, ${cx - 26} 80, ${cx - 28} 62 Z`} fill="#3a7bd5" opacity={0.92} />
+      <path
+        d={`M${cx - 28} 62 C ${cx - 34} 30, ${cx + 22} 24, ${cx + 30} 52 C ${cx + 36} 76, ${cx + 10} 104, ${cx - 14} 96 C ${cx - 26} 92, ${cx - 26} 80, ${cx - 28} 62 Z`}
+        fill="#3a7bd5"
+        opacity={0.92}
+      />
       <path d={`M${cx - 20} 58 C ${cx - 22} 38, ${cx + 14} 34, ${cx + 22} 52 C ${cx + 26} 70, ${cx + 6} 88, ${cx - 10} 84 Z`} fill="#c9ccd1" />
       {/* 금속 페이스플레이트의 무늬 */}
       {range(5).map((i) => (
-        <path key={i} d={`M${cx - 16 + i * 6} 44 C ${cx - 10 + i * 6} 56, ${cx - 20 + i * 6} 70, ${cx - 12 + i * 6} 82`} fill="none" stroke="#8d9198" strokeWidth={1.4} />
+        <path
+          key={i}
+          d={`M${cx - 16 + i * 6} 44 C ${cx - 10 + i * 6} 56, ${cx - 20 + i * 6} 70, ${cx - 12 + i * 6} 82`}
+          fill="none"
+          stroke="#8d9198"
+          strokeWidth={1.4}
+        />
       ))}
       <path d={`M${cx - 20} 58 C ${cx - 22} 38, ${cx + 14} 34, ${cx + 22} 52 L${cx - 12} 60 Z`} fill="#ffffff" opacity={0.25} />
       {/* 2핀 케이블 */}
@@ -270,11 +321,21 @@ function switch2(): ReactNode {
       {/* 왼쪽 스틱과 방향 버튼 */}
       <circle cx={28} cy={80} r={8} fill="#2b2b2f" />
       <circle cx={28} cy={80} r={5} fill="#141416" />
-      {[[28, 104], [22, 110], [34, 110], [28, 116]].map(([cx, cy]) => (
+      {[
+        [28, 104],
+        [22, 110],
+        [34, 110],
+        [28, 116],
+      ].map(([cx, cy]) => (
         <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={3} fill="#2b2b2f" />
       ))}
       {/* 오른쪽 버튼과 스틱 */}
-      {[[172, 74], [166, 80], [178, 80], [172, 86]].map(([cx, cy]) => (
+      {[
+        [172, 74],
+        [166, 80],
+        [178, 80],
+        [172, 86],
+      ].map(([cx, cy]) => (
         <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={3} fill="#2b2b2f" />
       ))}
       <circle cx={172} cy={110} r={8} fill="#2b2b2f" />
@@ -349,10 +410,18 @@ export function monitor({
         fill={screen[0]}
       />
       {/* 게임 장면 느낌의 빛 */}
-      <path d={`M${x + 3} ${y + h * 0.7 + curve} Q ${100 - w * 0.2} ${y + h * 0.35} 100 ${y + h * 0.55} T ${x + w - 3} ${y + h * 0.4 + curve} L${x + w - 3} ${y + h + curve - 4} Q 100 ${y + h - curve - 4} ${x + 3} ${y + h + curve - 4} Z`} fill={screen[1]} opacity={0.85} />
+      <path
+        d={`M${x + 3} ${y + h * 0.7 + curve} Q ${100 - w * 0.2} ${y + h * 0.35} 100 ${y + h * 0.55} T ${x + w - 3} ${y + h * 0.4 + curve} L${x + w - 3} ${y + h + curve - 4} Q 100 ${y + h - curve - 4} ${x + 3} ${y + h + curve - 4} Z`}
+        fill={screen[1]}
+        opacity={0.85}
+      />
       <path d={`M${x + w * 0.55} ${y + h * 0.2} l8 0 l-4 6 Z`} fill={screen[2]} />
       <circle cx={x + w * 0.3} cy={y + h * 0.35} r={Math.min(8, h * 0.12)} fill={screen[2]} opacity={0.9} />
-      <path d={`M${x + 3} ${y + curve + 3} Q 100 ${y - curve + 3} ${x + w * 0.45} ${y + curve * 0.4 + 3} L${x + 3} ${y + h * 0.6} Z`} fill="#ffffff" opacity={0.06} />
+      <path
+        d={`M${x + 3} ${y + curve + 3} Q 100 ${y - curve + 3} ${x + w * 0.45} ${y + curve * 0.4 + 3} L${x + 3} ${y + h * 0.6} Z`}
+        fill="#ffffff"
+        opacity={0.06}
+      />
       {/* 아래 테두리 */}
       <path d={`M${x} ${y + h + curve} Q 100 ${y + h - curve} ${x + w} ${y + h + curve}`} fill="none" stroke={bezel} strokeWidth={3} />
     </g>

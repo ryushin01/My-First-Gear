@@ -25,7 +25,17 @@ describe("PlannerSlot", () => {
     const onPick = vi.fn();
     render(
       <ol>
-        <PlannerSlot index={0} label="키보드" optional product={undefined} emptyText="고르지 않음" issues={[]} errorPrefix="맞지 않음: " onPick={onPick} onClear={vi.fn()} />
+        <PlannerSlot
+          index={0}
+          label="키보드"
+          optional
+          product={undefined}
+          emptyText="고르지 않음"
+          issues={[]}
+          errorPrefix="맞지 않음: "
+          onPick={onPick}
+          onClear={vi.fn()}
+        />
       </ol>,
     );
     expect(screen.getByText("[01 · 키보드] 선택")).toBeInTheDocument();

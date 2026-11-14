@@ -22,33 +22,31 @@ const BARS = ["#c0c0c0", "#c0c000", "#00c0c0", "#00c000", "#c000c0", "#c00000", 
 /** 브라운관 화면처럼 꾸민 1200×630 공유 이미지 틀 */
 export async function renderOg(children: ReactNode) {
   return new ImageResponse(
-    (
-      <div style={{ display: "flex", width: "100%", height: "100%", background: "#050505", padding: 28 }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            height: "100%",
-            borderRadius: 40,
-            background: "radial-gradient(ellipse at 50% 40%, #262626 0%, #111111 65%, #0b0b0b 100%)",
-            padding: "40px 56px",
-            color: "#fcf8ef",
-            fontFamily: "Pretendard",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 30 }}>
-            <div style={{ display: "flex", height: 26, borderRadius: 4, overflow: "hidden" }}>
-              {BARS.map((color) => (
-                <div key={color} style={{ width: 9, height: 26, background: color }} />
-              ))}
-            </div>
-            My First Gear
+    <div style={{ display: "flex", width: "100%", height: "100%", background: "#050505", padding: 28 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          borderRadius: 40,
+          background: "radial-gradient(ellipse at 50% 40%, #262626 0%, #111111 65%, #0b0b0b 100%)",
+          padding: "40px 56px",
+          color: "#fcf8ef",
+          fontFamily: "Pretendard",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 30 }}>
+          <div style={{ display: "flex", height: 26, borderRadius: 4, overflow: "hidden" }}>
+            {BARS.map((color) => (
+              <div key={color} style={{ width: 9, height: 26, background: color }} />
+            ))}
           </div>
-          {children}
+          My First Gear
         </div>
+        {children}
       </div>
-    ),
+    </div>,
     { ...OG_SIZE, fonts: [{ name: "Pretendard", data: await fontData, weight: 700, style: "normal" }] },
   );
 }

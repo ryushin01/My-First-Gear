@@ -26,7 +26,10 @@ export function RecentlyViewed({ exclude, headingLevel = 2 }: { exclude?: string
       <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
         {items.map((product) => (
           <li key={product.id}>
-            <Link href={`/product/${product.slug}`} className="flex flex-col gap-2 rounded-md border border-white/10 p-2 text-xs hover:border-white/40">
+            <Link
+              href={`/product/${product.slug}`}
+              className="flex flex-col gap-2 rounded-md border border-white/10 p-2 text-xs hover:border-white/40"
+            >
               <span className="grid aspect-square place-items-center rounded bg-black/40 text-cream">
                 <GearArt art={product.art} className="h-4/5 w-4/5" />
               </span>

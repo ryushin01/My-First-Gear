@@ -45,7 +45,11 @@ export function SearchResults() {
         <nav aria-label="최근 검색어" className="flex flex-wrap items-center gap-2 text-sm">
           <span className="mono-label">[Recent]</span>
           {terms.map((term) => (
-            <Link key={term} href={`/search?q=${encodeURIComponent(term)}`} className="inline-flex min-h-8 items-center rounded-full border border-white/20 px-3 hover:border-white">
+            <Link
+              key={term}
+              href={`/search?q=${encodeURIComponent(term)}`}
+              className="inline-flex min-h-8 items-center rounded-full border border-white/20 px-3 hover:border-white"
+            >
               {term}
             </Link>
           ))}

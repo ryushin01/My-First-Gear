@@ -15,8 +15,8 @@ export function SetupPage() {
     <CrtScreen source="DESK SETUP">
       <div className="flex flex-col gap-10 py-10">
         <PageHeading label="Desk Setup" title="데스크 셋업">
-          책상부터 마이크까지 칸마다 장비를 고르면 모니터암이 모니터 크기와 무게를 버티는지, 책상에 모니터와 스피커가 들어가는지 확인합니다. 조합은
-          이 브라우저에 저장되고 주소로 공유할 수 있습니다.
+          책상부터 마이크까지 칸마다 장비를 고르면 모니터암이 모니터 크기와 무게를 버티는지, 책상에 모니터와 스피커가 들어가는지 확인합니다. 조합은 이
+          브라우저에 저장되고 주소로 공유할 수 있습니다.
         </PageHeading>
         <Suspense fallback={<p className="text-mute-200">셋업을 불러오는 중…</p>}>
           <WithCatalog>

@@ -121,7 +121,10 @@ test("데스크 셋업에서 모니터암·책상 조합을 확인하고 한 번
 test("공유받은 셋업을 열면 고르던 셋업으로 되돌릴 수 있다", async ({ page }) => {
   await page.goto("/setup");
   await page.getByRole("button", { name: /고르기\s*:\s*마우스$/ }).click();
-  await page.getByRole("dialog").getByRole("button", { name: /MX Master 3S/ }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /MX Master 3S/ })
+    .click();
 
   await page.goto(`/setup?s=${encodeURIComponent("chair:p-chair-001")}`);
   await expect(page.getByText("공유받은 셋업을 불러왔습니다")).toBeVisible();

@@ -60,9 +60,7 @@ export function QuickBuild() {
       <section aria-label="추천 결과" aria-live="polite" className="flex flex-col gap-4">
         {!result && <p className="text-mute-200">예산과 용도를 고르면 재고가 있는 부품 중 호환되는 구성을 골라 드립니다.</p>}
         {result && !result.rec && (
-          <p className="text-brand">
-            {formatPrice(result.budget)} 안에서 호환되는 구성을 찾지 못했습니다. 예산을 늘려 보세요.
-          </p>
+          <p className="text-brand">{formatPrice(result.budget)} 안에서 호환되는 구성을 찾지 못했습니다. 예산을 늘려 보세요.</p>
         )}
         {result?.rec && (
           <>

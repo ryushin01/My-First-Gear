@@ -1,5 +1,1 @@
-export {
-  ProductPage as default,
-  generateProductMetadata as generateMetadata,
-  generateProductParams as generateStaticParams,
-} from "@/_pages/product";
+export { ProductPage as default, generateProductMetadata as generateMetadata, generateProductParams as generateStaticParams } from "@/_pages/product";

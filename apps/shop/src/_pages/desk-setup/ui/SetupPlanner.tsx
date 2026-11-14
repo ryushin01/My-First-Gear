@@ -133,10 +133,20 @@ export function SetupPlanner() {
             셋업 전체 장바구니 담기
           </button>
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={share} disabled={filled === 0} className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={share}
+              disabled={filled === 0}
+              className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50"
+            >
               셋업 주소 복사
             </button>
-            <button type="button" onClick={resetSetup} disabled={filled === 0} className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={resetSetup}
+              disabled={filled === 0}
+              className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50"
+            >
               처음부터
             </button>
           </div>

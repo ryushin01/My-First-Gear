@@ -98,6 +98,12 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 - E2E는 먼저 `pnpm build`로 두 앱을 빌드해 둡니다. 다시 빌드할 때는 예전 서버를 끄고 `.next`를 지웁니다. 서버가 떠 있으면 재생성한 페이지를 새 `.next`에 덮어쓸 수 있습니다.
 - Cache Components가 숨겨 둔 화면 때문에 E2E 선택자는 `getByRole`처럼 보이는 요소만 고르는 것을 씁니다.
 
+## 코드 서식
+
+- Prettier 3(`printWidth` 150)로 맞춥니다. `pnpm format`이 고치고, CI는 `pnpm format:check`로 검사합니다. 줄 너비는 기존 코드가 바뀌는 양이 가장 적은 값으로 골랐습니다.
+- 마크다운은 Prettier가 표 칸을 맞추느라 원문 한 줄이 지나치게 넓어져 `.prettierignore`로 뺍니다. `pnpm-lock.yaml`과 drizzle 마이그레이션 스냅숏도 생성 파일이라 뺍니다.
+- ESLint 설정에는 서식 규칙이 없어 Prettier와 겹치지 않습니다.
+
 ## 품질 예산
 
 - **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 400 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다.

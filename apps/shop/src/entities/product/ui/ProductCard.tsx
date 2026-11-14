@@ -14,15 +14,9 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
       <div className="relative grid aspect-square place-items-center overflow-hidden rounded-md bg-black/40 text-cream">
         <GearArt art={product.art} className="h-4/5 w-4/5 transition-transform duration-300 group-hover:scale-105" />
         <span className="absolute left-2 top-2 font-mono text-[11px] uppercase text-label">[{category.code}]</span>
-        {soldOut && (
-          <span className="absolute right-2 top-2 rounded-sm bg-cream px-1.5 py-0.5 font-mono text-[11px] text-ink">
-            품절
-          </span>
-        )}
+        {soldOut && <span className="absolute right-2 top-2 rounded-sm bg-cream px-1.5 py-0.5 font-mono text-[11px] text-ink">품절</span>}
         {product.purchaseMode === "consult" && (
-          <span className="absolute right-2 top-2 rounded-sm border border-cream/60 px-1.5 py-0.5 font-mono text-[11px] text-cream">
-            상담
-          </span>
+          <span className="absolute right-2 top-2 rounded-sm border border-cream/60 px-1.5 py-0.5 font-mono text-[11px] text-cream">상담</span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1">

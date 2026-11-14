@@ -14,15 +14,17 @@ export async function GET(request: Request) {
   });
   const services = state.services.flatMap((id) => getService(id) ?? []);
   const assembling = services.some((s) => s.id === "svc-assembly");
-  const total =
-    rows.reduce((sum, r) => sum + r.product.price, 0) + (assembling ? services.reduce((sum, s) => sum + s.price, 0) : 0);
+  const total = rows.reduce((sum, r) => sum + r.product.price, 0) + (assembling ? services.reduce((sum, s) => sum + s.price, 0) : 0);
 
   const image = await renderOg(
     <div style={{ display: "flex", flex: 1, flexDirection: "column", marginTop: 18 }}>
       <div style={{ display: "flex", fontSize: 22, color: "#b2aeab", marginTop: 6 }}>[PC BUILD · {rows.length} / 8]</div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
         {rows.map(({ slot, product }) => (
-          <div key={slot} style={{ display: "flex", alignItems: "center", gap: 12, width: 504, border: "1px solid #333", borderRadius: 8, padding: "6px 10px" }}>
+          <div
+            key={slot}
+            style={{ display: "flex", alignItems: "center", gap: 12, width: 504, border: "1px solid #333", borderRadius: 8, padding: "6px 10px" }}
+          >
             <img src={artDataUri(product.art)} width={52} height={52} alt="" />
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", fontSize: 16, color: "#b2aeab" }}>{slot}</div>

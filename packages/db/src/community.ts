@@ -14,7 +14,14 @@ export function maskName(name: string): string {
 
 export async function listReviews(db: Db, productId: string) {
   const rows = await db
-    .select({ id: reviews.id, rating: reviews.rating, body: reviews.body, createdAt: reviews.createdAt, userName: users.name, userId: reviews.userId })
+    .select({
+      id: reviews.id,
+      rating: reviews.rating,
+      body: reviews.body,
+      createdAt: reviews.createdAt,
+      userName: users.name,
+      userId: reviews.userId,
+    })
     .from(reviews)
     .innerJoin(users, eq(users.id, reviews.userId))
     .where(eq(reviews.productId, productId))
@@ -125,8 +132,14 @@ export async function answerInquiry(db: Db, id: number, answer: string) {
 
 export async function countUnanswered(db: Db) {
   const [[q], [i]] = await Promise.all([
-    db.select({ value: sql<number>`count(*)::int` }).from(questions).where(isNull(questions.answer)),
-    db.select({ value: sql<number>`count(*)::int` }).from(inquiries).where(isNull(inquiries.answer)),
+    db
+      .select({ value: sql<number>`count(*)::int` })
+      .from(questions)
+      .where(isNull(questions.answer)),
+    db
+      .select({ value: sql<number>`count(*)::int` })
+      .from(inquiries)
+      .where(isNull(inquiries.answer)),
   ]);
   return { questions: q.value, inquiries: i.value };
 }

@@ -45,7 +45,11 @@ export function CompareTable() {
                   <span className="block text-xs text-mute-200">
                     {p.brand} · {getCategory(p.categoryId).name}
                   </span>
-                  <button type="button" onClick={() => toggleCompare(p.slug)} className="mt-2 min-h-8 text-xs text-mute-200 underline hover:text-cream">
+                  <button
+                    type="button"
+                    onClick={() => toggleCompare(p.slug)}
+                    className="mt-2 min-h-8 text-xs text-mute-200 underline hover:text-cream"
+                  >
                     빼기<span className="sr-only">: {p.name}</span>
                   </button>
                 </th>
@@ -54,7 +58,9 @@ export function CompareTable() {
           </thead>
           <tbody>
             <tr className="border-b border-white/10">
-              <th scope="row" className="py-2.5 pr-4 text-left font-normal text-mute-200">가격</th>
+              <th scope="row" className="py-2.5 pr-4 text-left font-normal text-mute-200">
+                가격
+              </th>
               {items.map((p) => (
                 <td key={p.id} className="py-2.5 pr-4 font-mono tabular-nums">
                   {formatPrice(p.price)}
@@ -62,7 +68,9 @@ export function CompareTable() {
               ))}
             </tr>
             <tr className="border-b border-white/10">
-              <th scope="row" className="py-2.5 pr-4 text-left font-normal text-mute-200">평점</th>
+              <th scope="row" className="py-2.5 pr-4 text-left font-normal text-mute-200">
+                평점
+              </th>
               {items.map((p) => (
                 <td key={p.id} className="py-2.5 pr-4">
                   {p.rating.toFixed(1)} · 후기 {p.reviewCount.toLocaleString("ko-KR")}개

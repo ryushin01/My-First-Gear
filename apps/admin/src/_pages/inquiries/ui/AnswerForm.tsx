@@ -19,7 +19,15 @@ export function AnswerForm({ kind, id, label, defaultValue }: AnswerFormProps) {
           {label}
         </label>
         <div className="control">
-          <textarea id={fieldId} name="answer" className="textarea is-small" rows={2} maxLength={2000} defaultValue={state?.values?.answer ?? defaultValue ?? ""} required />
+          <textarea
+            id={fieldId}
+            name="answer"
+            className="textarea is-small"
+            rows={2}
+            maxLength={2000}
+            defaultValue={state?.values?.answer ?? defaultValue ?? ""}
+            required
+          />
         </div>
         <ActionMessage state={state} />
       </div>

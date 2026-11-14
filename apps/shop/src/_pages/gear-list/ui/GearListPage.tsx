@@ -16,22 +16,24 @@ function GearList({ categoryId }: { categoryId?: CategoryId }) {
   const channel = categoryId ? channelOf(categoryId) : "00";
 
   return (
-      <div className="grid gap-10 py-10 lg:grid-cols-[200px_1fr]">
-        <aside className="lg:sticky lg:top-40 lg:self-start">
-          <CategoryNav current={categoryId} />
-        </aside>
-        <div className="flex min-w-0 flex-col gap-6">
-          <header className="flex flex-col gap-2">
-            <p className="mono-label">[CH {channel} · {category?.code ?? "ALL GEAR"}]</p>
-            <h1 className="font-display text-5xl leading-none md:text-7xl">{category?.name ?? "전체 기어"}</h1>
-          </header>
-          <WithCatalog>
-            <Suspense fallback={<ProductBrowserFallback categoryId={categoryId} />}>
-              <ProductBrowser categoryId={categoryId} />
-            </Suspense>
-          </WithCatalog>
-        </div>
+    <div className="grid gap-10 py-10 lg:grid-cols-[200px_1fr]">
+      <aside className="lg:sticky lg:top-40 lg:self-start">
+        <CategoryNav current={categoryId} />
+      </aside>
+      <div className="flex min-w-0 flex-col gap-6">
+        <header className="flex flex-col gap-2">
+          <p className="mono-label">
+            [CH {channel} · {category?.code ?? "ALL GEAR"}]
+          </p>
+          <h1 className="font-display text-5xl leading-none md:text-7xl">{category?.name ?? "전체 기어"}</h1>
+        </header>
+        <WithCatalog>
+          <Suspense fallback={<ProductBrowserFallback categoryId={categoryId} />}>
+            <ProductBrowser categoryId={categoryId} />
+          </Suspense>
+        </WithCatalog>
       </div>
+    </div>
   );
 }
 

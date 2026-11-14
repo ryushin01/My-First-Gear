@@ -3,29 +3,10 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useState } from "react";
-import {
-  assemblyServices,
-  buildSlots,
-  buildTotal,
-  checkBuild,
-  estimateWatts,
-  formatPrice,
-  recommendedWatts,
-  type PartKind,
-} from "@mfg/catalog";
+import { assemblyServices, buildSlots, buildTotal, checkBuild, estimateWatts, formatPrice, recommendedWatts, type PartKind } from "@mfg/catalog";
 import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
-import {
-  clearPart,
-  decodeBuild,
-  encodeBuild,
-  replaceBuild,
-  resetBuild,
-  selectPart,
-  toBuild,
-  toggleService,
-  useBuildState,
-} from "@/entities/build";
+import { clearPart, decodeBuild, encodeBuild, replaceBuild, resetBuild, selectPart, toBuild, toggleService, useBuildState } from "@/entities/build";
 import { useMemberName } from "@/entities/member";
 import { useSubmitLock } from "@/shared/lib";
 import { PlannerSlot } from "@/widgets/gear-planner";
@@ -60,9 +41,7 @@ export function BuildPlanner() {
   const missingRequired = buildSlots.filter((slot) => slot.required && !build[slot.part]);
   const partsTotal = buildTotal(build);
   const assembling = state.services.includes("svc-assembly");
-  const servicesTotal = assembling
-    ? assemblyServices.filter((s) => state.services.includes(s.id)).reduce((sum, s) => sum + s.price, 0)
-    : 0;
+  const servicesTotal = assembling ? assemblyServices.filter((s) => state.services.includes(s.id)).reduce((sum, s) => sum + s.price, 0) : 0;
   const pickingSlot = buildSlots.find((slot) => slot.part === pickerPart);
   const canOrder = missingRequired.length === 0 && errors.length === 0;
 
@@ -154,7 +133,11 @@ export function BuildPlanner() {
           {assemblyServices.map((service) => {
             const disabled = !service.required && !assembling;
             return (
-              <label key={service.id} className="flex cursor-pointer items-start gap-3 text-sm aria-disabled:cursor-not-allowed aria-disabled:opacity-50" aria-disabled={disabled || undefined}>
+              <label
+                key={service.id}
+                className="flex cursor-pointer items-start gap-3 text-sm aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                aria-disabled={disabled || undefined}
+              >
                 <input
                   type="checkbox"
                   className="mt-0.5 size-4 accent-[#ff3131]"
@@ -164,8 +147,7 @@ export function BuildPlanner() {
                 />
                 <span className="flex flex-col">
                   <span>
-                    {service.required ? "조립 맡기기" : service.name} ·{" "}
-                    <span className="font-mono tabular-nums">{formatPrice(service.price)}</span>
+                    {service.required ? "조립 맡기기" : service.name} · <span className="font-mono tabular-nums">{formatPrice(service.price)}</span>
                   </span>
                   <span className="text-xs text-mute-200">{service.description}</span>
                 </span>
@@ -219,10 +201,20 @@ export function BuildPlanner() {
                 </button>
               </form>
             )}
-            <button type="button" onClick={share} disabled={filled === 0} className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={share}
+              disabled={filled === 0}
+              className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50"
+            >
               견적 주소 복사
             </button>
-            <button type="button" onClick={resetBuild} disabled={filled === 0} className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={resetBuild}
+              disabled={filled === 0}
+              className="min-h-11 rounded-md border border-white/30 text-sm hover:border-white disabled:opacity-50"
+            >
               처음부터
             </button>
           </div>

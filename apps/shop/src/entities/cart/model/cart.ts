@@ -22,9 +22,7 @@ export function addToCart(productId: string, quantity = 1) {
     if (found) {
       // 조립 서비스는 한 번만 담는다.
       if (productId.startsWith("svc-")) return lines;
-      return lines.map((line) =>
-        line.productId === productId ? { ...line, quantity: line.quantity + quantity } : line,
-      );
+      return lines.map((line) => (line.productId === productId ? { ...line, quantity: line.quantity + quantity } : line));
     }
     return [...lines, { productId, quantity }];
   });

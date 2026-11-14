@@ -279,9 +279,18 @@ function psu({ w, body, grille, label }: { w: number; body: string; grille: stri
       {range(7).map((i) => (
         <circle key={i} cx={x + w * 0.5} cy={y + h * 0.5} r={h * 0.06 + i * h * 0.056} fill="none" stroke={grille} strokeWidth={1.1} opacity={0.75} />
       ))}
-      <path d={`M${x + w * 0.5 - h * 0.42} ${y + h * 0.5} h${h * 0.84} M${x + w * 0.5} ${y + h * 0.08} v${h * 0.84}`} stroke={grille} strokeWidth={1.1} opacity={0.6} />
+      <path
+        d={`M${x + w * 0.5 - h * 0.42} ${y + h * 0.5} h${h * 0.84} M${x + w * 0.5} ${y + h * 0.08} v${h * 0.84}`}
+        stroke={grille}
+        strokeWidth={1.1}
+        opacity={0.6}
+      />
       {/* 옆면 라벨 띠 */}
-      <path d={`M${x + w + 2} ${y + 10} L${x + w + 12} ${y} L${x + w + 12} ${y + h * 0.45} L${x + w + 2} ${y + h * 0.55} Z`} fill={label} opacity={0.85} />
+      <path
+        d={`M${x + w + 2} ${y + 10} L${x + w + 12} ${y} L${x + w + 12} ${y + h * 0.45} L${x + w + 2} ${y + h * 0.55} Z`}
+        fill={label}
+        opacity={0.85}
+      />
     </g>
   );
 }
@@ -364,7 +373,13 @@ function dualTower({ fanFrame, fanBlade, fanEdge }: { fanFrame: string; fanBlade
       <Shadow cx={100} cy={176} rx={70} ry={6} />
       {/* 히트파이프 */}
       {range(4).map((i) => (
-        <path key={i} d={`M${62 + i * 6} 150 C ${62 + i * 6} 168, ${132 + i * 6} 168, ${132 + i * 6} 150`} fill="none" stroke="#c98a4b" strokeWidth={3} />
+        <path
+          key={i}
+          d={`M${62 + i * 6} 150 C ${62 + i * 6} 168, ${132 + i * 6} 168, ${132 + i * 6} 150`}
+          fill="none"
+          stroke="#c98a4b"
+          strokeWidth={3}
+        />
       ))}
       {fins(36)}
       {fins(120)}
@@ -383,11 +398,13 @@ export const pcModels: Record<string, () => ReactNode> = {
   "amd-ryzen-5-9600x": () => am5("9600X"),
   "intel-core-ultra-7-265k": lga1851,
   "asus-tuf-gaming-b650-plus": () => board({ pcb: "#16171a", heatsink: "#4a4c52", heatsinkLight: "#c9ccd1", accent: "#d9a441" }),
-  "msi-mag-b650m-mortar-wifi": () => board({ pcb: "#121315", heatsink: "#8c9097", heatsinkLight: "#ffffff", accent: "#5a5e66", matx: true, wifi: true }),
+  "msi-mag-b650m-mortar-wifi": () =>
+    board({ pcb: "#121315", heatsink: "#8c9097", heatsinkLight: "#ffffff", accent: "#5a5e66", matx: true, wifi: true }),
   "asrock-z890-pro-rs": () => board({ pcb: "#141416", heatsink: "#b9bcc2", heatsinkLight: "#ffffff", accent: "#3a3b40" }),
   "samsung-ddr5-5600-32gb-kit": samsungDdr5,
   "gskill-trident-z5-rgb-ddr5-6000-64gb": tridentZ5,
-  "geforce-rtx-5070-ti-16gb": () => card({ shroud: "#1e1f23", trim: "#9aa0a8", fans: 3, length: 184, accent: "#76b900", backplate: "#2b2c31", fanRing: "#3a3b41" }),
+  "geforce-rtx-5070-ti-16gb": () =>
+    card({ shroud: "#1e1f23", trim: "#9aa0a8", fans: 3, length: 184, accent: "#76b900", backplate: "#2b2c31", fanRing: "#3a3b41" }),
   "radeon-rx-9070-xt-16gb": () => card({ shroud: "#18181b", trim: "#c72c2c", fans: 3, length: 190, accent: "#c72c2c", backplate: "#26262a" }),
   "geforce-rtx-5060-8gb": () => card({ shroud: "#2a2b30", trim: "#6c7078", fans: 2, length: 126, accent: "#76b900", backplate: "#202125" }),
   "samsung-990-pro-2tb": () => m2({ base: "#101012", band: "#1c1c20", text: "#e7e7e7" }),

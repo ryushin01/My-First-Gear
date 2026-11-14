@@ -63,38 +63,21 @@ export function ProductBrowser({ categoryId, group }: ProductBrowserProps) {
           <legend className="mono-label mb-2">[Brand]</legend>
           {brandsOf(all).map((brand) => (
             <label key={brand} className="inline-flex min-h-8 cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                className="size-4 accent-[#ff3131]"
-                name="brand"
-                value={brand}
-                defaultChecked={brands.includes(brand)}
-              />
+              <input type="checkbox" className="size-4 accent-[#ff3131]" name="brand" value={brand} defaultChecked={brands.includes(brand)} />
               {brand}
             </label>
           ))}
         </fieldset>
         <div className="flex shrink-0 flex-wrap items-center gap-4">
           <label className="inline-flex min-h-8 cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              className="size-4 accent-[#ff3131]"
-              name="stock"
-              value="1"
-              defaultChecked={inStockOnly}
-            />
+            <input type="checkbox" className="size-4 accent-[#ff3131]" name="stock" value="1" defaultChecked={inStockOnly} />
             품절 상품 빼기
           </label>
           <div className="flex items-center gap-2">
             <label htmlFor={sortId} className="mono-label shrink-0 whitespace-nowrap">
               [Sort]
             </label>
-            <select
-              id={sortId}
-              name="sort"
-              defaultValue={sort}
-              className="min-h-9 rounded-md border border-white/20 bg-ink px-2 text-sm text-cream"
-            >
+            <select id={sortId} name="sort" defaultValue={sort} className="min-h-9 rounded-md border border-white/20 bg-ink px-2 text-sm text-cream">
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -130,14 +113,14 @@ export function ProductBrowserFallback({ categoryId, group }: ProductBrowserProp
   const shown = listProducts({ categoryId, group }, useCatalog());
   return (
     <>
-    <h2 className="sr-only">상품 목록</h2>
-    <ul className="mt-24 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {shown.map((product) => (
-        <li key={product.id}>
-          <ProductCard product={product} />
-        </li>
-      ))}
-    </ul>
+      <h2 className="sr-only">상품 목록</h2>
+      <ul className="mt-24 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {shown.map((product) => (
+          <li key={product.id}>
+            <ProductCard product={product} />
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

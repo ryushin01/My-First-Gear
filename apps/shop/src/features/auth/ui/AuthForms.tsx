@@ -40,8 +40,7 @@ function Feedback({ state, titleId }: { state: AuthState; titleId: string }) {
   );
 }
 
-const submitClass =
-  "min-h-12 rounded-md bg-cream px-6 font-medium text-ink hover:bg-white disabled:cursor-wait disabled:opacity-60";
+const submitClass = "min-h-12 rounded-md bg-cream px-6 font-medium text-ink hover:bg-white disabled:cursor-wait disabled:opacity-60";
 
 export function LoginForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(loginAction, null);
@@ -54,7 +53,15 @@ export function LoginForm({ next }: { next: string }) {
         <Feedback state={state} titleId={titleId} />
       </div>
       <input type="hidden" name="next" value={next} />
-      <TextField id="email" label="이메일" type="email" autoComplete="email" required defaultValue={state?.values?.email} error={state?.errors?.email} />
+      <TextField
+        id="email"
+        label="이메일"
+        type="email"
+        autoComplete="email"
+        required
+        defaultValue={state?.values?.email}
+        error={state?.errors?.email}
+      />
       <TextField id="password" label="비밀번호" type="password" autoComplete="current-password" required error={state?.errors?.password} />
       <p className="text-sm text-mute-200">
         데모 계정: <code className="font-mono text-cream">demo@myfirstgear.dev</code> / <code className="font-mono text-cream">demo1234</code>
@@ -85,7 +92,15 @@ export function SignupForm({ next }: { next: string }) {
       </div>
       <input type="hidden" name="next" value={next} />
       <TextField id="name" label="이름" autoComplete="name" maxLength={20} required defaultValue={state?.values?.name} error={state?.errors?.name} />
-      <TextField id="email" label="이메일" type="email" autoComplete="email" required defaultValue={state?.values?.email} error={state?.errors?.email} />
+      <TextField
+        id="email"
+        label="이메일"
+        type="email"
+        autoComplete="email"
+        required
+        defaultValue={state?.values?.email}
+        error={state?.errors?.email}
+      />
       <TextField
         id="password"
         label="비밀번호"

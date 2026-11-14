@@ -21,23 +21,8 @@ export function GearArt({ art, label, ...props }: GearArtProps) {
   const a11y = label ? { role: "img", "aria-label": label } : { "aria-hidden": true };
 
   return (
-    <svg
-      viewBox="0 0 200 200"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...a11y}
-      {...props}
-    >
-      {model ? (
-        <g stroke="none">{model()}</g>
-      ) : draw ? (
-        draw(art.accent, art.variant)
-      ) : (
-        <rect x="40" y="40" width="120" height="120" rx="8" />
-      )}
+    <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...a11y} {...props}>
+      {model ? <g stroke="none">{model()}</g> : draw ? draw(art.accent, art.variant) : <rect x="40" y="40" width="120" height="120" rx="8" />}
     </svg>
   );
 }

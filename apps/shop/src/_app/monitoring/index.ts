@@ -93,9 +93,7 @@ export function reportMetric(metric: Metric) {
   }
   if (!sentry || metric.rating !== "poor") return;
   // CLS·INP는 다른 화면으로 옮긴 뒤에 알려질 수 있어, 지표가 속한 쪽의 주소를 씁니다.
-  const path = metric.navigationURL
-    ? new URL(metric.navigationURL, location.origin).pathname
-    : location.pathname;
+  const path = metric.navigationURL ? new URL(metric.navigationURL, location.origin).pathname : location.pathname;
   void sentry.then((Sentry) =>
     Sentry?.captureMessage(`Web Vitals 나쁨: ${metric.name}`, {
       level: "warning",
@@ -132,10 +130,7 @@ function captureUnhandled(Sentry: SentryModule, error: unknown, type: string) {
  */
 function afterFirstPaint(): Promise<void> {
   return new Promise((resolve) => {
-    const idle = () =>
-      "requestIdleCallback" in window
-        ? window.requestIdleCallback(() => resolve(), { timeout: 3000 })
-        : setTimeout(resolve, 0);
+    const idle = () => ("requestIdleCallback" in window ? window.requestIdleCallback(() => resolve(), { timeout: 3000 }) : setTimeout(resolve, 0));
     if (document.readyState === "complete") idle();
     else {
       // 끝나지 않는 요청(스트림, 멈춘 이미지 등)이 load를 붙잡아도 10초가 지나면 바로 받기 시작합니다.

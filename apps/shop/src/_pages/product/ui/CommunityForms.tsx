@@ -27,8 +27,7 @@ function Status({ state }: { state: CommunityState }) {
   );
 }
 
-const textareaClass =
-  "min-h-24 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-cream aria-[invalid=true]:border-brand";
+const textareaClass = "min-h-24 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-cream aria-[invalid=true]:border-brand";
 const buttonClass = "min-h-11 w-fit rounded-md border border-white/30 px-4 text-sm hover:border-white disabled:opacity-60";
 
 export function ReviewForm({ productId }: { productId: string }) {
@@ -59,7 +58,14 @@ export function ReviewForm({ productId }: { productId: string }) {
       <label htmlFor={`${id}-body`} className="text-sm">
         후기 내용
       </label>
-      <textarea id={`${id}-body`} name="body" defaultValue={state?.values?.body} maxLength={1000} className={textareaClass} aria-invalid={state?.field === "body" || undefined} />
+      <textarea
+        id={`${id}-body`}
+        name="body"
+        defaultValue={state?.values?.body}
+        maxLength={1000}
+        className={textareaClass}
+        aria-invalid={state?.field === "body" || undefined}
+      />
       <button type="submit" disabled={pending} className={buttonClass}>
         {pending ? "등록 중…" : "후기 등록"}
       </button>
@@ -85,7 +91,14 @@ export function QuestionForm({ productId }: { productId: string }) {
       <label htmlFor={`${id}-q`} className="text-sm">
         상품 질문
       </label>
-      <textarea id={`${id}-q`} name="body" defaultValue={state?.values?.body} maxLength={1000} className={textareaClass} aria-invalid={state?.field === "body" || undefined} />
+      <textarea
+        id={`${id}-q`}
+        name="body"
+        defaultValue={state?.values?.body}
+        maxLength={1000}
+        className={textareaClass}
+        aria-invalid={state?.field === "body" || undefined}
+      />
       <button type="submit" disabled={pending} className={buttonClass}>
         {pending ? "등록 중…" : "질문 등록"}
       </button>

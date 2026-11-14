@@ -30,7 +30,16 @@ function indices(cx: number, cy: number, r: number, color: string, arabic: boole
   return (
     <g>
       {range(60).map((i) => (
-        <rect key={`m${i}`} x={cx - 0.5} y={cy - r} width={1} height={i % 5 === 0 ? 0 : 3} fill={color} opacity={0.7} transform={`rotate(${i * 6} ${cx} ${cy})`} />
+        <rect
+          key={`m${i}`}
+          x={cx - 0.5}
+          y={cy - r}
+          width={1}
+          height={i % 5 === 0 ? 0 : 3}
+          fill={color}
+          opacity={0.7}
+          transform={`rotate(${i * 6} ${cx} ${cy})`}
+        />
       ))}
       {range(12).map((i) =>
         arabic && i % 3 === 0 ? null : (
@@ -38,7 +47,10 @@ function indices(cx: number, cy: number, r: number, color: string, arabic: boole
         ),
       )}
       {/* 3·6·9·12 자리를 굵은 사각 인덱스로 */}
-      {arabic && range(4).map((i) => <rect key={`q${i}`} x={cx - 3.5} y={cy - r + 2} width={7} height={11} rx={1} fill={color} transform={`rotate(${i * 90} ${cx} ${cy})`} />)}
+      {arabic &&
+        range(4).map((i) => (
+          <rect key={`q${i}`} x={cx - 3.5} y={cy - r + 2} width={7} height={11} rx={1} fill={color} transform={`rotate(${i * 90} ${cx} ${cy})`} />
+        ))}
     </g>
   );
 }
@@ -89,7 +101,15 @@ function sinn104(): ReactNode {
       ))}
       <circle cx={cx} cy={cy} r={44} fill="#17191d" />
       {range(60).map((i) => (
-        <rect key={`b${i}`} x={cx - (i % 5 === 0 ? 1.4 : 0.6)} y={cy - 44} width={i % 5 === 0 ? 2.8 : 1.2} height={i % 5 === 0 ? 6 : 3} fill="#e9e9e6" transform={`rotate(${i * 6} ${cx} ${cy})`} />
+        <rect
+          key={`b${i}`}
+          x={cx - (i % 5 === 0 ? 1.4 : 0.6)}
+          y={cy - 44}
+          width={i % 5 === 0 ? 2.8 : 1.2}
+          height={i % 5 === 0 ? 6 : 3}
+          fill="#e9e9e6"
+          transform={`rotate(${i * 6} ${cx} ${cy})`}
+        />
       ))}
       <path d={`M${cx} ${cy - 43} l-4 7 h8 Z`} fill="#e8463b" />
       <rect x={146} y={94} width={8} height={12} rx={2} fill="#b9bdc3" />

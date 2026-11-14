@@ -4,8 +4,7 @@ type SentryEvent = { exception?: { values?: { mechanism?: unknown }[] } };
 type EventProcessor = (event: SentryEvent) => SentryEvent;
 
 const sentry = vi.hoisted(() => {
-  
-  const processors: (EventProcessor)[] = [];
+  const processors: EventProcessor[] = [];
   return {
     processors,
     init: vi.fn(),
