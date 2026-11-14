@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.10.4-ff3131)
+![version](https://img.shields.io/badge/version-0.10.5-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -13,7 +13,7 @@
 
 | 홈 (VHS 테이프 캐러셀) | 게이밍 모니터 존 |
 |---|---|
-| ![브라운관 화면 안에 VHS 표지처럼 꾸민 AMD 라이젠 7 9800X3D 그림이 가운데 놓이고 양옆에 시계, 그래픽카드 테이프가 보이는 캐러셀](docs/images/shop-home.jpg) | ![49인치 곡면 오디세이 OLED G9, 평면 32인치, 삼각대 받침 27인치, 곡면 34인치 모니터 그림이 놓인 상품 카드 네 장](docs/images/shop-monitors.jpg) |
+| ![브라운관 화면 안에 VHS 표지처럼 꾸민 AMD 라이젠 7 9800X3D 그림이 가운데 놓이고 양옆에 KEF 스피커, 그래픽카드, 안텍 토크 테이프가 보이는 캐러셀](docs/images/shop-home.jpg) | ![49인치 곡면 오디세이 OLED G9, 평면 32인치, 삼각대 받침 27인치, 곡면 34인치 모니터 그림이 놓인 상품 카드 네 장](docs/images/shop-monitors.jpg) |
 
 | PC 견적 | 예산별 빠른 견적 |
 |---|---|
@@ -25,7 +25,7 @@
 
 | 마이페이지 | 상품 후기·Q&A |
 |---|---|
-| ![김기어님의 채널 화면: 회원 주문 내역, 저장한 PC 견적과 불러오기·삭제 버튼](docs/images/shop-my.jpg) | ![별점과 가린 작성자 이름이 붙은 후기 목록과 상품 질문 입력 칸](docs/images/shop-community.jpg) |
+| ![김기어님의 채널 화면: 회원 주문 내역과 주문 취소 버튼, 저장한 PC 견적과 불러오기·삭제 버튼](docs/images/shop-my.jpg) | ![안텍 토크 사양 표 아래, 별점과 가린 작성자 이름이 붙은 후기와 그래픽카드 450mm까지 들어간다는 답변이 달린 상품 질문, 후기·질문 입력 칸](docs/images/shop-community.jpg) |
 
 | 어드민 대시보드 (Bulma) | 어드민 판매 정보 |
 |---|---|
@@ -33,7 +33,7 @@
 
 | 홈 조립 장면 (스크롤 고정) | 모바일 조립 장면 |
 |---|---|
-| ![화면을 고정한 채 스크롤하면 메인보드, i9 CPU, DDR5 메모리 네 개, NVMe SSD 세 개, 360mm 수랭 쿨러, 세로 장착 RTX 3090, 1200W 파워가 차례로 날아와 흰색 오픈 프레임 케이스 안에 조립된 모습과 네 단계 설명](docs/images/shop-assembly.jpg) | <img src="docs/images/mobile-assembly.jpg" alt="모바일에서 단계 설명이 하나씩 바뀌고 아래에 조립이 끝난 흰색 오픈 프레임 PC 그림이 보이는 화면" width="240"> |
+| ![화면을 고정한 채 스크롤하면 메인보드, i9 CPU, DDR5 메모리 네 개, NVMe SSD 세 개와 M.2 방열판, 위 판을 따라 기운 360mm 수랭 쿨러, 세로 장착 RTX 3090, 1200W 파워가 차례로 날아와 앞으로 기운 흰색 안텍 토크 케이스 안에 조립된 모습과 네 단계 설명](docs/images/shop-assembly.jpg) | <img src="docs/images/mobile-assembly.jpg" alt="모바일 화면 속 조립이 끝난 앞으로 기운 흰색 안텍 토크 케이스와 그 아래 PC 견적 안내" width="240"> |
 
 | 모바일 홈 | 어드민 문의 답변 |
 |---|---|
