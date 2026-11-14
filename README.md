@@ -128,6 +128,7 @@ packages/
 
 | 자료 | 저작자 | 사용 허락 | 원본 |
 |---|---|---|---|
+| 트로피 아이콘 (두 앱의 파비콘·홈 화면 아이콘·머리글 로고) | Slidicon | Flaticon 무료 라이선스(저작자 표기 조건) | [Flaticon "Trophy"](https://www.flaticon.com/free-icon/trophy_3865212) — [Trophy icons created by Slidicon - Flaticon](https://www.flaticon.com/free-icons/trophy) |
 | VT323 (영문 큰 제목) | Peter Hull | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/VT323) |
 | Black And White Picture (한글 큰 제목) | AsiaSoft Inc. | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Black+And+White+Picture) |
 | Gothic A1 (본문) | HanYang I&C Co | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Gothic+A1) |
