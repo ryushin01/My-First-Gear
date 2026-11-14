@@ -6,14 +6,14 @@ import {
 } from "next/font/google";
 
 /** 큰 제목의 영문: 브라운관 픽셀 글꼴 */
-export const displayEn = VT323({
+const displayEn = VT323({
   weight: "400",
   subsets: ["latin"],
   variable: "--ff-display-en",
 });
 
 /** 큰 제목의 한글: 흑백 영화 자막 같은 블랙 앤 화이트 픽처 */
-export const displayKo = Black_And_White_Picture({
+const displayKo = Black_And_White_Picture({
   weight: "400",
   subsets: ["latin"],
   variable: "--ff-display-ko",
@@ -21,7 +21,7 @@ export const displayKo = Black_And_White_Picture({
 });
 
 /** 본문 */
-export const sans = Gothic_A1({
+const sans = Gothic_A1({
   weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--ff-sans",
@@ -29,7 +29,7 @@ export const sans = Gothic_A1({
 });
 
 /** 라벨과 견적 금액: 모니터 글씨 같은 고정폭 */
-export const mono = Nanum_Gothic_Coding({
+const mono = Nanum_Gothic_Coding({
   weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--ff-mono",

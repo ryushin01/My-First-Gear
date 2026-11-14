@@ -3,7 +3,7 @@ import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { Db } from "./client";
 import { orders, users } from "./schema";
 
-export type User = typeof users.$inferSelect;
+type User = typeof users.$inferSelect;
 export type PublicUser = Pick<User, "id" | "email" | "name">;
 
 export class AuthError extends Error {}

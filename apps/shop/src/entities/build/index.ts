@@ -9,5 +9,4 @@ export {
   toggleService,
   useBuildState,
 } from "./model/build";
-export type { BuildState } from "./model/build";
 export { decodeBuild, encodeBuild } from "./model/codec";

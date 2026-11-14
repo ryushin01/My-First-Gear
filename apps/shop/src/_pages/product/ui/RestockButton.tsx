@@ -7,7 +7,7 @@ import { useMemberName } from "@/entities/member";
 import { useSubmitLock } from "@/shared/lib";
 import { getRestockAction, toggleRestockAction } from "../api/restockActions";
 
-/** 품절 상품의 재입고 알림 신청 (상태는 aria-pressed로 알린다) */
+/** 품절 상품의 재입고 알림 신청. 토글 버튼이라 상태는 aria-pressed로 알리고, 버튼 이름은 그대로 둔다. */
 export function RestockButton({ productId }: { productId: string }) {
   const name = useMemberName();
   const pathname = usePathname();
@@ -49,7 +49,8 @@ export function RestockButton({ productId }: { productId: string }) {
         }}
         className="min-h-12 rounded-md border border-cream px-6 font-medium hover:bg-cream hover:text-ink aria-pressed:bg-cream aria-pressed:text-ink disabled:opacity-60"
       >
-        {on ? "재입고 알림 신청됨" : "재입고 알림 신청"}
+        {/* 상태는 aria-pressed로 알리므로 이름은 바꾸지 않는다. 눈으로는 채운 배경과 ✓로 구분한다. */}
+        <span aria-hidden="true">{on ? "✓ " : ""}</span>재입고 알림 신청
       </button>
       <p role="status" className="min-h-5 text-sm text-mute-100">
         {message}

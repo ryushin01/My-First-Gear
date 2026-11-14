@@ -52,3 +52,5 @@ playwright-report/
 
 # local database (PGlite)
 .local-db/
+.lighthouseci
+!.env.example

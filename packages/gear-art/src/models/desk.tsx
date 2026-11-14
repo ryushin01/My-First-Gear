@@ -344,6 +344,7 @@ function mouse({
   side,
   rgb,
   wheel = "#2b2b2f",
+  ambi,
 }: {
   body: string;
   shine?: number;
@@ -351,6 +352,8 @@ function mouse({
   side?: string;
   rgb?: boolean;
   wheel?: string;
+  /** 좌우 양쪽에 옆 버튼이 있는 양손 마우스 */
+  ambi?: boolean;
 }): ReactNode {
   const outline = {
     sym: "M100 26 C 130 26, 140 56, 140 96 C 140 140, 126 172, 100 172 C 74 172, 60 140, 60 96 C 60 56, 70 26, 100 26 Z",
@@ -385,6 +388,8 @@ function mouse({
         <g>
           <rect x={56} y={92} width={6} height={14} rx={2} fill={side} />
           <rect x={56} y={110} width={6} height={14} rx={2} fill={side} />
+          {ambi && <rect x={138} y={92} width={6} height={14} rx={2} fill={side} />}
+          {ambi && <rect x={138} y={110} width={6} height={14} rx={2} fill={side} />}
         </g>
       )}
       {shape === "g502" && (
@@ -417,6 +422,11 @@ function keyboard({
   accentKeys = [],
   thin,
   knob,
+  leds,
+  round,
+  halfFn,
+  touchId,
+  hhkb,
 }: {
   cols: number;
   rows?: number;
@@ -430,6 +440,16 @@ function keyboard({
   accentKeys?: number[];
   thin?: boolean;
   knob?: string;
+  /** 오른쪽 위 표시등 색 (리얼포스 등) */
+  leds?: string;
+  /** 오목하게 파인 둥근 키 (MX Keys) */
+  round?: boolean;
+  /** 높이가 반인 기능키 줄 (애플 매직 키보드) */
+  halfFn?: boolean;
+  /** 오른쪽 위 Touch ID 키 */
+  touchId?: boolean;
+  /** 해피해킹 배열: 맨 아랫줄 양 끝이 비어 있다 */
+  hhkb?: boolean;
 }): ReactNode {
   const keyW = numpad ? 8.2 : nav ? 9.4 : 10.4;
   const gap = 1.2;
@@ -443,13 +463,14 @@ function keyboard({
   const y0 = 100 - (allRows * (kh + gap)) / 2;
   const h = allRows * (kh + gap) + 10;
   let n = 0;
-  const key = (x: number, y: number, w: number, isMod: boolean) => {
+  const key = (x: number, y: number, w: number, isMod: boolean, keyH = kh) => {
     const idx = n++;
     const fill = accent && accentKeys.includes(idx) ? accent : isMod ? mod : cap;
     return (
       <g key={idx}>
-        <rect x={x} y={y} width={w} height={kh} rx={thin ? 1 : 1.6} fill={fill} />
-        {!thin && <rect x={x + 0.8} y={y + 0.6} width={w - 1.6} height={kh * 0.55} rx={1.2} fill="#ffffff" opacity={0.18} />}
+        <rect x={x} y={y} width={w} height={keyH} rx={thin ? 1 : 1.6} fill={fill} />
+        {!thin && <rect x={x + 0.8} y={y + 0.6} width={w - 1.6} height={keyH * 0.55} rx={1.2} fill="#ffffff" opacity={0.18} />}
+        {round && <ellipse cx={x + w / 2} cy={y + keyH / 2} rx={Math.min(w, 9) * 0.36} ry={keyH * 0.32} fill="#000" opacity={0.22} />}
       </g>
     );
   };
@@ -457,7 +478,28 @@ function keyboard({
   for (let r = 0; r < allRows; r++) {
     const y = y0 + r * (kh + gap);
     const last = r === allRows - 1;
-    if (last) {
+    if (last && hhkb) {
+      // 빈칸 · Alt · ◆ · 스페이스 · ◆ · Alt · 빈칸
+      const side = keyW * 1.5 + gap;
+      const m = keyW * 1.2;
+      let x = x0 + 6 + side;
+      keys.push(key(x, y, m, true));
+      x += m + gap;
+      keys.push(key(x, y, m, true));
+      x += m + gap;
+      const space = mainW - 2 * side - 4 * (m + gap) - gap;
+      keys.push(key(x, y, space, false));
+      x += space + gap;
+      keys.push(key(x, y, m, true));
+      x += m + gap;
+      keys.push(key(x, y, m, true));
+    } else if (fn && halfFn && r === 0) {
+      for (let c = 0; c < cols; c++) keys.push(key(x0 + 6 + c * (keyW + gap), y + kh / 2, keyW, c === 0, kh / 2));
+      if (touchId)
+        keys.push(
+          <circle key="touch-id" cx={x0 + 6 + (cols - 1) * (keyW + gap) + keyW / 2} cy={y + kh * 0.75} r={kh * 0.18} fill="none" stroke="#9a9ea5" strokeWidth={0.8} />,
+        );
+    } else if (last) {
       keys.push(key(x0 + 6, y, keyW * 1.3, true));
       keys.push(key(x0 + 6 + keyW * 1.3 + gap, y, keyW * 1.3, true));
       keys.push(key(x0 + 6 + 2 * (keyW * 1.3 + gap), y, mainW - 4 * (keyW * 1.3 + gap) - gap, false));
@@ -487,6 +529,7 @@ function keyboard({
       <rect x={x0} y={y0 - 6} width={total} height={3} rx={2} fill="#ffffff" opacity={0.2} />
       {keys}
       {knob && <circle cx={x0 + total - 10} cy={y0 - 1} r={4.5} fill={knob} stroke="#000" strokeOpacity={0.3} />}
+      {leds && [0, 1, 2].map((i) => <circle key={`led${i}`} cx={x0 + total - 22 + i * 6} cy={y0 - 2.5} r={1.3} fill={leds} opacity={i === 0 ? 1 : 0.35} />)}
     </g>
   );
 }
@@ -772,11 +815,18 @@ export const deskModels: Record<string, () => ReactNode> = {
   "logitech-g-pro-x-superlight-2": () => mouse({ body: "#1d1d20", shape: "sym", side: "#2b2b2f" }),
   "logitech-mx-master-3s": () => mouse({ body: "#3a3c42", shape: "master", wheel: "#8d9097" }),
   "logitech-g502-x-plus": () => mouse({ body: "#1b1b1d", shape: "g502", side: "#2b2b2f", rgb: true }),
+  "logitech-g903-hero": () => mouse({ body: "#1b1b1d", shape: "sym", side: "#3a3b40", wheel: "#8d9097", ambi: true }),
   "razer-viper-v2-pro": () => mouse({ body: "#efefed", shine: 0.35, shape: "sym", side: "#d9d9d6", wheel: "#c9c9c6" }),
   "razer-deathadder-v3-pro": () => mouse({ body: "#18181a", shape: "ergo", side: "#2b2b2f" }),
 
   "logitech-g-pro-x-tkl-rapid": () => keyboard({ cols: 13, nav: true, body: "#1b1b1d", cap: "#2a2b2f", mod: "#222326", knob: "#3a3b40" }),
   "nuphy-air75-v3": () => keyboard({ cols: 14, body: "#c9ccd1", cap: "#e9e9e6", mod: "#8d9097", accent: "#ff7a1a", accentKeys: [0, 13, 70], thin: true, knob: "#ff7a1a" }),
+  "realforce-r3-tkl": () => keyboard({ cols: 13, nav: true, body: "#1a1a1c", cap: "#2b2c30", mod: "#232427", leds: "#3ddc84" }),
+  "hhkb-professional-hybrid-type-s-snow": () => keyboard({ cols: 15, fn: false, body: "#d6d6cf", cap: "#fbfbf8", mod: "#ecece5", hhkb: true }),
+  "leopold-fc750r-pd": () => keyboard({ cols: 13, nav: true, body: "#4a4c52", cap: "#c9cbcf", mod: "#5b6f8a", accent: "#c4302b", accentKeys: [0] }),
+  "logitech-mx-keys-s": () => keyboard({ cols: 12, nav: true, numpad: true, thin: true, round: true, body: "#3a3c42", cap: "#232427", mod: "#232427" }),
+  "apple-magic-keyboard-touch-id": () =>
+    keyboard({ cols: 14, thin: true, halfFn: true, touchId: true, body: "#d9dbdf", cap: "#f8f8f6", mod: "#f8f8f6" }),
   "leopold-fc660mbt": () => keyboard({ cols: 15, fn: false, body: "#3a3b40", cap: "#dcd9d2", mod: "#9c9a94", accent: "#c4302b", accentKeys: [0] }),
   "corsair-k70-rgb-pro": () => keyboard({ cols: 12, nav: true, numpad: true, body: "#d9dbdf", cap: "#f4f4f2", mod: "#e1e2e4", knob: "#9aa0a6" }),
 
