@@ -15,9 +15,10 @@ export default defineConfig({
       rgb: { red: "#ff2846", blue: "#2896ff" },
     },
     font: {
-      display: "var(--ff-display-en), var(--ff-display-ko), 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
-      mono: "var(--ff-mono), ui-monospace, Menlo, Consolas, monospace",
-      sans: "var(--ff-sans), 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif",
+      // 대체 글꼴: 브라운관 화면 글씨처럼 영문은 고정폭 타자기 글꼴(Courier New), 한글은 운영체제 고딕
+      display: "var(--ff-display-en), var(--ff-display-ko), 'Courier New', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', monospace",
+      mono: "var(--ff-mono), ui-monospace, 'SF Mono', Menlo, Consolas, D2Coding, monospace",
+      sans: "var(--ff-sans), 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', system-ui, sans-serif",
     },
   },
   shortcuts: {

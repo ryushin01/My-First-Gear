@@ -28,7 +28,7 @@ body {
   padding: var(--edge);
   background: var(--ink-deep);
   color: var(--cream);
-  font-family: var(--ff-sans), "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  font-family: var(--ff-sans), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   word-break: keep-all;
   overflow-wrap: anywhere;

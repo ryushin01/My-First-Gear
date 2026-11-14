@@ -1,8 +1,12 @@
 # 버전 기록
 
-## 0.10.2 - 2026-11-14
+## 0.10.3 - 2026-11-14
 
 - 서식: Prettier 3 도입(`printWidth` 150, 마크다운·lockfile·drizzle 스냅숏 제외), `pnpm format` / `format:check` 명령과 CI 서식 검사 추가, 저장소 전체 코드에 적용
+
+## 0.10.2 - 2026-11-14
+
+- 대체 글꼴: 큰 제목 영문은 Courier New(브라운관 화면 글씨), 라벨은 SF Mono·Menlo·Consolas·D2Coding, 한글은 Noto Sans CJK KR까지 이음
 
 ## 0.10.1 - 2026-11-14
 
