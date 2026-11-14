@@ -92,7 +92,7 @@ test("회원 주문, 견적 저장, 1:1 문의가 마이페이지에 모인다",
 test("로그인하지 않으면 후기·질문 대신 로그인 안내를 보여 준다", async ({ page }) => {
   await page.goto("/product/antec-torque");
   await expect(page.getByText("부품이 다 보여서 책상 위 오브제가 됐습니다.")).toBeVisible();
-  await expect(page.getByText(/330mm까지 장착할 수 있어/)).toBeVisible();
+  await expect(page.getByText(/450mm까지 장착할 수 있어/)).toBeVisible();
   await expect(page.getByRole("button", { name: "후기 등록" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "로그인" }).nth(1)).toBeVisible();
 });

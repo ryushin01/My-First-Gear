@@ -30,7 +30,7 @@ export const SEED_QUESTIONS = [
     productId: "p-case-001",
     userId: 3,
     body: "RTX 5070 Ti도 들어가나요?",
-    answer: "네, 그래픽카드 길이 330mm까지 장착할 수 있어 304mm인 RTX 5070 Ti는 들어갑니다.",
+    answer: "네, 그래픽카드 길이 450mm까지 장착할 수 있어 304mm인 RTX 5070 Ti는 넉넉히 들어갑니다.",
   },
   { productId: "p-gpu-001", userId: 2, body: "750W 파워로 충분할까요?", answer: null },
 ];

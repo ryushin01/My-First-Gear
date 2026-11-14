@@ -123,7 +123,7 @@ describe("후기·Q&A·문의", () => {
 
   it("질문과 1:1 문의에 답변한다", async () => {
     await createQuestion(db, { productId: "p-ssd-001", userId: 1, body: "방열판 있나요?" });
-    expect((await listQuestions(db, "p-case-001"))[0].answer).toContain("330mm");
+    expect((await listQuestions(db, "p-case-001"))[0].answer).toContain("450mm");
     const inquiry = await createInquiry(db, { userId: 1, category: "delivery", title: "배송 문의", body: "언제 오나요?" });
     await answerInquiry(db, inquiry.id, "내일 도착합니다.");
     expect((await listInquiriesByUser(db, 1))[0].answer).toBe("내일 도착합니다.");

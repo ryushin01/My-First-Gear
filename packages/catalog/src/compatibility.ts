@@ -39,7 +39,7 @@ export function recommendedWatts(build: Build): number {
   return Math.ceil((estimateWatts(build) * 1.4) / 50) * 50;
 }
 
-const boardLabel = { ATX: "ATX", mATX: "M-ATX", ITX: "ITX" } as const;
+const boardLabel = { "E-ATX": "E-ATX", ATX: "ATX", mATX: "M-ATX", ITX: "ITX" } as const;
 
 export function checkBuild(build: Build): BuildIssue[] {
   const issues: BuildIssue[] = [];

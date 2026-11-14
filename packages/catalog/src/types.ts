@@ -87,7 +87,7 @@ export type CategoryGroup = {
 
 export type Socket = "AM5" | "LGA1851";
 export type MemoryType = "DDR5";
-export type BoardFormFactor = "ATX" | "mATX" | "ITX";
+export type BoardFormFactor = "E-ATX" | "ATX" | "mATX" | "ITX";
 export type PsuFormFactor = "ATX" | "SFX";
 
 /** PC 견적에서 호환성을 따질 때 쓰는 부품 값 */
