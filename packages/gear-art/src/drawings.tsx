@@ -81,12 +81,7 @@ const gpu: Drawing = (a, v) => {
             <circle cx={cx} cy="98" r="26" />
             <circle cx={cx} cy="98" r="7" fill={a} stroke={a} />
             {range(7).map((b) => (
-              <path
-                key={b}
-                d={`M${cx} 98 q 10 -8 0 -22`}
-                transform={`rotate(${b * (360 / 7)} ${cx} 98)`}
-                strokeWidth="1.5"
-              />
+              <path key={b} d={`M${cx} 98 q 10 -8 0 -22`} transform={`rotate(${b * (360 / 7)} ${cx} 98)`} strokeWidth="1.5" />
             ))}
           </g>
         );
@@ -152,13 +147,11 @@ const pcCase: Drawing = (a, v) => {
   return (
     <>
       <rect x={x} y={y} width={w} height={h} rx="6" />
-      {v === "wood"
-        ? range(9).map((i) => (
-            <path key={i} d={`M${x + 10 + i * 9} ${y + 10} v${h - 20}`} stroke={a} strokeWidth="5" strokeOpacity="0.55" />
-          ))
-        : (
-          <rect x={x + 10} y={y + 10} width={w - 20} height={h - 20} rx="3" fill={a} fillOpacity="0.12" stroke={a} />
-        )}
+      {v === "wood" ? (
+        range(9).map((i) => <path key={i} d={`M${x + 10 + i * 9} ${y + 10} v${h - 20}`} stroke={a} strokeWidth="5" strokeOpacity="0.55" />)
+      ) : (
+        <rect x={x + 10} y={y + 10} width={w - 20} height={h - 20} rx="3" fill={a} fillOpacity="0.12" stroke={a} />
+      )}
       <circle cx={x + w - 14} cy={y + 8} r="2.5" fill="currentColor" stroke="none" />
       <path d={`M${x + 8} ${y + h} v8 M${x + w - 8} ${y + h} v8`} />
     </>
@@ -242,15 +235,15 @@ const dap: Drawing = (a, v) => {
     );
   }
   return (
-  <>
-    <path d="M62 26 h66 l10 10 v134 l-8 8 h-68 l-8 -8 v-136 z" />
-    <rect x="66" y="36" width="64" height="96" rx="2" fill={a} fillOpacity="0.18" stroke={a} />
-    <path d="M140 60 l10 -6 v40 l-10 -6" />
-    <circle cx="74" cy="152" r="4" />
-    <circle cx="90" cy="152" r="5" />
-    <path d="M110 150 h20" />
-    <path d="M78 110 q 20 -40 40 -10" stroke={a} strokeWidth="1.2" />
-  </>
+    <>
+      <path d="M62 26 h66 l10 10 v134 l-8 8 h-68 l-8 -8 v-136 z" />
+      <rect x="66" y="36" width="64" height="96" rx="2" fill={a} fillOpacity="0.18" stroke={a} />
+      <path d="M140 60 l10 -6 v40 l-10 -6" />
+      <circle cx="74" cy="152" r="4" />
+      <circle cx="90" cy="152" r="5" />
+      <path d="M110 150 h20" />
+      <path d="M78 110 q 20 -40 40 -10" stroke={a} strokeWidth="1.2" />
+    </>
   );
 };
 
@@ -289,9 +282,11 @@ const headphone: Drawing = (a, v) => (
     {[38, 162].map((cx) => (
       <g key={cx}>
         <rect x={cx - 18} y="104" width="36" height="58" rx="16" />
-        {v === "open"
-          ? range(5).map((i) => <path key={i} d={`M${cx - 10} ${116 + i * 8} h20`} stroke={a} strokeWidth="1.5" />)
-          : <rect x={cx - 11} y="114" width="22" height="38" rx="10" fill={a} fillOpacity="0.28" stroke={a} />}
+        {v === "open" ? (
+          range(5).map((i) => <path key={i} d={`M${cx - 10} ${116 + i * 8} h20`} stroke={a} strokeWidth="1.5" />)
+        ) : (
+          <rect x={cx - 11} y="114" width="22" height="38" rx="10" fill={a} fillOpacity="0.28" stroke={a} />
+        )}
       </g>
     ))}
   </>
@@ -317,7 +312,12 @@ const consoleDrawing: Drawing = (a, v) => {
       <circle cx="35" cy="80" r="6" />
       <circle cx="165" cy="108" r="6" />
       <path d="M30 108 h10 M35 103 v10" />
-      {[[160, 76], [170, 84], [160, 92], [150, 84]].map(([cx, cy]) => (
+      {[
+        [160, 76],
+        [170, 84],
+        [160, 92],
+        [150, 84],
+      ].map(([cx, cy]) => (
         <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2.5" />
       ))}
     </>
@@ -344,13 +344,7 @@ const motorcycle: Drawing = (a) => (
     <circle cx="156" cy="136" r="30" />
     <circle cx="46" cy="136" r="12" strokeWidth="1.5" />
     <circle cx="156" cy="136" r="12" strokeWidth="1.5" />
-    <path
-      d="M46 136 L82 96 L124 92 L146 70 L170 76 L166 98 L156 136"
-      fill={a}
-      fillOpacity="0.22"
-      stroke={a}
-      strokeLinejoin="round"
-    />
+    <path d="M46 136 L82 96 L124 92 L146 70 L170 76 L166 98 L156 136" fill={a} fillOpacity="0.22" stroke={a} strokeLinejoin="round" />
     <path d="M66 86 L104 74 L136 80" strokeWidth="3" />
     <path d="M146 70 L140 58 L160 60" />
     <path d="M90 104 h30 v18 h-30 z" strokeWidth="1.5" />
@@ -362,13 +356,7 @@ const car: Drawing = (a, v) => {
   if (v === "supercar") {
     return (
       <>
-        <path
-          d="M14 128 L30 108 L86 96 L118 76 L150 80 L186 106 L188 128 Z"
-          fill={a}
-          fillOpacity="0.22"
-          stroke={a}
-          strokeLinejoin="round"
-        />
+        <path d="M14 128 L30 108 L86 96 L118 76 L150 80 L186 106 L188 128 Z" fill={a} fillOpacity="0.22" stroke={a} strokeLinejoin="round" />
         <path d="M92 96 L120 82 L144 86 L160 102 Z" strokeWidth="1.5" />
         <path d="M30 116 L64 112 M150 112 L176 114" strokeWidth="1.5" />
         <circle cx="52" cy="130" r="18" />
@@ -381,13 +369,7 @@ const car: Drawing = (a, v) => {
   }
   return (
     <>
-      <path
-        d="M12 128 L16 108 L48 102 L76 78 L136 78 L162 102 L188 108 L190 128 Z"
-        fill={a}
-        fillOpacity="0.18"
-        stroke={a}
-        strokeLinejoin="round"
-      />
+      <path d="M12 128 L16 108 L48 102 L76 78 L136 78 L162 102 L188 108 L190 128 Z" fill={a} fillOpacity="0.18" stroke={a} strokeLinejoin="round" />
       <path d="M58 102 L80 84 h28 v18 Z M114 84 h20 l18 18 h-38 Z" strokeWidth="1.5" />
       <path d="M12 116 h14 M176 116 h14" strokeWidth="3" />
       <circle cx="50" cy="130" r="17" />
@@ -475,7 +457,9 @@ const speaker: Drawing = (a) => (
 const microphone: Drawing = (a) => (
   <>
     <rect x="80" y="30" width="40" height="80" rx="20" />
-    {range(5).map((i) => <path key={i} d={`M84 ${48 + i * 10} h32`} strokeWidth="1" />)}
+    {range(5).map((i) => (
+      <path key={i} d={`M84 ${48 + i * 10} h32`} strokeWidth="1" />
+    ))}
     <path d="M70 92 C 70 124, 130 124, 130 92 M100 118 V156 M76 162 h48" />
     <circle cx="100" cy="102" r="3" fill={a} stroke="none" />
   </>

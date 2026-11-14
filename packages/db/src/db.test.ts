@@ -84,7 +84,17 @@ describe("주문", () => {
 });
 
 import { authenticate, AuthError, createUser, verifyPassword } from "./auth";
-import { answerInquiry, CommunityError, createInquiry, createQuestion, createReview, listInquiriesByUser, listQuestions, listReviews, maskName } from "./community";
+import {
+  answerInquiry,
+  CommunityError,
+  createInquiry,
+  createQuestion,
+  createReview,
+  listInquiriesByUser,
+  listQuestions,
+  listReviews,
+  maskName,
+} from "./community";
 import { listOrdersByUser, listSavedBuilds, listWishlist, saveBuild, toggleWish } from "./mypage";
 import { DEMO_MEMBER } from "./seed";
 
@@ -202,7 +212,15 @@ describe("주문 취소와 상태 이력", () => {
   });
 
   it("조립이 시작된 주문은 취소할 수 없다", async () => {
-    const order = await placeOrder(db, { userId: 1, lines: [{ itemId: "p-mem-001", quantity: 1 }, { itemId: "svc-assembly", quantity: 1 }], buyer, payment: "card" });
+    const order = await placeOrder(db, {
+      userId: 1,
+      lines: [
+        { itemId: "p-mem-001", quantity: 1 },
+        { itemId: "svc-assembly", quantity: 1 },
+      ],
+      buyer,
+      payment: "card",
+    });
     expect(order.status).toBe("assembling");
     expect((await cancelOrderByUser(db, 1, order.id)).ok).toBe(false);
   });

@@ -19,7 +19,15 @@ type ProductPageProps = { params: Promise<{ slug: string }> };
 /** 화면 프레임은 Suspense 밖에 두어, 내용이 들어와도 본문 바로가기와 초점이 그대로 남게 한다. */
 export function ProductPage({ params }: ProductPageProps) {
   return (
-    <CrtScreen source={<Suspense fallback="TUNING…">{params.then(({ slug }) => <ProductSource slug={slug} />)}</Suspense>}>
+    <CrtScreen
+      source={
+        <Suspense fallback="TUNING…">
+          {params.then(({ slug }) => (
+            <ProductSource slug={slug} />
+          ))}
+        </Suspense>
+      }
+    >
       <Suspense fallback={<p className="py-24 text-center font-mono text-xs uppercase text-label">Tuning…</p>}>
         {params.then(({ slug }) => (
           <ProductContent slug={slug} />
@@ -108,9 +116,7 @@ async function ProductContent({ slug }: { slug: string }) {
         <div className="flex flex-col gap-8">
           <figure className="crt-inset relative grid aspect-[4/3] place-items-center overflow-hidden rounded-[28px] border-8 border-[#1d1d1d] bg-black text-cream">
             <GearArt art={product.art} label={`${product.name} 그림`} className="h-4/5 w-4/5" />
-            <figcaption className="absolute bottom-3 left-4 font-mono text-[11px] uppercase text-label">
-              Play ▶ {product.slug}
-            </figcaption>
+            <figcaption className="absolute bottom-3 left-4 font-mono text-[11px] uppercase text-label">Play ▶ {product.slug}</figcaption>
           </figure>
 
           <section aria-labelledby={`${product.id}-spec`} className="flex flex-col gap-3">
@@ -133,10 +139,7 @@ async function ProductContent({ slug }: { slug: string }) {
           </section>
 
           {next.id !== product.id && (
-            <Link
-              href={`/product/${next.slug}`}
-              className="group flex items-center justify-between border-t border-white/10 pt-4"
-            >
+            <Link href={`/product/${next.slug}`} className="group flex items-center justify-between border-t border-white/10 pt-4">
               <span className="mono-label">[Next tape]</span>
               <span className="font-display text-2xl group-hover:text-brand">
                 {next.name} <span aria-hidden="true">→</span>

@@ -31,12 +31,7 @@ export function TapeCarousel({ products }: { products: Product[] }) {
   return (
     // 화살표 키는 캐러셀 안 어디서나 쓰는 지름길이다. 키보드로는 아래 이전·다음 버튼으로도 넘긴다.
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <section
-      aria-roledescription="carousel"
-      aria-label="추천 기어"
-      onKeyDown={onKeyDown}
-      className="flex w-full min-w-0 flex-col items-center gap-4"
-    >
+    <section aria-roledescription="carousel" aria-label="추천 기어" onKeyDown={onKeyDown} className="flex w-full min-w-0 flex-col items-center gap-4">
       <div className="relative h-[calc(clamp(180px,22vw,300px)*1.48)] w-full overflow-x-clip [perspective:1400px]">
         {products.map((product, i) => {
           let offset = i - index;
@@ -66,10 +61,7 @@ export function TapeCarousel({ products }: { products: Product[] }) {
                 visibility: hidden ? "hidden" : "visible",
               }}
             >
-              <Link
-                href={`/product/${product.slug}`}
-                className="block rounded-[3px] focus-visible:outline-offset-6"
-              >
+              <Link href={`/product/${product.slug}`} className="block rounded-[3px] focus-visible:outline-offset-6">
                 <TapeSleeve product={product} />
               </Link>
             </div>
@@ -96,7 +88,8 @@ export function TapeCarousel({ products }: { products: Product[] }) {
           {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
         </span>
         <button type="button" onClick={() => go(1)} className="min-h-11 min-w-11 px-3 text-label hover:text-cream">
-          다음<span className="sr-only md:not-sr-only"> 테이프</span><span aria-hidden="true"> ▶▶</span>
+          다음<span className="sr-only md:not-sr-only"> 테이프</span>
+          <span aria-hidden="true"> ▶▶</span>
         </button>
         <Link href={`/product/${current.slug}`} className="inline-flex min-h-11 items-center px-3 text-cream hover:text-brand">
           재생<span aria-hidden="true"> ▶</span>

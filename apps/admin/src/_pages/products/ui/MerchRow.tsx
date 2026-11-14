@@ -39,13 +39,29 @@ export function MerchRow(props: MerchRowProps) {
         <label className="is-sr-only" htmlFor={id("price")}>
           {props.name} 판매가
         </label>
-        <input id={id("price")} form={formId} name="price" className="input is-small" inputMode="numeric" defaultValue={state?.values?.price ?? props.price} required />
+        <input
+          id={id("price")}
+          form={formId}
+          name="price"
+          className="input is-small"
+          inputMode="numeric"
+          defaultValue={state?.values?.price ?? props.price}
+          required
+        />
       </td>
       <td>
         <label className="is-sr-only" htmlFor={id("listPrice")}>
           {props.name} 정가
         </label>
-        <input id={id("listPrice")} form={formId} name="listPrice" className="input is-small" inputMode="numeric" defaultValue={state?.values?.listPrice ?? props.listPrice ?? ""} placeholder="없음" />
+        <input
+          id={id("listPrice")}
+          form={formId}
+          name="listPrice"
+          className="input is-small"
+          inputMode="numeric"
+          defaultValue={state?.values?.listPrice ?? props.listPrice ?? ""}
+          placeholder="없음"
+        />
       </td>
       <td>
         <label className="is-sr-only" htmlFor={id("stock")}>
@@ -73,7 +89,9 @@ export function MerchRow(props: MerchRowProps) {
           <span className="is-sr-only">{props.name} 노출</span>
         </label>
       </td>
-      <td className="has-text-centered">{props.restockRequests ? <span className="tag is-warning is-light">{props.restockRequests}명</span> : "-"}</td>
+      <td className="has-text-centered">
+        {props.restockRequests ? <span className="tag is-warning is-light">{props.restockRequests}명</span> : "-"}
+      </td>
       <td>
         <form id={formId} action={action} onSubmit={guardSubmit}>
           <input type="hidden" name="productId" value={props.productId} />

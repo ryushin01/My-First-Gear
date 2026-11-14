@@ -1,11 +1,13 @@
 {
   "name": "my-first-gear",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint && steiger apps/shop/src && steiger apps/admin/src",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e --concurrency=1"
@@ -14,6 +16,7 @@
     "@feature-sliced/steiger-plugin": "^0.8.2",
     "@lhci/cli": "^0.16.0",
     "@size-limit/file": "^14.3.0",
+    "prettier": "^3.10.1",
     "size-limit": "^14.3.0",
     "steiger": "0.10.0",
     "turbo": "2.11.10"

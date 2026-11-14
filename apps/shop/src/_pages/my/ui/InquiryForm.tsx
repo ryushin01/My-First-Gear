@@ -22,7 +22,10 @@ export function InquiryForm() {
       {state?.errors && <ErrorSummary errors={state.errors} titleId={titleId} />}
       <div className="flex flex-col gap-1.5">
         <label htmlFor={categoryId} className="text-sm">
-          문의 유형<span className="ml-1 text-brand" aria-hidden="true">*</span>
+          문의 유형
+          <span className="ml-1 text-brand" aria-hidden="true">
+            *
+          </span>
         </label>
         <select
           id={categoryId}

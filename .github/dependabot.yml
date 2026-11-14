@@ -6,21 +6,21 @@ updates:
       interval: weekly
     groups:
       minor-and-patch:
-        update-types: ['minor', 'patch']
+        update-types: ["minor", "patch"]
     ignore:
       # typescript-eslint가 TypeScript 7을 지원하지 않아 린트가 바로 실패한다. 지원되면 함께 올린다.
       - dependency-name: typescript
-        update-types: ['version-update:semver-major']
+        update-types: ["version-update:semver-major"]
       # eslint-config-next가 쓰는 eslint-plugin-react·jsx-a11y·import가 ESLint 9까지만 지원한다.
       - dependency-name: eslint
-        update-types: ['version-update:semver-major']
+        update-types: ["version-update:semver-major"]
       # 타입은 프로젝트 기준 Node 버전(.nvmrc)에 맞춘다. Node를 올릴 때 함께 올린다.
-      - dependency-name: '@types/node'
-        update-types: ['version-update:semver-major']
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
     groups:
       actions:
-        patterns: ['*']
+        patterns: ["*"]

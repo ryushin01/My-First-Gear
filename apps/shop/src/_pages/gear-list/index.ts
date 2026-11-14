@@ -1,7 +1,1 @@
-export {
-  AllGearPage,
-  allGearMetadata,
-  CategoryGearPage,
-  generateCategoryMetadata,
-  generateCategoryParams,
-} from "./ui/GearListPage";
+export { AllGearPage, allGearMetadata, CategoryGearPage, generateCategoryMetadata, generateCategoryParams } from "./ui/GearListPage";

@@ -49,9 +49,7 @@ export function PartPicker({ part, label, build, open, onClose, onSelect }: Part
           </li>
         ))}
         {shown.length === 0 && (
-          <li className="py-10 text-center text-mute-200">
-            호환되는 상품이 없습니다. 위 체크를 풀면 모든 상품을 볼 수 있습니다.
-          </li>
+          <li className="py-10 text-center text-mute-200">호환되는 상품이 없습니다. 위 체크를 풀면 모든 상품을 볼 수 있습니다.</li>
         )}
       </ul>
     </PickerDialog>

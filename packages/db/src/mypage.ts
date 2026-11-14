@@ -14,7 +14,11 @@ export async function listOrdersByUser(db: Db, userId: number) {
 // 찜
 
 export async function listWishlist(db: Db, userId: number): Promise<string[]> {
-  const rows = await db.select({ productId: wishlists.productId }).from(wishlists).where(eq(wishlists.userId, userId)).orderBy(desc(wishlists.createdAt));
+  const rows = await db
+    .select({ productId: wishlists.productId })
+    .from(wishlists)
+    .where(eq(wishlists.userId, userId))
+    .orderBy(desc(wishlists.createdAt));
   return rows.map((r) => r.productId);
 }
 
@@ -46,6 +50,9 @@ export async function listSavedBuilds(db: Db, userId: number) {
 }
 
 export async function deleteSavedBuild(db: Db, userId: number, id: number) {
-  const rows = await db.delete(savedBuilds).where(and(eq(savedBuilds.id, id), eq(savedBuilds.userId, userId))).returning();
+  const rows = await db
+    .delete(savedBuilds)
+    .where(and(eq(savedBuilds.id, id), eq(savedBuilds.userId, userId)))
+    .returning();
   return rows.length > 0;
 }

@@ -15,7 +15,10 @@ async function ReviewList({ productId }: { productId: string }) {
         <li key={review.id} className="rounded-md border border-white/10 p-4">
           <p className="flex flex-wrap items-center gap-x-3 font-mono text-xs text-label">
             <span>
-              <span aria-hidden="true">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+              <span aria-hidden="true">
+                {"★".repeat(review.rating)}
+                {"☆".repeat(5 - review.rating)}
+              </span>
               <span className="sr-only">별점 5점 중 {review.rating}점</span>
             </span>
             <span>{review.author}</span>

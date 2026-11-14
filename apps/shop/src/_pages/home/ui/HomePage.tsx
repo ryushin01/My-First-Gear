@@ -57,10 +57,7 @@ export async function HomePage() {
           <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-6">
             {categories.map((category) => (
               <li key={category.id}>
-                <Link
-                  href={`/gear/${category.id}`}
-                  className="flex h-full min-h-20 flex-col justify-between gap-2 bg-ink p-4 hover:bg-ink-soft"
-                >
+                <Link href={`/gear/${category.id}`} className="flex h-full min-h-20 flex-col justify-between gap-2 bg-ink p-4 hover:bg-ink-soft">
                   <span className="font-mono text-[11px] text-label">CH {channelOf(category.id)}</span>
                   <span className="text-base">{category.name}</span>
                 </Link>
@@ -81,7 +78,10 @@ export async function HomePage() {
             </h2>
           </div>
           <div className="flex flex-col justify-end gap-4 text-mute-100">
-            <p>CPU부터 케이스까지 칸을 채우면 소켓, 메모리 규격, 파워 용량, 그래픽카드 길이를 바로 확인합니다. 책상·모니터·모니터암도 데스크 셋업에서 크기와 무게를 맞춰 볼 수 있습니다.</p>
+            <p>
+              CPU부터 케이스까지 칸을 채우면 소켓, 메모리 규격, 파워 용량, 그래픽카드 길이를 바로 확인합니다. 책상·모니터·모니터암도 데스크 셋업에서
+              크기와 무게를 맞춰 볼 수 있습니다.
+            </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/build" className="inline-flex min-h-11 items-center rounded-md bg-cream px-5 text-ink hover:bg-white">
                 PC 견적 시작

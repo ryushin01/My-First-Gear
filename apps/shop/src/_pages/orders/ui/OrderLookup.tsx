@@ -7,11 +7,7 @@ import { useSubmitLock } from "@/shared/lib";
 import { TextField } from "@/shared/ui";
 
 type LookupState =
-  | { kind: "idle" }
-  | { kind: "loading" }
-  | { kind: "found"; order: OrderSummary }
-  | { kind: "missing" }
-  | { kind: "error"; message: string };
+  { kind: "idle" } | { kind: "loading" } | { kind: "found"; order: OrderSummary } | { kind: "missing" } | { kind: "error"; message: string };
 
 /** 비회원 주문 조회. 주문 번호와 받는 분 이름이 모두 맞아야 보여준다. */
 export function OrderLookup() {

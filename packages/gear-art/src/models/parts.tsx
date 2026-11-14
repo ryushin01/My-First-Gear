@@ -87,13 +87,40 @@ export function Fan({
 }
 
 /** 둥근 구멍 타공판 */
-export function Perforation({ x, y, w, h, gap = 4, r = 1, fill = "#000", opacity = 0.55 }: { x: number; y: number; w: number; h: number; gap?: number; r?: number; fill?: string; opacity?: number }) {
+export function Perforation({
+  x,
+  y,
+  w,
+  h,
+  gap = 4,
+  r = 1,
+  fill = "#000",
+  opacity = 0.55,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  gap?: number;
+  r?: number;
+  fill?: string;
+  opacity?: number;
+}) {
   const cols = Math.floor(w / gap);
   const rows = Math.floor(h / gap);
   const dots: ReactNode[] = [];
   for (let j = 0; j < rows; j++)
     for (let i = 0; i < cols; i++)
-      dots.push(<circle key={`${i}-${j}`} cx={x + gap / 2 + i * gap + (j % 2 ? gap / 2 : 0)} cy={y + gap / 2 + j * gap} r={r} fill={fill} opacity={opacity} />);
+      dots.push(
+        <circle
+          key={`${i}-${j}`}
+          cx={x + gap / 2 + i * gap + (j % 2 ? gap / 2 : 0)}
+          cy={y + gap / 2 + j * gap}
+          r={r}
+          fill={fill}
+          opacity={opacity}
+        />,
+      );
   return <g>{dots}</g>;
 }
 
@@ -130,7 +157,17 @@ export function Wheel({
       <circle cx={cx} cy={cy} r={r} fill={tire} />
       <circle cx={cx} cy={cy} r={r * 0.97} fill="none" stroke="#2b2b2e" strokeWidth={r * 0.04} />
       <circle cx={cx} cy={cy} r={inner} fill={rim} />
-      {caliper && <rect x={cx + inner * 0.25} y={cy - inner * 0.62} width={inner * 0.42} height={inner * 0.5} rx={2} fill={caliper} transform={`rotate(-20 ${cx} ${cy})`} />}
+      {caliper && (
+        <rect
+          x={cx + inner * 0.25}
+          y={cy - inner * 0.62}
+          width={inner * 0.42}
+          height={inner * 0.5}
+          rx={2}
+          fill={caliper}
+          transform={`rotate(-20 ${cx} ${cy})`}
+        />
+      )}
       {range(spokes).map((i) => (
         <path
           key={i}

@@ -36,9 +36,7 @@ export type ProductQuery = {
 
 /** source: DB 판매 정보를 반영한 상품 목록. 없으면 코드의 기본 카탈로그 */
 export function listProducts(query: ProductQuery = {}, source: Product[] = products): Product[] {
-  const groupCategories = query.group
-    ? new Set(categories.filter((c) => c.group === query.group).map((c) => c.id))
-    : null;
+  const groupCategories = query.group ? new Set(categories.filter((c) => c.group === query.group).map((c) => c.id)) : null;
 
   return source
     .filter((p) => !query.categoryId || p.categoryId === query.categoryId)

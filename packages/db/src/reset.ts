@@ -19,8 +19,6 @@ export async function resetDemoData(db: Db) {
     await tx.insert(users).values(SEED_MEMBERS);
     await tx.execute(sql`select setval(pg_get_serial_sequence('users', 'id'), (select max(id) from users))`);
     await tx.insert(reviews).values(SEED_REVIEWS);
-    await tx.insert(questions).values(
-      SEED_QUESTIONS.map((q) => ({ ...q, answeredAt: q.answer ? new Date() : null })),
-    );
+    await tx.insert(questions).values(SEED_QUESTIONS.map((q) => ({ ...q, answeredAt: q.answer ? new Date() : null })));
   });
 }

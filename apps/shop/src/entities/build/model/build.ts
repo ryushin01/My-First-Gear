@@ -55,4 +55,3 @@ export function toBuild(state: BuildState, catalog: Product[]): Build {
   }
   return build;
 }
-

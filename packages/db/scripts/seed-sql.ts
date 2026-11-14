@@ -6,9 +6,7 @@ import { deskSetupProducts } from "../../catalog/src/deskSetupProducts.ts";
 const products = [...coreProducts, ...deskSetupProducts];
 
 const q = (v: string) => `'${v.replaceAll("'", "''")}'`;
-const rows = products.map(
-  (p) => `(${q(p.id)}, ${p.price}, ${p.listPrice ?? "NULL"}, ${p.stock}, ${p.featured ? "true" : "false"}, true)`,
-);
+const rows = products.map((p) => `(${q(p.id)}, ${p.price}, ${p.listPrice ?? "NULL"}, ${p.stock}, ${p.featured ? "true" : "false"}, true)`);
 const sql = `-- 상품 판매 정보 시드 (가상 가격과 재고)
 INSERT INTO "product_merch" ("product_id", "price", "list_price", "stock", "featured", "visible") VALUES
 ${rows.join(",\n")}

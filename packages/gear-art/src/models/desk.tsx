@@ -177,7 +177,14 @@ function desk({
       <rect x={4} y={84} width={192} height={6} rx={2} fill={topEdge} />
       {grain &&
         range(6).map((i) => (
-          <path key={i} d={`M${18 + i * 4} ${62 + i * 3.4} C 70 ${60 + i * 3.4}, 120 ${66 + i * 3.4}, ${184 - i * 2} ${62 + i * 3.4}`} fill="none" stroke={grain} strokeWidth={0.8} opacity={0.6} />
+          <path
+            key={i}
+            d={`M${18 + i * 4} ${62 + i * 3.4} C 70 ${60 + i * 3.4}, 120 ${66 + i * 3.4}, ${184 - i * 2} ${62 + i * 3.4}`}
+            fill="none"
+            stroke={grain}
+            strokeWidth={0.8}
+            opacity={0.6}
+          />
         ))}
       <path d="M14 60 H186 L188 64 H12 Z" fill="#ffffff" opacity={0.18} />
       {/* 높이 조절 버튼 */}
@@ -212,7 +219,10 @@ function arm({ color, light, dual, long }: { color: string; light: string; dual?
         <g>
           {screen(8)}
           {screen(138)}
-          {[[100, 66, 68, 72], [100, 66, 132, 72]].map(([x1, y1, x2, y2]) => (
+          {[
+            [100, 66, 68, 72],
+            [100, 66, 132, 72],
+          ].map(([x1, y1, x2, y2]) => (
             <g key={x2}>
               <path d={`M${x1} ${y1} L${x2} ${y2}`} stroke={color} strokeWidth={8} strokeLinecap="round" />
               <path d={`M${x1} ${y1 - 2} L${x2} ${y2 - 2}`} stroke={light} strokeWidth={1.5} opacity={0.6} />
@@ -225,8 +235,21 @@ function arm({ color, light, dual, long }: { color: string; light: string; dual?
       ) : (
         <g>
           {screen(124)}
-          <path d={`M100 ${long ? 74 : 64} L${long ? 70 : 76} ${long ? 52 : 46} L130 60`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" />
-          <path d={`M100 ${long ? 72 : 62} L${long ? 70 : 76} ${long ? 50 : 44} L130 58`} fill="none" stroke={light} strokeWidth={1.6} opacity={0.6} />
+          <path
+            d={`M100 ${long ? 74 : 64} L${long ? 70 : 76} ${long ? 52 : 46} L130 60`}
+            fill="none"
+            stroke={color}
+            strokeWidth={8}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d={`M100 ${long ? 72 : 62} L${long ? 70 : 76} ${long ? 50 : 44} L130 58`}
+            fill="none"
+            stroke={light}
+            strokeWidth={1.6}
+            opacity={0.6}
+          />
           <circle cx={long ? 70 : 76} cy={long ? 52 : 46} r={5} fill={light} />
           <circle cx={100} cy={long ? 74 : 64} r={6} fill={light} />
         </g>
@@ -296,7 +319,10 @@ function playBars(): ReactNode {
       <rect x={94} y={112} width={12} height={48} fill="#2b2c30" />
       <path d="M70 166 L100 156 L130 166" stroke="#2b2c30" strokeWidth={5} />
       {/* 막대 조명 두 개 */}
-      {[[24, "#a675ff"], [166, "#ff6fbf"]].map(([x, c]) => (
+      {[
+        [24, "#a675ff"],
+        [166, "#ff6fbf"],
+      ].map(([x, c]) => (
         <g key={x as number}>
           <rect x={x as number} y={92} width={10} height={70} rx={2} fill="#1b1b1d" />
           <rect x={(x as number) + 2} y={94} width={6} height={64} rx={1} fill={c as string} />
@@ -328,7 +354,15 @@ function nanoleafLines(): ReactNode {
           <path d={`M${x1} ${y1} L${x2} ${y2}`} stroke={c} strokeWidth={4} strokeLinecap="round" />
         </g>
       ))}
-      {[[40, 120], [70, 68], [130, 68], [160, 120], [100, 120], [130, 172], [70, 172]].map(([x, y]) => (
+      {[
+        [40, 120],
+        [70, 68],
+        [130, 68],
+        [160, 120],
+        [100, 120],
+        [130, 172],
+        [70, 172],
+      ].map(([x, y]) => (
         <circle key={`${x}-${y}`} cx={x} cy={y} r={4.5} fill="#e9e9ec" />
       ))}
     </g>
@@ -370,7 +404,13 @@ function mouse({
       <path d="M72 50 C 76 36, 88 30, 98 30" fill="none" stroke="#ffffff" strokeWidth={2.4} strokeLinecap="round" opacity={0.35} />
       {/* 왼쪽·오른쪽 버튼 가르는 선 */}
       <path d="M100 26 V84" stroke="#000" strokeWidth={1.2} opacity={0.4} />
-      <path d={`M${shape === "master" ? 64 : 62} 84 C 80 90, 120 90, ${shape === "master" ? 144 : 140} 84`} fill="none" stroke="#000" strokeWidth={1} opacity={0.25} />
+      <path
+        d={`M${shape === "master" ? 64 : 62} 84 C 80 90, 120 90, ${shape === "master" ? 144 : 140} 84`}
+        fill="none"
+        stroke="#000"
+        strokeWidth={1}
+        opacity={0.25}
+      />
       {/* 휠 */}
       <rect x={95} y={42} width={10} height={24} rx={5} fill={wheel} />
       {range(5).map((i) => (
@@ -399,9 +439,7 @@ function mouse({
           <rect x={92} y={70} width={16} height={6} rx={2} fill="#2b2b2f" />
         </g>
       )}
-      {rgb && (
-        <path d="M76 150 C 90 160, 110 160, 124 150" fill="none" stroke="#ff3fa4" strokeWidth={3} strokeLinecap="round" />
-      )}
+      {rgb && <path d="M76 150 C 90 160, 110 160, 124 150" fill="none" stroke="#ff3fa4" strokeWidth={3} strokeLinecap="round" />}
       {rgb && <path d="M70 140 C 74 146, 76 148, 78 150" stroke="#00e0ff" strokeWidth={3} strokeLinecap="round" />}
     </g>
   );
@@ -497,7 +535,15 @@ function keyboard({
       for (let c = 0; c < cols; c++) keys.push(key(x0 + 6 + c * (keyW + gap), y + kh / 2, keyW, c === 0, kh / 2));
       if (touchId)
         keys.push(
-          <circle key="touch-id" cx={x0 + 6 + (cols - 1) * (keyW + gap) + keyW / 2} cy={y + kh * 0.75} r={kh * 0.18} fill="none" stroke="#9a9ea5" strokeWidth={0.8} />,
+          <circle
+            key="touch-id"
+            cx={x0 + 6 + (cols - 1) * (keyW + gap) + keyW / 2}
+            cy={y + kh * 0.75}
+            r={kh * 0.18}
+            fill="none"
+            stroke="#9a9ea5"
+            strokeWidth={0.8}
+          />,
         );
     } else if (last) {
       keys.push(key(x0 + 6, y, keyW * 1.3, true));
@@ -529,7 +575,8 @@ function keyboard({
       <rect x={x0} y={y0 - 6} width={total} height={3} rx={2} fill="#ffffff" opacity={0.2} />
       {keys}
       {knob && <circle cx={x0 + total - 10} cy={y0 - 1} r={4.5} fill={knob} stroke="#000" strokeOpacity={0.3} />}
-      {leds && [0, 1, 2].map((i) => <circle key={`led${i}`} cx={x0 + total - 22 + i * 6} cy={y0 - 2.5} r={1.3} fill={leds} opacity={i === 0 ? 1 : 0.35} />)}
+      {leds &&
+        [0, 1, 2].map((i) => <circle key={`led${i}`} cx={x0 + total - 22 + i * 6} cy={y0 - 2.5} r={1.3} fill={leds} opacity={i === 0 ? 1 : 0.35} />)}
     </g>
   );
 }
@@ -767,8 +814,15 @@ function steamDeck(): ReactNode {
   return (
     <g>
       <Shadow cx={100} cy={150} rx={94} ry={6} />
-      <path d="M8 76 C 8 58, 22 52, 36 52 H164 C 178 52, 192 58, 192 76 L196 118 C 198 136, 186 146, 170 142 L150 136 H50 L30 142 C 14 146, 2 136, 4 118 Z" fill="#1c1c1f" />
-      <path d="M8 76 C 8 58, 22 52, 36 52 H164 C 178 52, 192 58, 192 76 L190 72 C 186 62, 176 58, 164 58 H36 C 24 58, 14 62, 10 72 Z" fill="#ffffff" opacity={0.08} />
+      <path
+        d="M8 76 C 8 58, 22 52, 36 52 H164 C 178 52, 192 58, 192 76 L196 118 C 198 136, 186 146, 170 142 L150 136 H50 L30 142 C 14 146, 2 136, 4 118 Z"
+        fill="#1c1c1f"
+      />
+      <path
+        d="M8 76 C 8 58, 22 52, 36 52 H164 C 178 52, 192 58, 192 76 L190 72 C 186 62, 176 58, 164 58 H36 C 24 58, 14 62, 10 72 Z"
+        fill="#ffffff"
+        opacity={0.08}
+      />
       {/* OLED 화면 */}
       <rect x={52} y={58} width={96} height={60} rx={3} fill="#09090b" />
       <rect x={55} y={61} width={90} height={54} rx={1} fill="#122033" />
@@ -780,7 +834,12 @@ function steamDeck(): ReactNode {
       <circle cx={40} cy={98} r={6} fill="#141416" />
       <rect x={24} y={112} width={22} height={22} rx={5} fill="#252528" />
       {/* 오른쪽: ABXY, 스틱, 트랙패드 */}
-      {[[170, 64], [164, 70], [176, 70], [170, 76]].map(([cx, cy]) => (
+      {[
+        [170, 64],
+        [164, 70],
+        [176, 70],
+        [170, 76],
+      ].map(([cx, cy]) => (
         <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={3} fill="#2b2b2f" />
       ))}
       <circle cx={160} cy={98} r={9} fill="#2b2b2f" />
@@ -820,36 +879,40 @@ export const deskModels: Record<string, () => ReactNode> = {
   "razer-deathadder-v3-pro": () => mouse({ body: "#18181a", shape: "ergo", side: "#2b2b2f" }),
 
   "logitech-g-pro-x-tkl-rapid": () => keyboard({ cols: 13, nav: true, body: "#1b1b1d", cap: "#2a2b2f", mod: "#222326", knob: "#3a3b40" }),
-  "nuphy-air75-v3": () => keyboard({ cols: 14, body: "#c9ccd1", cap: "#e9e9e6", mod: "#8d9097", accent: "#ff7a1a", accentKeys: [0, 13, 70], thin: true, knob: "#ff7a1a" }),
+  "nuphy-air75-v3": () =>
+    keyboard({ cols: 14, body: "#c9ccd1", cap: "#e9e9e6", mod: "#8d9097", accent: "#ff7a1a", accentKeys: [0, 13, 70], thin: true, knob: "#ff7a1a" }),
   "realforce-r3-tkl": () => keyboard({ cols: 13, nav: true, body: "#1a1a1c", cap: "#2b2c30", mod: "#232427", leds: "#3ddc84" }),
   "hhkb-professional-hybrid-type-s-snow": () => keyboard({ cols: 15, fn: false, body: "#d6d6cf", cap: "#fbfbf8", mod: "#ecece5", hhkb: true }),
   "leopold-fc750r-pd": () => keyboard({ cols: 13, nav: true, body: "#4a4c52", cap: "#c9cbcf", mod: "#5b6f8a", accent: "#c4302b", accentKeys: [0] }),
-  "logitech-mx-keys-s": () => keyboard({ cols: 12, nav: true, numpad: true, thin: true, round: true, body: "#3a3c42", cap: "#232427", mod: "#232427" }),
+  "logitech-mx-keys-s": () =>
+    keyboard({ cols: 12, nav: true, numpad: true, thin: true, round: true, body: "#3a3c42", cap: "#232427", mod: "#232427" }),
   "apple-magic-keyboard-touch-id": () =>
     keyboard({ cols: 14, thin: true, halfFn: true, touchId: true, body: "#d9dbdf", cap: "#f8f8f6", mod: "#f8f8f6" }),
   "leopold-fc660mbt": () => keyboard({ cols: 15, fn: false, body: "#3a3b40", cap: "#dcd9d2", mod: "#9c9a94", accent: "#c4302b", accentKeys: [0] }),
   "corsair-k70-rgb-pro": () => keyboard({ cols: 12, nav: true, numpad: true, body: "#d9dbdf", cap: "#f4f4f2", mod: "#e1e2e4", knob: "#9aa0a6" }),
 
   "kef-lsx-ii": () => bookshelfPair({ w: 54, h: 92, body: "#2e5f80", edge: "#1d3e55", woofer: "#c3c6cc", coax: "#e7c46a", radius: 6 }),
-  "kef-r3-meta": () => bookshelfPair({
-    w: 62,
-    h: 130,
-    body: "#c9ccd1",
-    edge: "#9aa0a6",
-    woofer: "#d9dbdf",
-    coax: "#9aa0a6",
-    extra: (x, y) => driver(x + 31, y + 96, 22, "#b4b8be"),
-  }),
+  "kef-r3-meta": () =>
+    bookshelfPair({
+      w: 62,
+      h: 130,
+      body: "#c9ccd1",
+      edge: "#9aa0a6",
+      woofer: "#d9dbdf",
+      coax: "#9aa0a6",
+      extra: (x, y) => driver(x + 31, y + 96, 22, "#b4b8be"),
+    }),
   "edifier-mr4": () => bookshelfPair({ w: 54, h: 88, body: "#f2f2f0", edge: "#d9d9d6", woofer: "#2b2c30" }),
-  "edifier-qr65": () => bookshelfPair({
-    w: 56,
-    h: 96,
-    body: "#1b1b1d",
-    edge: "#0d0d0e",
-    woofer: "#2b2c30",
-    radius: 14,
-    extra: (x, y) => <rect x={x + 6} y={y + 86} width={44} height={3} rx={1.5} fill="#d6283c" />,
-  }),
+  "edifier-qr65": () =>
+    bookshelfPair({
+      w: 56,
+      h: 96,
+      body: "#1b1b1d",
+      edge: "#0d0d0e",
+      woofer: "#2b2c30",
+      radius: 14,
+      extra: (x, y) => <rect x={x + 6} y={y + 86} width={44} height={3} rx={1.5} fill="#d6283c" />,
+    }),
   "audioengine-a2-plus-wireless": () => bookshelfPair({ w: 46, h: 72, body: "#c4302b", edge: "#8f1f1b", woofer: "#d8d6d0" }),
   "creative-pebble-v3": pebble,
   "marshall-acton-iii": acton,

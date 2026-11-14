@@ -5,8 +5,14 @@ describe("회원 장바구니·견적 합치기", () => {
   it("장바구니는 상품별로 많은 수량을 쓴다", () => {
     expect(
       mergeCart(
-        [{ productId: "a", quantity: 1 }, { productId: "b", quantity: 3 }],
-        [{ productId: "a", quantity: 2 }, { productId: "c", quantity: 1 }],
+        [
+          { productId: "a", quantity: 1 },
+          { productId: "b", quantity: 3 },
+        ],
+        [
+          { productId: "a", quantity: 2 },
+          { productId: "c", quantity: 1 },
+        ],
       ),
     ).toEqual([
       { productId: "a", quantity: 2 },

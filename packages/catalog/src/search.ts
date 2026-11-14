@@ -8,7 +8,15 @@ const normalize = (text: string) => text.toLowerCase().normalize("NFC").replace(
 function haystack(product: Product) {
   const category = getCategory(product.categoryId);
   return normalize(
-    [product.name, product.brand, category.name, category.code, ...(category.aliases ?? []), product.tagline, ...product.specs.map((s) => `${s.label} ${s.value}`)].join(" "),
+    [
+      product.name,
+      product.brand,
+      category.name,
+      category.code,
+      ...(category.aliases ?? []),
+      product.tagline,
+      ...product.specs.map((s) => `${s.label} ${s.value}`),
+    ].join(" "),
   );
 }
 

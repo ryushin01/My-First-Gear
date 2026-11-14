@@ -7,7 +7,9 @@ import { revalidateShop } from "@/shared/api";
 import type { ActionState } from "@/shared/ui";
 
 function toInt(value: FormDataEntryValue | null): number | null {
-  const text = String(value ?? "").replaceAll(",", "").trim();
+  const text = String(value ?? "")
+    .replaceAll(",", "")
+    .trim();
   if (text === "") return null;
   const n = Number(text);
   return Number.isInteger(n) && n >= 0 ? n : NaN;

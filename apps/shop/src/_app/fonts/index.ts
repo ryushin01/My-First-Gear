@@ -1,9 +1,4 @@
-import {
-  Black_And_White_Picture,
-  Gothic_A1,
-  Nanum_Gothic_Coding,
-  VT323,
-} from "next/font/google";
+import { Black_And_White_Picture, Gothic_A1, Nanum_Gothic_Coding, VT323 } from "next/font/google";
 
 /** 큰 제목의 영문: 브라운관 픽셀 글꼴 */
 const displayEn = VT323({
@@ -40,6 +35,4 @@ const mono = Nanum_Gothic_Coding({
  * 한글 글꼴은 글자 묶음별로 나눈 조각 파일이라 화면에 쓰인 글자의 조각만 받는다.
  * 그래서 미리 받지 않는다(preload: false).
  */
-export const fontVariables = [displayEn, displayKo, sans, mono]
-  .map((font) => font.variable)
-  .join(" ");
+export const fontVariables = [displayEn, displayKo, sans, mono].map((font) => font.variable).join(" ");

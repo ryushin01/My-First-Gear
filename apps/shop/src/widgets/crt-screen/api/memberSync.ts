@@ -25,6 +25,10 @@ export async function saveMemberCartAction(lines: StoredCartLine[]) {
 export async function saveMemberBuildAction(build: StoredBuild | null) {
   const userId = await getSessionUserId();
   if (userId === null || !hasDatabase()) return;
-  const parts = Object.fromEntries(Object.entries(build?.parts ?? {}).filter(([, v]) => typeof v === "string").slice(0, 8));
+  const parts = Object.fromEntries(
+    Object.entries(build?.parts ?? {})
+      .filter(([, v]) => typeof v === "string")
+      .slice(0, 8),
+  );
   await saveMemberBuild(getDb(), userId, build ? { parts, services: (build.services ?? []).slice(0, 8) } : null);
 }

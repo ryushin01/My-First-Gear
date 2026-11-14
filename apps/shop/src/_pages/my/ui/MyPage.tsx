@@ -43,18 +43,40 @@ async function MyContent() {
       <div className="flex flex-wrap items-center gap-4">
         <nav aria-label="마이페이지 바로가기">
           <ul className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs uppercase text-label">
-            <li><a href="#my-orders" className="hover:text-cream">주문 내역</a></li>
-            <li><a href="#my-builds" className="hover:text-cream">저장한 견적</a></li>
-            <li><a href="#my-wish" className="hover:text-cream">찜</a></li>
-            <li><a href="#my-restock" className="hover:text-cream">재입고 알림</a></li>
-            <li><a href="#my-inquiries" className="hover:text-cream">1:1 문의</a></li>
+            <li>
+              <a href="#my-orders" className="hover:text-cream">
+                주문 내역
+              </a>
+            </li>
+            <li>
+              <a href="#my-builds" className="hover:text-cream">
+                저장한 견적
+              </a>
+            </li>
+            <li>
+              <a href="#my-wish" className="hover:text-cream">
+                찜
+              </a>
+            </li>
+            <li>
+              <a href="#my-restock" className="hover:text-cream">
+                재입고 알림
+              </a>
+            </li>
+            <li>
+              <a href="#my-inquiries" className="hover:text-cream">
+                1:1 문의
+              </a>
+            </li>
           </ul>
         </nav>
         <LogoutButton />
       </div>
 
       <section id="my-orders" aria-labelledby="my-orders-heading" className="flex flex-col gap-4">
-        <h2 id="my-orders-heading" className={sectionTitle}>주문 내역</h2>
+        <h2 id="my-orders-heading" className={sectionTitle}>
+          주문 내역
+        </h2>
         {orders.length === 0 ? (
           <p className="text-mute-200">아직 회원으로 주문한 내역이 없습니다.</p>
         ) : (
@@ -63,17 +85,29 @@ async function MyContent() {
               <caption className="sr-only">회원 주문 내역</caption>
               <thead>
                 <tr className="border-b border-white/20 text-left font-mono text-xs uppercase text-label">
-                  <th scope="col" className="py-2 pr-4 font-normal">주문 번호</th>
-                  <th scope="col" className="py-2 pr-4 font-normal">주문일</th>
-                  <th scope="col" className="py-2 pr-4 font-normal">상품</th>
-                  <th scope="col" className="py-2 pr-4 font-normal">상태</th>
-                  <th scope="col" className="py-2 text-right font-normal">금액</th>
+                  <th scope="col" className="py-2 pr-4 font-normal">
+                    주문 번호
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-normal">
+                    주문일
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-normal">
+                    상품
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-normal">
+                    상태
+                  </th>
+                  <th scope="col" className="py-2 text-right font-normal">
+                    금액
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
                   <tr key={order.id} className="border-b border-white/10">
-                    <th scope="row" className="py-3 pr-4 text-left font-mono font-normal">{order.id}</th>
+                    <th scope="row" className="py-3 pr-4 text-left font-mono font-normal">
+                      {order.id}
+                    </th>
                     <td className="py-3 pr-4">{date.format(order.createdAt)}</td>
                     <td className="py-3 pr-4">
                       {order.lines[0]?.name}
@@ -98,10 +132,16 @@ async function MyContent() {
       </section>
 
       <section id="my-builds" aria-labelledby="my-builds-heading" className="flex flex-col gap-4">
-        <h2 id="my-builds-heading" className={sectionTitle}>저장한 견적</h2>
+        <h2 id="my-builds-heading" className={sectionTitle}>
+          저장한 견적
+        </h2>
         {builds.length === 0 ? (
           <p className="text-mute-200">
-            저장한 견적이 없습니다. <Link href="/build" className="underline">PC 견적</Link>에서 저장할 수 있습니다.
+            저장한 견적이 없습니다.{" "}
+            <Link href="/build" className="underline">
+              PC 견적
+            </Link>
+            에서 저장할 수 있습니다.
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
@@ -114,7 +154,10 @@ async function MyContent() {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/build?b=${encodeURIComponent(build.encoded)}`} className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-4 text-sm hover:border-white">
+                  <Link
+                    href={`/build?b=${encodeURIComponent(build.encoded)}`}
+                    className="inline-flex min-h-11 items-center rounded-md border border-white/30 px-4 text-sm hover:border-white"
+                  >
                     불러오기<span className="sr-only">: {build.name}</span>
                   </Link>
                   <form action={deleteBuildAction}>
@@ -131,27 +174,33 @@ async function MyContent() {
       </section>
 
       <section id="my-restock" aria-labelledby="my-restock-heading" className="flex flex-col gap-4">
-        <h2 id="my-restock-heading" className={sectionTitle}>재입고 알림</h2>
+        <h2 id="my-restock-heading" className={sectionTitle}>
+          재입고 알림
+        </h2>
         {restock.length === 0 ? (
           <p className="text-mute-200">신청한 재입고 알림이 없습니다. 품절 상품 상세에서 신청할 수 있습니다.</p>
         ) : (
           <ul className="flex flex-col gap-2">
-            {restock.flatMap((id) => catalog.find((p) => p.id === id) ?? []).map((product) => (
-              <li key={product.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 p-4">
-                <Link href={`/product/${product.slug}`} className="hover:underline">
-                  {product.name}
-                </Link>
-                <span className={product.stock > 0 ? "text-[#3cb371]" : "text-mute-200"}>
-                  {product.stock > 0 ? `입고됨 · 재고 ${product.stock}개` : "아직 품절"}
-                </span>
-              </li>
-            ))}
+            {restock
+              .flatMap((id) => catalog.find((p) => p.id === id) ?? [])
+              .map((product) => (
+                <li key={product.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 p-4">
+                  <Link href={`/product/${product.slug}`} className="hover:underline">
+                    {product.name}
+                  </Link>
+                  <span className={product.stock > 0 ? "text-[#3cb371]" : "text-mute-200"}>
+                    {product.stock > 0 ? `입고됨 · 재고 ${product.stock}개` : "아직 품절"}
+                  </span>
+                </li>
+              ))}
           </ul>
         )}
       </section>
 
       <section id="my-wish" aria-labelledby="my-wish-heading" className="flex flex-col gap-4">
-        <h2 id="my-wish-heading" className={sectionTitle}>찜</h2>
+        <h2 id="my-wish-heading" className={sectionTitle}>
+          찜
+        </h2>
         {wishedProducts.length === 0 ? (
           <p className="text-mute-200">찜한 상품이 없습니다.</p>
         ) : (
@@ -166,7 +215,9 @@ async function MyContent() {
       </section>
 
       <section id="my-inquiries" aria-labelledby="my-inquiries-heading" className="flex flex-col gap-6">
-        <h2 id="my-inquiries-heading" className={sectionTitle}>1:1 문의</h2>
+        <h2 id="my-inquiries-heading" className={sectionTitle}>
+          1:1 문의
+        </h2>
         {inquiries.length > 0 && (
           <ul className="flex flex-col gap-3">
             {inquiries.map((inquiry) => (

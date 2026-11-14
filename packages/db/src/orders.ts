@@ -36,9 +36,7 @@ export async function placeOrder(db: Db, input: PlaceOrderInput): Promise<Order>
 
   return db.transaction(async (tx) => {
     const productIds = lines.map((l) => l.itemId).filter((id) => getProductById(id));
-    const merchRows = productIds.length
-      ? await tx.select().from(productMerch).where(inArray(productMerch.productId, productIds)).for("update")
-      : [];
+    const merchRows = productIds.length ? await tx.select().from(productMerch).where(inArray(productMerch.productId, productIds)).for("update") : [];
     const merch = new Map(merchRows.map((m) => [m.productId, m]));
 
     const resolved = lines.map((line) => {
@@ -127,7 +125,8 @@ export async function cancelOrderByUser(db: Db, userId: number, id: string): Pro
   return db.transaction(async (tx) => {
     const order = await tx.query.orders.findFirst({ where: and(eq(orders.id, id), eq(orders.userId, userId)), with: { lines: true } });
     if (!order) return { ok: false, message: "주문을 찾지 못했습니다." };
-    if (!CANCELLABLE.includes(order.status)) return { ok: false, message: "조립이나 배송이 시작된 주문은 취소할 수 없습니다. 1:1 문의로 남겨 주세요." };
+    if (!CANCELLABLE.includes(order.status))
+      return { ok: false, message: "조립이나 배송이 시작된 주문은 취소할 수 없습니다. 1:1 문의로 남겨 주세요." };
     await tx.update(orders).set({ status: "cancelled" }).where(eq(orders.id, id));
     await tx.insert(orderEvents).values({ orderId: id, status: "cancelled" });
     for (const line of order.lines) {
@@ -144,10 +143,16 @@ export async function dashboardStats(db: Db) {
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const [[recent], [revenue], [assembling], [newConsults], lowStock] = await Promise.all([
     db.select({ value: count() }).from(orders).where(gte(orders.createdAt, since)),
-    db.select({ value: sum(orders.total) }).from(orders).where(sql`${orders.status} <> 'cancelled'`),
+    db
+      .select({ value: sum(orders.total) })
+      .from(orders)
+      .where(sql`${orders.status} <> 'cancelled'`),
     db.select({ value: count() }).from(orders).where(eq(orders.status, "assembling")),
     db.select({ value: count() }).from(consultRequests).where(eq(consultRequests.status, "new")),
-    db.select().from(productMerch).where(sql`${productMerch.stock} < 5 and ${productMerch.visible}`),
+    db
+      .select()
+      .from(productMerch)
+      .where(sql`${productMerch.stock} < 5 and ${productMerch.visible}`),
   ]);
   return {
     ordersLast24h: recent.value,

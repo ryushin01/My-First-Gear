@@ -31,47 +31,47 @@ export function CrtScreen({ children, source = "MY FIRST GEAR" }: CrtScreenProps
       <MemberSync />
       <ScreenShell
         header={
-      <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-12">
-        <div className="flex items-center gap-8 font-mono text-xs uppercase text-label">
-          <Link href="/" className="inline-flex min-h-8 items-center hover:text-cream">
-            Home
-          </Link>
-          <span className="hidden md:inline">
-            <Timecode />
-          </span>
-        </div>
-        <Link href="/" aria-label="My First Gear 홈" className="col-span-2 justify-self-center md:order-none md:col-span-1 -order-1">
-          <Wordmark />
-        </Link>
-        <nav aria-label="주요 메뉴" className="justify-self-end">
-          <ul className="flex flex-wrap justify-end gap-x-4 gap-y-1 font-mono md:gap-x-6 text-xs uppercase text-label">
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-cream">
-                  {item.label}
-                  {item.href === "/cart" && <CartCount />}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <AccountLink />
-            </li>
-          </ul>
-        </nav>
-      </header>
+          <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-12">
+            <div className="flex items-center gap-8 font-mono text-xs uppercase text-label">
+              <Link href="/" className="inline-flex min-h-8 items-center hover:text-cream">
+                Home
+              </Link>
+              <span className="hidden md:inline">
+                <Timecode />
+              </span>
+            </div>
+            <Link href="/" aria-label="My First Gear 홈" className="col-span-2 justify-self-center md:order-none md:col-span-1 -order-1">
+              <Wordmark />
+            </Link>
+            <nav aria-label="주요 메뉴" className="justify-self-end">
+              <ul className="flex flex-wrap justify-end gap-x-4 gap-y-1 font-mono md:gap-x-6 text-xs uppercase text-label">
+                {NAV.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-cream">
+                      {item.label}
+                      {item.href === "/cart" && <CartCount />}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <AccountLink />
+                </li>
+              </ul>
+            </nav>
+          </header>
         }
         footer={
-      <footer className="crt-chrome-bottom sticky bottom-0 z-40 px-5 pb-5 pt-3 md:px-16 md:pb-12">
-        <div className="grid grid-cols-2 items-center gap-4 font-mono text-xs uppercase text-label md:grid-cols-4">
-          <LocalClock />
-          <span className="flex flex-wrap gap-x-4">
-            <BwToggle />
-            <FxToggle />
-          </span>
-          <p className="hidden md:block">Source: {source}</p>
-          <p className="col-span-2 normal-case md:col-span-1 md:justify-self-end">포트폴리오 데모 · 실제 판매하지 않습니다</p>
-        </div>
-      </footer>
+          <footer className="crt-chrome-bottom sticky bottom-0 z-40 px-5 pb-5 pt-3 md:px-16 md:pb-12">
+            <div className="grid grid-cols-2 items-center gap-4 font-mono text-xs uppercase text-label md:grid-cols-4">
+              <LocalClock />
+              <span className="flex flex-wrap gap-x-4">
+                <BwToggle />
+                <FxToggle />
+              </span>
+              <p className="hidden md:block">Source: {source}</p>
+              <p className="col-span-2 normal-case md:col-span-1 md:justify-self-end">포트폴리오 데모 · 실제 판매하지 않습니다</p>
+            </div>
+          </footer>
         }
       >
         {children}

@@ -21,8 +21,7 @@ export function AssemblySequence() {
           <p className="mono-label">[Assembly Sequence]</p>
           <h2 id="home-assembly" className="assembly-title font-display text-4xl md:text-6xl">
             흩어진 부품이
-            <br />
-            한 대의 PC가 되기까지
+            <br />한 대의 PC가 되기까지
           </h2>
           <ol className="assembly-steps">
             {STEPS.map((step, i) => (

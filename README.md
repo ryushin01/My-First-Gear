@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.10.2-ff3131)
+![version](https://img.shields.io/badge/version-0.10.3-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -92,6 +92,7 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 |---|---|
 | `pnpm build` | 두 앱 프로덕션 빌드 |
 | `pnpm lint` / `typecheck` | ESLint + FSD 검사 / 타입 검사 |
+| `pnpm format` / `format:check` | Prettier로 서식 맞추기 / 서식 검사(CI) |
 | `pnpm test` | 컴포넌트·접근성·호환성·DB 통합 테스트 |
 | `pnpm test:e2e` | 프로덕션 빌드를 로컬 DB로 띄워 쇼핑몰·어드민 E2E |
 | `pnpm --filter shop size` / `lhci` | 쇼핑몰 번들 크기 / Lighthouse 기준 검사 (먼저 `build` 필요) |
