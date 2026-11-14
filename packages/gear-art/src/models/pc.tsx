@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Fan, Metal, Perforation, Shadow, range } from "./parts";
+import { antecTorque } from "./torque";
 
 /* ───────────── CPU: 위에서 본 모습 ───────────── */
 
@@ -287,41 +288,6 @@ function psu({ w, body, grille, label }: { w: number; body: string; grille: stri
 
 /* ───────────── 케이스 ───────────── */
 
-/** 안텍 토크: 옆판 없는 오픈 프레임, 양옆의 두꺼운 알루미늄 판(빨강·검정), 가로로 놓인 부품 */
-function torque(): ReactNode {
-  return (
-    <g>
-      <Shadow cx={100} cy={182} rx={76} ry={6} />
-      {/* 뒤 알루미늄 판 */}
-      <path d="M44 22 L156 22 L170 34 L170 168 L58 168 L44 156 Z" fill="#202024" />
-      {/* 메인보드 트레이와 보드 */}
-      <rect x={66} y={42} width={88} height={108} fill="#141416" />
-      <rect x={72} y={48} width={76} height={96} fill="#1b2a22" />
-      <rect x={110} y={56} width={30} height={30} rx={3} fill="#c5c8ce" />
-      <circle cx={125} cy={71} r={12} fill="#1c1c1f" />
-      <circle cx={125} cy={71} r={4} fill="#55585e" />
-      {range(4).map((i) => (
-        <rect key={i} x={88 + i * 5} y={52} width={3} height={36} fill="#3b3c41" />
-      ))}
-      {/* 그래픽카드 (빨간 포인트) */}
-      <rect x={74} y={98} width={74} height={18} rx={3} fill="#2a2a2e" />
-      <rect x={74} y={98} width={74} height={4} fill="#ff3131" />
-      {/* 아래 파워 */}
-      <rect x={74} y={124} width={50} height={18} rx={2} fill="#2c2c30" />
-      {/* 앞 알루미늄 판 두 장: 빨간 바깥면 */}
-      <path d="M28 30 L52 22 L52 176 L28 184 Z" fill="#c4161c" />
-      <path d="M28 30 L52 22 L52 60 L28 70 Z" fill="#ffffff" opacity={0.18} />
-      <path d="M28 30 L52 22 L52 176 L28 184 Z" fill="none" stroke="#7f0e12" strokeWidth={1} />
-      <path d="M148 30 L172 22 L172 176 L148 184 Z" fill="#141416" />
-      <path d="M148 30 L172 22 L172 60 L148 70 Z" fill="#ffffff" opacity={0.12} />
-      {/* 판을 잇는 금속 기둥 */}
-      <rect x={52} y={36} width={96} height={6} fill="#9fa3aa" />
-      <rect x={52} y={154} width={96} height={6} fill="#9fa3aa" />
-      <rect x={52} y={36} width={96} height={2} fill="#ffffff" opacity={0.4} />
-    </g>
-  );
-}
-
 /** 프랙탈 North: 짙은 상자, 앞면 오른쪽에 원목 세로 살, 강화유리 옆판 */
 function north(): ReactNode {
   return (
@@ -429,7 +395,7 @@ export const pcModels: Record<string, () => ReactNode> = {
   "seasonic-focus-gx-850": () => psu({ w: 128, body: "#1b1c1f", grille: "#5a5d64", label: "#c9a24a" }),
   "corsair-sf750": () => psu({ w: 100, body: "#202125", grille: "#6a6d74", label: "#9fa3aa" }),
   "micronics-classic-ii-600": () => psu({ w: 128, body: "#26272b", grille: "#4f5258", label: "#7c8088" }),
-  "antec-torque": torque,
+  "antec-torque": antecTorque,
   "fractal-north": north,
   "cooler-master-nr200p": nr200p,
   "thermalright-peerless-assassin-120-se": () => dualTower({ fanFrame: "#141416", fanBlade: "#2a2a2f", fanEdge: "#3e3e45" }),

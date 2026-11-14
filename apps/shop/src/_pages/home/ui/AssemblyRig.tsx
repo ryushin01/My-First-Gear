@@ -1,10 +1,12 @@
 import type { CSSProperties, ReactNode } from "react";
+import { TORQUE_TOP_RADIATOR, TORQUE_TRAY, TorqueBack, TorqueFront } from "@mfg/gear-art";
 
 /**
- * 홈 조립 장면의 그림. 실제 견적 한 대를 옆판 없는 쪽에서 본 모습으로 그린다.
- * 안텍 토크 화이트, ROG MAXIMUS Z690 EXTREME, i9-12900K, 삼성 DDR5 16GB ×4, 980 PRO ×3,
- * NZXT KRAKEN Z73 RGB, ROG STRIX RTX 3090(세로 거치대·라이저 케이블), ROG THOR 1200W.
- * 로고와 상표 문양은 그리지 않는다.
+ * 홈 조립 장면의 그림. 실제 견적 한 대를 안텍 토크 화이트의 강화유리 쪽에서 본 모습으로 그린다.
+ * 토크는 메인보드 트레이가 앞으로 기울어 있어 부품을 TORQUE_TRAY로, 위 라디에이터는 위 판과 나란히 놓는다.
+ * ROG MAXIMUS Z690 EXTREME, i9-12900K, 삼성 DDR5 16GB ×4, 980 PRO ×3, NZXT KRAKEN Z73 RGB,
+ * ROG STRIX RTX 3090(쿨러마스터 세로 거치대 V2·ROG Strix 라이저 케이블), ROG THOR 1200W.
+ * 각 부품은 제품 사진을 보고 모양과 색을 따랐고, 로고와 상표 문양, 제품 이름 글자는 그리지 않는다.
  */
 
 const range = (n: number) => Array.from({ length: n }, (_, i) => i);
@@ -18,7 +20,7 @@ type PartMotion = {
   rot: number;
 };
 
-function Part({ motion, children }: { motion: PartMotion; children: ReactNode }) {
+function Part({ motion, place, children }: { motion: PartMotion; place?: string; children: ReactNode }) {
   const style = {
     "--s": `${motion.start}%`,
     "--dx": `${motion.dx}px`,
@@ -27,31 +29,110 @@ function Part({ motion, children }: { motion: PartMotion; children: ReactNode })
   } as CSSProperties;
   return (
     <g className="assembly-part" style={style}>
-      {children}
+      {place ? <g transform={place}>{children}</g> : children}
     </g>
   );
 }
 
-/** 팬: 테두리, 날개, 가운데 허브. rgb면 둘레에 빛 고리를 두른다. */
-function Fan({ cx, cy, r, rgb = false }: { cx: number; cy: number; r: number; rgb?: boolean }) {
+/** 7세그먼트 숫자 하나 (Q-Code, 펌프 LCD, 파워 OLED) */
+const SEGMENTS: Record<string, string> = {
+  "0": "abcdef",
+  "1": "bc",
+  "2": "abged",
+  "3": "abgcd",
+  "4": "fgbc",
+  "5": "afgcd",
+  "8": "abcdefg",
+};
+
+function Digit({ x, y, w, h, t, d, color }: { x: number; y: number; w: number; h: number; t: number; d: string; color: string }) {
+  const half = h / 2;
+  const rects: Record<string, [number, number, number, number]> = {
+    a: [x + t, y, w - 2 * t, t],
+    b: [x + w - t, y + t * 0.6, t, half - t * 0.8],
+    c: [x + w - t, y + half + t * 0.2, t, half - t * 0.8],
+    d: [x + t, y + h - t, w - 2 * t, t],
+    e: [x, y + half + t * 0.2, t, half - t * 0.8],
+    f: [x, y + t * 0.6, t, half - t * 0.8],
+    g: [x + t, y + half - t / 2, w - 2 * t, t],
+  };
   return (
-    <g>
-      {rgb && <circle cx={cx} cy={cy} r={r + 1.5} fill="none" stroke="url(#asm-rgb)" strokeWidth={2.5} />}
-      <circle cx={cx} cy={cy} r={r} fill="#16171a" />
-      {range(9).map((i) => (
-        <path
-          key={i}
-          d={`M${cx} ${cy} q ${r * 0.55} ${-r * 0.2} ${r * 0.9} ${r * 0.18} q ${-r * 0.35} ${r * 0.12} ${-r * 0.9} ${-r * 0.18}`}
-          fill="#2c2e33"
-          stroke="#3c3f45"
-          strokeWidth={0.6}
-          transform={`rotate(${i * 40} ${cx} ${cy})`}
-        />
-      ))}
-      <circle cx={cx} cy={cy} r={r * 0.28} fill="#222428" stroke="#44474e" strokeWidth={0.8} />
+    <g fill={color}>
+      {[...SEGMENTS[d]].map((s) => {
+        const [rx, ry, rw, rh] = rects[s];
+        return <rect key={s} x={rx} y={ry} width={rw} height={rh} />;
+      })}
     </g>
   );
 }
+
+/** ROG STRIX의 Axial-tech 팬: 날개 끝을 잇는 고리와 은색 허브 */
+function AxialFan({ cx, cy, r, reverse = false }: { cx: number; cy: number; r: number; reverse?: boolean }) {
+  const blade = `M${cx} ${cy - r * 0.3} C ${cx + r * 0.35} ${cy - r * 0.5}, ${cx + r * 0.55} ${cy - r * 0.85}, ${cx + r * 0.28} ${cy - r * 0.95} L ${cx - r * 0.02} ${cy - r * 0.95} C ${cx + r * 0.18} ${cy - r * 0.8}, ${cx + r * 0.04} ${cy - r * 0.52}, ${cx - r * 0.12} ${cy - r * 0.3} Z`;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={r} fill="#101114" />
+      <g transform={reverse ? `translate(${2 * cx} 0) scale(-1 1)` : undefined}>
+        {range(13).map((i) => (
+          <path key={i} d={blade} fill="#2b2d32" stroke="#43464d" strokeWidth={0.5} transform={`rotate(${(360 / 13) * i} ${cx} ${cy})`} />
+        ))}
+      </g>
+      <circle cx={cx} cy={cy} r={r * 0.95} fill="none" stroke="#33363c" strokeWidth={2.2} />
+      <circle cx={cx} cy={cy} r={r * 0.3} fill="#c5cad1" />
+      <circle cx={cx} cy={cy} r={r * 0.3} fill="none" stroke="#7d8189" strokeWidth={1} />
+      <circle cx={cx - r * 0.08} cy={cy - r * 0.08} r={r * 0.12} fill="#ffffff" opacity={0.5} />
+    </g>
+  );
+}
+
+/** 위에 단 라디에이터 아래의 팬: 아래를 보고 누워 있어 거의 옆모습(타원)으로 보인다 */
+function FlatFan({ cx, cy }: { cx: number; cy: number }) {
+  return (
+    <g>
+      <rect x={cx - 38} y={cy - 9} width={76} height={4} fill="#17181b" />
+      <ellipse cx={cx} cy={cy} rx={36} ry={8} fill="#141518" />
+      {range(7).map((i) => {
+        const a = (Math.PI * 2 * i) / 7;
+        return (
+          <path
+            key={i}
+            d={`M${cx} ${cy} L${cx + 30 * Math.cos(a)} ${cy + 6.4 * Math.sin(a)}`}
+            fill="none"
+            stroke="#2c2e33"
+            strokeWidth={2.6}
+            strokeLinecap="round"
+          />
+        );
+      })}
+      <ellipse cx={cx} cy={cy} rx={35} ry={7.2} fill="none" stroke="url(#asm-rgb)" strokeWidth={2} />
+      <ellipse cx={cx} cy={cy} rx={9} ry={2.4} fill="#222428" />
+    </g>
+  );
+}
+
+/** AniMe Matrix에 켜진 점(사선 무늬) */
+const ANIME_LIT = [
+  [1, 3],
+  [2, 4],
+  [3, 5],
+  [4, 6],
+  [5, 7],
+  [6, 8],
+  [1, 9],
+  [2, 10],
+  [3, 11],
+  [4, 12],
+  [5, 13],
+  [6, 14],
+];
+
+/** M.2 방열판의 X자 점 무늬 */
+const ARMOR_LIT = [0, 1, 2, 3, 4, 5].flatMap((k) => [
+  [114 + 4 * k, 222 + 4 * k],
+  [134 - 4 * k, 222 + 4 * k],
+  [146 + 4 * k, 222 + 4 * k],
+  [166 - 4 * k, 222 + 4 * k],
+]);
 
 export function AssemblyRig({ className }: { className?: string }) {
   return (
@@ -62,160 +143,270 @@ export function AssemblyRig({ className }: { className?: string }) {
           <stop offset="0.5" stopColor="#7a5cff" />
           <stop offset="1" stopColor="#21d4ff" />
         </linearGradient>
-        <linearGradient id="asm-plate" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#d7d8d6" />
-        </linearGradient>
         <radialGradient id="asm-lcd" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#1b2b4a" />
           <stop offset="0.7" stopColor="#0a1222" />
           <stop offset="1" stopColor="#05080f" />
         </radialGradient>
+        {/* 촘촘한 타공 점: AniMe Matrix(밝은 판 위 어두운 점)와 M.2 방열판(어두운 판 위 밝은 점) */}
+        <pattern id="asm-dots" width={4} height={4} patternUnits="userSpaceOnUse">
+          <circle cx={2} cy={2} r={0.9} fill="#2a2c30" />
+        </pattern>
+        <pattern id="asm-dots-dark" width={4} height={4} patternUnits="userSpaceOnUse">
+          <circle cx={2} cy={2} r={0.8} fill="#4a4d54" />
+        </pattern>
       </defs>
 
-      {/* 안텍 토크 화이트: 뒤 알루미늄 판, 흰 트레이, 앞 판 두 장, 위아래 기둥 */}
+      {/* 안텍 토크 화이트: 뼈대·받침·다리 */}
       <g className="assembly-case">
-        <ellipse cx={200} cy={430} rx={170} ry={7} fill="#000" opacity={0.45} />
-        <rect x={70} y={58} width={258} height={346} fill="#e8e8e5" />
-        {range(5).map((i) => (
-          <rect key={i} x={84} y={82 + i * 66} width={10} height={30} rx={5} fill="#cfcfcb" />
-        ))}
-        <path d="M28 26 L62 18 L62 424 L28 432 Z" fill="url(#asm-plate)" />
-        <path d="M28 26 L62 18 L62 90 L28 100 Z" fill="#fff" opacity={0.5} />
-        <path d="M336 18 L352 24 L352 428 L336 424 Z" fill="url(#asm-plate)" />
-        <path d="M358 26 L376 32 L376 432 L358 428 Z" fill="#dcdcd9" />
-        <rect x={62} y={40} width={274} height={9} fill="#b9bcc1" />
-        <rect x={62} y={40} width={274} height={3} fill="#fff" opacity={0.6} />
-        <rect x={62} y={406} width={274} height={9} fill="#b9bcc1" />
-        <rect x={40} y={430} width={16} height={6} fill="#bdbdb9" />
-        <rect x={344} y={430} width={16} height={6} fill="#bdbdb9" />
+        <TorqueBack />
       </g>
 
-      {/* ROG MAXIMUS Z690 EXTREME: E-ATX 검은 기판, 건메탈 방열판, 거울 같은 I/O 덮개 */}
-      <Part motion={{ start: 2, dx: -260, dy: -60, rot: -14 }}>
-        <rect x={86} y={66} width={226} height={274} rx={3} fill="#111214" />
-        <path d="M90 70 H150 V92 H128 V196 H90 Z" fill="#2f3237" />
-        <path d="M90 70 H150 V78 H90 Z" fill="#8b9097" opacity={0.6} />
-        <rect x={94} y={98} width={30} height={92} fill="#1b1d22" />
+      {/* ROG MAXIMUS Z690 EXTREME: 구리빛 테두리의 E-ATX 기판, AniMe Matrix I/O 덮개, 핀 방열판 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 2, dx: -260, dy: -60, rot: -14 }}>
+        <rect x={100} y={100} width={182} height={200} rx={2} fill="#101114" stroke="#a8703f" strokeWidth={1.2} />
+        <path d="M100 100 H142 V170 L132 196 H100 Z" fill="#2e3035" />
+        <rect x={104} y={106} width={32} height={80} rx={1.5} fill="#8d9198" />
+        <rect x={104} y={106} width={32} height={80} rx={1.5} fill="url(#asm-dots)" />
+        {ANIME_LIT.map(([c, r]) => (
+          <circle key={`${c}-${r}`} cx={106 + 4 * c} cy={110 + 4 * r} r={1.1} fill="#f4f6f8" />
+        ))}
+        <rect x={100} y={100} width={42} height={3} fill="#ffffff" opacity={0.12} />
+        {/* 소켓 위·왼쪽 VRM 방열판 */}
+        <rect x={142} y={102} width={72} height={18} rx={1.5} fill="#1b1c20" />
+        {range(11).map((i) => (
+          <rect key={i} x={146 + i * 6} y={104} width={2.4} height={14} fill="#34363c" />
+        ))}
+        <rect x={142} y={122} width={12} height={70} rx={1.5} fill="#1b1c20" />
+        {range(10).map((i) => (
+          <rect key={i} x={144} y={126 + i * 6.4} width={8} height={2.2} fill="#34363c" />
+        ))}
+        {/* LGA1700 소켓: 세로로 긴 고정 틀과 레버 */}
+        <rect x={158} y={126} width={40} height={46} rx={2} fill="#9da2a9" />
+        <rect x={163} y={131} width={30} height={36} fill="#2a2c30" />
+        <path d="M202 128 V172 H196" fill="none" stroke="#c3c7cd" strokeWidth={2} />
+        {/* DDR5 슬롯 4개와 걸쇠 */}
+        {range(4).map((i) => (
+          <g key={i}>
+            <rect x={220 + i * 10} y={114} width={7} height={98} fill="#25272b" />
+            <rect x={220 + i * 10} y={111} width={7} height={4} fill="#3a3c41" />
+            <rect x={220 + i * 10} y={211} width={7} height={4} fill="#3a3c41" />
+          </g>
+        ))}
+        {/* 24핀 전원, Q-Code와 버튼 */}
+        <rect x={268} y={136} width={10} height={52} rx={1} fill="#1a1b1e" />
+        {range(12).map((i) => (
+          <rect key={i} x={270} y={139 + i * 4} width={6} height={2} fill="#2f3136" />
+        ))}
+        <rect x={258} y={194} width={20} height={13} rx={1} fill="#050506" />
+        <Digit x={260.5} y={196.5} w={6.5} h={8} t={1.2} d="4" color="#ff4d2e" />
+        <Digit x={269} y={196.5} w={6.5} h={8} t={1.2} d="0" color="#ff4d2e" />
+        <rect x={262} y={210} width={7} height={5} rx={1} fill="#c4302b" />
+        <rect x={271} y={210} width={7} height={5} rx={1} fill="#3a3c41" />
+        {/* PCIe x16 슬롯 두 개(금속 보강) */}
+        {[212, 247].map((y) => (
+          <g key={y}>
+            <rect x={120} y={y} width={58} height={6} rx={1} fill="#c9ccd2" />
+            <rect x={122} y={y + 2} width={54} height={2} fill="#55585e" />
+          </g>
+        ))}
+        {/* M.2 자리 세 개: 소켓과 나사 기둥 */}
+        {[
+          [116, 223],
+          [182, 223],
+          [116, 260],
+        ].map(([x, y]) => (
+          <g key={`${x}-${y}`}>
+            <rect x={x} y={y} width={58} height={14} fill="#17181b" />
+            <rect x={x} y={y + 2} width={4} height={10} fill="#2b2d31" />
+            <circle cx={x + 56} cy={y + 7} r={1.6} fill="#8d9097" />
+          </g>
+        ))}
+      </Part>
+
+      {/* i9-12900K: 청록 기판 위 모서리가 꺾인 니켈 히트스프레더, 소켓에 세로로 놓인다 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 10, dx: -120, dy: -220, rot: 30 }}>
+        <rect x={166} y={134} width={24} height={30} rx={1.5} fill="#1d5a52" />
+        <path d="M170.5 137 H185.5 V140 H187.5 V158 H185.5 V161 H170.5 V158 H168.5 V140 H170.5 Z" fill="#c9cdd2" />
+        <rect x={170.5} y={137} width={15} height={7} fill="#ffffff" opacity={0.3} />
+        <path d="M172 147 h12 M172 151 h9 M172 155 h11" fill="none" stroke="#9a9ea5" strokeWidth={0.8} />
+        <path d="M166.6 163.4 h3 l-3 -3 Z" fill="#d4a63b" />
+      </Part>
+
+      {/* 삼성 DDR5 16GB ×4: 슬롯에 선 초록 기판을 위에서 보면 칩 여덟 개와 가운데 PMIC가 보인다 */}
+      {range(4).map((i) => {
+        const x = 220 + i * 10;
+        return (
+          <Part key={i} place={TORQUE_TRAY} motion={{ start: 22 + i * 3, dx: 160 + i * 20, dy: -120 + i * 30, rot: 22 - i * 8 }}>
+            <rect x={x} y={118} width={7} height={90} rx={0.8} fill="#1f6b40" />
+            <rect x={x} y={118} width={1.4} height={90} fill="#2f8a57" />
+            {range(8).map((c) => (
+              <rect key={c} x={x + 2.6} y={c < 4 ? 121 + c * 9 : 168 + (c - 4) * 9} width={4.4} height={7.4} fill="#141518" />
+            ))}
+            <rect x={x + 2.6} y={158} width={4.4} height={6} fill="#3a3c41" />
+          </Part>
+        );
+      })}
+
+      {/* 삼성 980 PRO ×3: 검은 기판과 검은 라벨, 금 단자는 M.2 소켓 쪽 */}
+      {[
+        [116, 223],
+        [182, 223],
+        [116, 260],
+      ].map(([x, y], i) => (
+        <Part key={`${x}-${y}`} place={TORQUE_TRAY} motion={{ start: 32 + i * 3, dx: -200, dy: 40 + i * 30, rot: -25 + i * 10 }}>
+          <rect x={x} y={y} width={58} height={14} rx={1.2} fill="#0e0f11" />
+          <rect x={x + 6} y={y + 1.5} width={46} height={11} fill="#1b1c1f" />
+          <rect x={x + 9} y={y + 4} width={7} height={1.6} fill="#e7e7e7" />
+          <rect x={x + 17} y={y + 4} width={6} height={1.6} fill="#e3342f" />
+          <rect x={x + 9} y={y + 7.5} width={14} height={1} fill="#9a9ea5" />
+          <rect x={x + 30} y={y + 3.5} width={6} height={6} fill="#d9dadb" />
+          <rect x={x + 39} y={y + 4} width={10} height={1} fill="#9a9ea5" />
+          <rect x={x + 39} y={y + 7} width={7} height={1} fill="#9a9ea5" />
+          <rect x={x} y={y + 1} width={3.5} height={12} fill="#d4a63b" />
+          <circle cx={x + 56} cy={y + 7} r={1.6} fill="#2b2d31" />
+        </Part>
+      ))}
+
+      {/* Z690 EXTREME의 M.2 방열판: SSD를 덮는 짙은 장갑판, X자 점 무늬와 결, LiveDash OLED */}
+      <Part place={TORQUE_TRAY} motion={{ start: 43, dx: 220, dy: 80, rot: 10 }}>
+        <path d="M104 220 H276 L280 224 V244 H104 Z" fill="#2c2e33" />
+        <path d="M104 256 H280 V292 L274 298 H104 Z" fill="#2c2e33" />
+        <rect x={104} y={220} width={72} height={24} fill="url(#asm-dots-dark)" />
+        <rect x={104} y={256} width={72} height={42} fill="url(#asm-dots-dark)" />
+        {ARMOR_LIT.map(([cx, cy]) => (
+          <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={1} fill="#cfd2d7" />
+        ))}
+        {range(14).map((i) => (
+          <path key={i} d={`M${182 + i * 7} 244 L${194 + i * 7} 220`} fill="none" stroke="#373a40" strokeWidth={1} />
+        ))}
+        <rect x={104} y={220} width={176} height={1.5} fill="#ffffff" opacity={0.12} />
+        <path d="M236 258 H280 V292 L274 298 H236 Z" fill="#383b41" />
+        <rect x={244} y={262} width={26} height={16} rx={1} fill="#050506" />
+        <path d="M247 274 L253 270 L258 273 L263 266 L267 268" fill="none" stroke="#5fd3ff" strokeWidth={1.2} />
+      </Part>
+
+      {/* NZXT KRAKEN Z73 RGB: 360mm 라디에이터를 기운 위 판 아래에 나란히 달아 RGB 팬 셋이 아래를 본다 */}
+      <Part place={TORQUE_TOP_RADIATOR} motion={{ start: 52, dx: 0, dy: -240, rot: 0 }}>
+        <rect x={62} y={62} width={254} height={14} rx={2} fill="#121316" />
+        <rect x={62} y={62} width={22} height={14} rx={2} fill="#1a1b1e" />
+        {range(57).map((i) => (
+          <rect key={i} x={86 + i * 4} y={64} width={1.2} height={10} fill="#26282c" />
+        ))}
+        {[123, 200, 277].map((cx) => (
+          <FlatFan key={cx} cx={cx} cy={86} />
+        ))}
+      </Part>
+
+      {/* KRAKEN 펌프: 원형 LCD에 액체 온도와 반원 게이지, 라디에이터로 가는 감싼 호스 두 가닥 */}
+      <Part motion={{ start: 58, dx: 180, dy: -160, rot: 40 }}>
+        {["M134 172 C 118 140, 92 112, 95 71", "M141 169 C 128 136, 106 110, 104 76"].map((d) => (
+          <g key={d}>
+            <path d={d} fill="none" stroke="#1a1b1e" strokeWidth={5.4} strokeLinecap="round" />
+            <path d={d} fill="none" stroke="#2c2d31" strokeWidth={5.4} strokeDasharray="1.5 2.5" />
+          </g>
+        ))}
+        <g transform={TORQUE_TRAY}>
+          <circle cx={178} cy={148} r={26} fill="#1a1b1e" />
+          <circle cx={178} cy={148} r={26} fill="none" stroke="#2e3035" strokeWidth={2} />
+          <circle cx={178} cy={148} r={21} fill="url(#asm-lcd)" />
+          <circle
+            cx={178}
+            cy={148}
+            r={17}
+            fill="none"
+            stroke="url(#asm-rgb)"
+            strokeWidth={3}
+            strokeDasharray="80 27"
+            transform="rotate(135 178 148)"
+          />
+          <Digit x={169.5} y={141} w={7} h={11} t={1.7} d="3" color="#eef4ff" />
+          <Digit x={178.5} y={141} w={7} h={11} t={1.7} d="2" color="#eef4ff" />
+          <rect x={172} y={156} width={12} height={1.4} rx={0.7} fill="#8fa0b8" />
+        </g>
+      </Part>
+
+      {/* ROG Strix 라이저 케이블: 일곱 갈래 납작 케이블이 위 PCIe 슬롯에서 그래픽카드 뒤로 내려간다 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 68, dx: -140, dy: 120, rot: -30 }}>
+        <rect x={118} y={208} width={62} height={11} rx={1.5} fill="#18191c" />
+        <rect x={118} y={208} width={62} height={2} fill="#ffffff" opacity={0.08} />
+        <rect x={120} y={219} width={58} height={54} fill="#141518" />
         {range(6).map((i) => (
-          <path key={i} d={`M95 ${104 + i * 14} l28 -10`} stroke="#5a5f68" strokeWidth={1.4} />
+          <rect key={i} x={128 + i * 8.3} y={219} width={0.9} height={54} fill="#2c2e33" />
         ))}
-        <rect x={156} y={70} width={92} height={18} fill="#2f3237" />
-        {range(7).map((i) => (
-          <rect key={i} x={160 + i * 12} y={73} width={7} height={12} fill="#45494f" />
-        ))}
-        {/* LGA1700 소켓 */}
-        <rect x={160} y={104} width={68} height={60} rx={2} fill="#8f949b" />
-        <rect x={166} y={110} width={56} height={48} fill="#2a2c30" />
-        {/* 메모리 슬롯 네 칸 */}
+      </Part>
+
+      {/* 쿨러마스터 세로 그래픽카드 거치대 V2: 창이 뚫린 뒤 브래킷, 손나사, 아래 PCIe 슬롯 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 71, dx: -180, dy: 60, rot: 18 }}>
+        <rect x={84} y={262} width={16} height={104} fill="#17181b" />
+        <rect x={88} y={272} width={8} height={72} fill="#050506" />
         {range(4).map((i) => (
-          <rect key={i} x={244 + i * 12} y={94} width={6} height={104} fill="#3a3c41" />
+          <rect key={i} x={89} y={348 + i * 4} width={6} height={1.6} fill="#050506" />
         ))}
-        {/* PCIe 슬롯(금속 보강) */}
-        <rect x={112} y={214} width={164} height={7} fill="#c7cad0" />
-        <rect x={112} y={300} width={164} height={7} fill="#7d8188" />
-        {/* M.2 자리 */}
-        {[188, 240, 272].map((y) => (
-          <rect key={y} x={118} y={y} width={76} height={14} fill="#1d1f23" stroke="#30333a" strokeWidth={1} />
+        <rect x={100} y={264} width={204} height={6} fill="#17181b" />
+        <rect x={84} y={360} width={220} height={6} fill="#17181b" />
+        <rect x={120} y={361.5} width={110} height={3} fill="#2b2c30" />
+        <rect x={122} y={362.5} width={106} height={1} fill="#8d9097" />
+        {[
+          [92, 262],
+          [296, 266],
+        ].map(([cx, cy]) => (
+          <g key={cx}>
+            <circle cx={cx} cy={cy} r={3.6} fill="#26282c" />
+            <circle cx={cx} cy={cy} r={1.6} fill="#55585e" />
+          </g>
         ))}
-        {/* 칩셋 방열판 */}
-        <path d="M214 236 H306 V334 H236 L214 312 Z" fill="#2f3237" />
+      </Part>
+
+      {/* ROG STRIX RTX 3090: 세로로 세워 팬 셋이 유리 쪽을 본다. 철회색 몸체를 지나는 은색 사선 판 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 76, dx: 40, dy: 260, rot: -12 }}>
+        <rect x={96} y={268} width={5} height={94} fill="#c9ccd2" />
         {range(5).map((i) => (
-          <path key={i} d={`M${226 + i * 16} 330 l20 -80`} stroke="#5a5f68" strokeWidth={1.4} />
+          <rect key={i} x={97.5} y={276 + i * 16} width={2} height={10} fill="#6d7178" />
         ))}
-        <path d="M214 236 H306 V242 H214 Z" fill="#8b9097" opacity={0.6} />
-      </Part>
-
-      {/* i9-12900K: 길쭉한 LGA1700 기판과 히트스프레더 */}
-      <Part motion={{ start: 10, dx: -120, dy: -220, rot: 30 }}>
-        <rect x={170} y={113} width={48} height={42} rx={2} fill="#1f5a3a" />
-        <rect x={176} y={118} width={36} height={32} rx={2} fill="#c9ccd1" />
-        <rect x={176} y={118} width={36} height={10} rx={2} fill="#fff" opacity={0.35} />
-        <path d="M182 134 h24 M182 140 h16" stroke="#8d9096" strokeWidth={1.6} />
-      </Part>
-
-      {/* 삼성 DDR5 16GB ×4: 초록 기판과 검은 칩 */}
-      {range(4).map((i) => (
-        <Part key={i} motion={{ start: 26 + i * 3, dx: 160 + i * 20, dy: -120 + i * 30, rot: 22 - i * 8 }}>
-          <rect x={242 + i * 12} y={92} width={10} height={108} rx={1} fill="#1f6b40" />
-          {range(4).map((c) => (
-            <rect key={c} x={243.5 + i * 12} y={98 + c * 25} width={7} height={18} fill="#16171a" />
-          ))}
-          <rect x={242 + i * 12} y={92} width={10} height={4} fill="#d4a63b" />
-        </Part>
-      ))}
-
-      {/* 삼성 980 PRO ×3: 검은 M.2 2280 */}
-      {[188, 240, 272].map((y, i) => (
-        <Part key={y} motion={{ start: 38 + i * 3, dx: -200, dy: 40 + i * 30, rot: -25 + i * 10 }}>
-          <rect x={118} y={y} width={76} height={14} rx={1.5} fill="#0e0f11" />
-          <rect x={150} y={y + 2} width={36} height={10} fill="#1d1e22" />
-          <path d={`M154 ${y + 5} h20 M154 ${y + 9} h12`} stroke="#e7e7e7" strokeWidth={1.1} />
-          <path d={`M124 ${y + 7} h18`} stroke="#ff7a1a" strokeWidth={1.4} />
-          <rect x={118} y={y} width={5} height={14} fill="#d4a63b" />
-        </Part>
-      ))}
-
-      {/* NZXT KRAKEN Z73 RGB: 360mm 라디에이터와 RGB 팬 셋 */}
-      <Part motion={{ start: 50, dx: 0, dy: -240, rot: 0 }}>
-        <rect x={76} y={0} width={246} height={40} rx={4} fill="#121315" />
-        {range(40).map((i) => (
-          <rect key={i} x={84 + i * 5.8} y={4} width={1.4} height={32} fill="#26282c" />
+        <path d="M104 270 H296 L304 278 V352 L296 360 H104 L101 356 V274 Z" fill="#2a2c31" />
+        {range(30).map((i) => (
+          <rect key={i} x={108 + i * 6.5} y={274} width={1.4} height={82} fill="#1c1d21" />
         ))}
-        {[118, 199, 280].map((cx) => (
-          <Fan key={cx} cx={cx} cy={20} r={17} rgb />
+        <path d="M104 270 L150 270 L136 281 L104 281 Z" fill="#aeb3bb" />
+        <path d="M250 360 L296 360 L304 352 L304 344 L262 350 Z" fill="#aeb3bb" />
+        {[170, 236].map((x) => (
+          <path key={x} d={`M${x - 8} 272 L${x + 2} 272 L${x + 14} 358 L${x + 4} 358 Z`} fill="#b9bec6" />
+        ))}
+        <path d="M104 270 H296 L304 278 V352 L296 360 H104 L101 356 V274 Z" fill="none" stroke="#aeb3bb" strokeWidth={2.4} />
+        <path d="M112 271 H290" fill="none" stroke="url(#asm-rgb)" strokeWidth={2.5} strokeLinecap="round" />
+        {[136, 202, 268].map((cx, i) => (
+          <AxialFan key={cx} cx={cx} cy={315} r={31} reverse={i === 1} />
         ))}
       </Part>
 
-      {/* KRAKEN 펌프: 둥근 LCD 머리와 라디에이터로 가는 호스 */}
-      <Part motion={{ start: 56, dx: 180, dy: -160, rot: 40 }}>
-        <path d="M186 110 C 176 70, 150 60, 140 34" fill="none" stroke="#18191c" strokeWidth={7} strokeLinecap="round" />
-        <path d="M204 110 C 212 70, 236 60, 248 34" fill="none" stroke="#18191c" strokeWidth={7} strokeLinecap="round" />
-        <circle cx={194} cy={134} r={30} fill="#1a1b1e" />
-        <circle cx={194} cy={134} r={25} fill="url(#asm-lcd)" />
-        <circle cx={194} cy={134} r={18} fill="none" stroke="url(#asm-rgb)" strokeWidth={3} strokeDasharray="70 44" />
-        <path d="M186 132 h16 M189 138 h10" stroke="#e8f1ff" strokeWidth={2} strokeLinecap="round" />
-        <circle cx={194} cy={134} r={30} fill="none" stroke="#2c2e33" strokeWidth={2} />
-      </Part>
-
-      {/* ROG STRIX 라이저 케이블: PCIe 슬롯에서 세로 그래픽카드로 */}
-      <Part motion={{ start: 68, dx: -140, dy: 120, rot: -30 }}>
-        <path d="M118 218 C 92 222, 82 250, 86 290 L 92 352" fill="none" stroke="#1c1d20" strokeWidth={10} strokeLinejoin="round" />
-        <path d="M118 218 C 92 222, 82 250, 86 290 L 92 352" fill="none" stroke="#3a3c42" strokeWidth={10} strokeDasharray="2 6" />
-      </Part>
-
-      {/* 쿨러마스터 세로 그래픽카드 거치 키트 V2 */}
-      <Part motion={{ start: 71, dx: -180, dy: 60, rot: 18 }}>
-        <rect x={66} y={276} width={18} height={104} fill="#26282c" />
-        {range(4).map((i) => (
-          <rect key={i} x={70} y={284 + i * 22} width={10} height={14} fill="#3b3e44" />
+      {/* ROG THOR 1200W: 윗면 방열 줄무늬, 옆면의 가는 선 무늬와 전력 OLED, 사선 RGB 띠 */}
+      <Part place={TORQUE_TRAY} motion={{ start: 84, dx: 220, dy: 160, rot: 16 }}>
+        <rect x={150} y={366} width={124} height={54} rx={2} fill="#141518" />
+        <rect x={150} y={366} width={124} height={5} rx={2} fill="#202226" />
+        {range(15).map((i) => (
+          <rect key={i} x={154 + i * 8} y={366.5} width={4} height={4} fill="#2c2e33" />
         ))}
-        <rect x={66} y={374} width={262} height={8} fill="#2a2c30" />
+        <path
+          d="M156 380 L176 380 L186 392 M156 404 L170 404 L182 414 L214 414 M232 378 L262 378 L268 386 M248 398 L268 398"
+          fill="none"
+          stroke="#3b3e44"
+          strokeWidth={1}
+        />
+        <rect x={158} y={384} width={36} height={14} rx={1} fill="#030304" />
+        <Digit x={161} y={387} w={5} h={8} t={1.1} d="5" color="#f2f2f2" />
+        <Digit x={167.5} y={387} w={5} h={8} t={1.1} d="4" color="#f2f2f2" />
+        <Digit x={174} y={387} w={5} h={8} t={1.1} d="0" color="#f2f2f2" />
+        <path d="M181.5 387 L183 395 L185 390 L187 395 L188.5 387" fill="none" stroke="#f2f2f2" strokeWidth={1.1} />
+        <path d="M204 367 L244 419" fill="none" stroke="#ff3d8b" strokeWidth={6} opacity={0.25} />
+        <path d="M204 367 L244 419" fill="none" stroke="#ff5aa0" strokeWidth={2} />
+        <rect x={270} y={368} width={4} height={50} fill="#1d1f23" />
       </Part>
 
-      {/* ROG STRIX RTX 3090: 세로 장착이라 팬 셋이 앞을 본다 */}
-      <Part motion={{ start: 76, dx: 40, dy: 260, rot: -12 }}>
-        <rect x={84} y={282} width={238} height={90} rx={6} fill="#24262b" />
-        <path d="M84 290 L110 282 H300 L322 296 V364 L300 372 H110 L84 364 Z" fill="#33363c" />
-        <path d="M110 282 H300 L322 296" fill="none" stroke="#9aa0a8" strokeWidth={2} />
-        <path d="M110 372 H300 L322 364" fill="none" stroke="#9aa0a8" strokeWidth={2} />
-        <path d="M88 286 L150 282" stroke="url(#asm-rgb)" strokeWidth={3} strokeLinecap="round" />
-        <path d="M262 372 L318 366" stroke="url(#asm-rgb)" strokeWidth={3} strokeLinecap="round" />
-        {[134, 203, 272].map((cx) => (
-          <Fan key={cx} cx={cx} cy={327} r={31} />
-        ))}
-      </Part>
-
-      {/* ROG THOR 1200W: 검은 몸체, 옆면 전력 표시창, RGB 띠 */}
-      <Part motion={{ start: 84, dx: 220, dy: 160, rot: 16 }}>
-        <rect x={150} y={384} width={150} height={22} rx={2} fill="#17181b" />
-        <rect x={160} y={388} width={34} height={14} rx={1} fill="#06070a" />
-        <path d="M165 395 h8 M176 395 h6 M185 395 h5" stroke="#5ff3ff" strokeWidth={2} />
-        <path d="M206 404 L238 386" stroke="url(#asm-rgb)" strokeWidth={3} />
-        {range(8).map((i) => (
-          <rect key={i} x={248 + i * 6} y={389} width={3} height={12} fill="#2c2e33" />
-        ))}
-      </Part>
+      {/* 안텍 토크 화이트: 흰 앞 판·위 판과 강화유리 */}
+      <g className="assembly-case">
+        <TorqueFront />
+      </g>
     </svg>
   );
 }
