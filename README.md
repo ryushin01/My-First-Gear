@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.10.0-ff3131)
+![version](https://img.shields.io/badge/version-0.10.1-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
