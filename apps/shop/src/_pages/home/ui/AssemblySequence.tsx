@@ -3,7 +3,7 @@ import { AssemblyRig } from "./AssemblyRig";
 
 const STEPS = [
   { label: "01", title: "메인보드와 CPU", body: "ROG MAXIMUS Z690 EXTREME의 LGA1700 소켓에 i9-12900K를 꽂습니다." },
-  { label: "02", title: "메모리와 SSD", body: "DDR5 16GB 네 개로 64GB를 채우고, 980 PRO NVMe 세 개를 M.2 슬롯에 넣습니다." },
+  { label: "02", title: "메모리와 SSD", body: "DDR5 16GB 네 개로 64GB를 채우고, 980 PRO NVMe 세 개를 M.2 슬롯에 꽂은 뒤 방열판을 덮습니다." },
   { label: "03", title: "수랭 쿨러", body: "NZXT KRAKEN Z73 360mm 라디에이터를 위에 달고, LCD 펌프를 CPU 위에 얹습니다." },
   { label: "04", title: "그래픽카드와 파워", body: "RTX 3090을 세로 거치대와 라이저 케이블로 세우고, 1200W 파워로 안텍 토크 화이트를 완성합니다." },
 ];

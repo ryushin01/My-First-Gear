@@ -16,8 +16,8 @@ describe("AssemblySequence", () => {
     const figure = container.querySelector(".assembly-figure");
     expect(figure).toHaveAttribute("aria-hidden", "true");
     const parts = figure?.querySelectorAll<SVGGElement>(".assembly-part") ?? [];
-    // 메인보드, CPU, 메모리 4, SSD 3, 라디에이터, 펌프, 라이저, 거치대, 그래픽카드, 파워
-    expect(parts).toHaveLength(15);
+    // 메인보드, CPU, 메모리 4, SSD 3, M.2 방열판, 라디에이터, 펌프, 라이저, 거치대, 그래픽카드, 파워
+    expect(parts).toHaveLength(16);
     parts.forEach((part) => expect(part.style.getPropertyValue("--s")).toMatch(/%$/));
   });
 });
