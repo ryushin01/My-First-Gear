@@ -1,8 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
-import { TorqueBack, TorqueFront } from "@mfg/gear-art";
+import { TORQUE_TOP_RADIATOR, TORQUE_TRAY, TorqueBack, TorqueFront } from "@mfg/gear-art";
 
 /**
  * 홈 조립 장면의 그림. 실제 견적 한 대를 안텍 토크 화이트의 강화유리 쪽에서 본 모습으로 그린다.
+ * 토크는 메인보드 트레이가 앞으로 기울어 있어 부품을 TORQUE_TRAY로, 위 라디에이터는 위 판과 나란히 놓는다.
  * ROG MAXIMUS Z690 EXTREME, i9-12900K, 삼성 DDR5 16GB ×4, 980 PRO ×3, NZXT KRAKEN Z73 RGB,
  * ROG STRIX RTX 3090(쿨러마스터 세로 거치대 V2·ROG Strix 라이저 케이블), ROG THOR 1200W.
  * 각 부품은 제품 사진을 보고 모양과 색을 따랐고, 로고와 상표 문양, 제품 이름 글자는 그리지 않는다.
@@ -19,7 +20,7 @@ type PartMotion = {
   rot: number;
 };
 
-function Part({ motion, children }: { motion: PartMotion; children: ReactNode }) {
+function Part({ motion, place, children }: { motion: PartMotion; place?: string; children: ReactNode }) {
   const style = {
     "--s": `${motion.start}%`,
     "--dx": `${motion.dx}px`,
@@ -28,7 +29,7 @@ function Part({ motion, children }: { motion: PartMotion; children: ReactNode })
   } as CSSProperties;
   return (
     <g className="assembly-part" style={style}>
-      {children}
+      {place ? <g transform={place}>{children}</g> : children}
     </g>
   );
 }
@@ -162,7 +163,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       </g>
 
       {/* ROG MAXIMUS Z690 EXTREME: 구리빛 테두리의 E-ATX 기판, AniMe Matrix I/O 덮개, 핀 방열판 */}
-      <Part motion={{ start: 2, dx: -260, dy: -60, rot: -14 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 2, dx: -260, dy: -60, rot: -14 }}>
         <rect x={100} y={100} width={182} height={200} rx={2} fill="#101114" stroke="#a8703f" strokeWidth={1.2} />
         <path d="M100 100 H142 V170 L132 196 H100 Z" fill="#2e3035" />
         <rect x={104} y={106} width={32} height={80} rx={1.5} fill="#8d9198" />
@@ -224,7 +225,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       </Part>
 
       {/* i9-12900K: 청록 기판 위 모서리가 꺾인 니켈 히트스프레더, 소켓에 세로로 놓인다 */}
-      <Part motion={{ start: 10, dx: -120, dy: -220, rot: 30 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 10, dx: -120, dy: -220, rot: 30 }}>
         <rect x={166} y={134} width={24} height={30} rx={1.5} fill="#1d5a52" />
         <path d="M170.5 137 H185.5 V140 H187.5 V158 H185.5 V161 H170.5 V158 H168.5 V140 H170.5 Z" fill="#c9cdd2" />
         <rect x={170.5} y={137} width={15} height={7} fill="#ffffff" opacity={0.3} />
@@ -236,7 +237,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       {range(4).map((i) => {
         const x = 220 + i * 10;
         return (
-          <Part key={i} motion={{ start: 22 + i * 3, dx: 160 + i * 20, dy: -120 + i * 30, rot: 22 - i * 8 }}>
+          <Part key={i} place={TORQUE_TRAY} motion={{ start: 22 + i * 3, dx: 160 + i * 20, dy: -120 + i * 30, rot: 22 - i * 8 }}>
             <rect x={x} y={118} width={7} height={90} rx={0.8} fill="#1f6b40" />
             <rect x={x} y={118} width={1.4} height={90} fill="#2f8a57" />
             {range(8).map((c) => (
@@ -253,7 +254,7 @@ export function AssemblyRig({ className }: { className?: string }) {
         [182, 223],
         [116, 260],
       ].map(([x, y], i) => (
-        <Part key={`${x}-${y}`} motion={{ start: 32 + i * 3, dx: -200, dy: 40 + i * 30, rot: -25 + i * 10 }}>
+        <Part key={`${x}-${y}`} place={TORQUE_TRAY} motion={{ start: 32 + i * 3, dx: -200, dy: 40 + i * 30, rot: -25 + i * 10 }}>
           <rect x={x} y={y} width={58} height={14} rx={1.2} fill="#0e0f11" />
           <rect x={x + 6} y={y + 1.5} width={46} height={11} fill="#1b1c1f" />
           <rect x={x + 9} y={y + 4} width={7} height={1.6} fill="#e7e7e7" />
@@ -268,7 +269,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       ))}
 
       {/* Z690 EXTREME의 M.2 방열판: SSD를 덮는 짙은 장갑판, X자 점 무늬와 결, LiveDash OLED */}
-      <Part motion={{ start: 43, dx: 220, dy: 80, rot: 10 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 43, dx: 220, dy: 80, rot: 10 }}>
         <path d="M104 220 H276 L280 224 V244 H104 Z" fill="#2c2e33" />
         <path d="M104 256 H280 V292 L274 298 H104 Z" fill="#2c2e33" />
         <rect x={104} y={220} width={72} height={24} fill="url(#asm-dots-dark)" />
@@ -285,8 +286,8 @@ export function AssemblyRig({ className }: { className?: string }) {
         <path d="M247 274 L253 270 L258 273 L263 266 L267 268" fill="none" stroke="#5fd3ff" strokeWidth={1.2} />
       </Part>
 
-      {/* NZXT KRAKEN Z73 RGB: 360mm 라디에이터를 위에 달아 RGB 팬 셋이 아래를 본다 */}
-      <Part motion={{ start: 52, dx: 0, dy: -240, rot: 0 }}>
+      {/* NZXT KRAKEN Z73 RGB: 360mm 라디에이터를 기운 위 판 아래에 나란히 달아 RGB 팬 셋이 아래를 본다 */}
+      <Part place={TORQUE_TOP_RADIATOR} motion={{ start: 52, dx: 0, dy: -240, rot: 0 }}>
         <rect x={62} y={62} width={254} height={14} rx={2} fill="#121316" />
         <rect x={62} y={62} width={22} height={14} rx={2} fill="#1a1b1e" />
         {range(57).map((i) => (
@@ -299,32 +300,34 @@ export function AssemblyRig({ className }: { className?: string }) {
 
       {/* KRAKEN 펌프: 원형 LCD에 액체 온도와 반원 게이지, 라디에이터로 가는 감싼 호스 두 가닥 */}
       <Part motion={{ start: 58, dx: 180, dy: -160, rot: 40 }}>
-        {["M158 132 C 130 120, 80 120, 70 78", "M164 126 C 140 106, 92 104, 80 78"].map((d) => (
+        {["M134 172 C 118 140, 92 112, 95 71", "M141 169 C 128 136, 106 110, 104 76"].map((d) => (
           <g key={d}>
-            <path d={d} fill="none" stroke="#1a1b1e" strokeWidth={6.5} strokeLinecap="round" />
-            <path d={d} fill="none" stroke="#2c2d31" strokeWidth={6.5} strokeDasharray="1.5 2.5" />
+            <path d={d} fill="none" stroke="#1a1b1e" strokeWidth={5.4} strokeLinecap="round" />
+            <path d={d} fill="none" stroke="#2c2d31" strokeWidth={5.4} strokeDasharray="1.5 2.5" />
           </g>
         ))}
-        <circle cx={178} cy={148} r={26} fill="#1a1b1e" />
-        <circle cx={178} cy={148} r={26} fill="none" stroke="#2e3035" strokeWidth={2} />
-        <circle cx={178} cy={148} r={21} fill="url(#asm-lcd)" />
-        <circle
-          cx={178}
-          cy={148}
-          r={17}
-          fill="none"
-          stroke="url(#asm-rgb)"
-          strokeWidth={3}
-          strokeDasharray="80 27"
-          transform="rotate(135 178 148)"
-        />
-        <Digit x={169.5} y={141} w={7} h={11} t={1.7} d="3" color="#eef4ff" />
-        <Digit x={178.5} y={141} w={7} h={11} t={1.7} d="2" color="#eef4ff" />
-        <rect x={172} y={156} width={12} height={1.4} rx={0.7} fill="#8fa0b8" />
+        <g transform={TORQUE_TRAY}>
+          <circle cx={178} cy={148} r={26} fill="#1a1b1e" />
+          <circle cx={178} cy={148} r={26} fill="none" stroke="#2e3035" strokeWidth={2} />
+          <circle cx={178} cy={148} r={21} fill="url(#asm-lcd)" />
+          <circle
+            cx={178}
+            cy={148}
+            r={17}
+            fill="none"
+            stroke="url(#asm-rgb)"
+            strokeWidth={3}
+            strokeDasharray="80 27"
+            transform="rotate(135 178 148)"
+          />
+          <Digit x={169.5} y={141} w={7} h={11} t={1.7} d="3" color="#eef4ff" />
+          <Digit x={178.5} y={141} w={7} h={11} t={1.7} d="2" color="#eef4ff" />
+          <rect x={172} y={156} width={12} height={1.4} rx={0.7} fill="#8fa0b8" />
+        </g>
       </Part>
 
       {/* ROG Strix 라이저 케이블: 일곱 갈래 납작 케이블이 위 PCIe 슬롯에서 그래픽카드 뒤로 내려간다 */}
-      <Part motion={{ start: 68, dx: -140, dy: 120, rot: -30 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 68, dx: -140, dy: 120, rot: -30 }}>
         <rect x={118} y={208} width={62} height={11} rx={1.5} fill="#18191c" />
         <rect x={118} y={208} width={62} height={2} fill="#ffffff" opacity={0.08} />
         <rect x={120} y={219} width={58} height={54} fill="#141518" />
@@ -334,7 +337,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       </Part>
 
       {/* 쿨러마스터 세로 그래픽카드 거치대 V2: 창이 뚫린 뒤 브래킷, 손나사, 아래 PCIe 슬롯 */}
-      <Part motion={{ start: 71, dx: -180, dy: 60, rot: 18 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 71, dx: -180, dy: 60, rot: 18 }}>
         <rect x={84} y={262} width={16} height={104} fill="#17181b" />
         <rect x={88} y={272} width={8} height={72} fill="#050506" />
         {range(4).map((i) => (
@@ -356,7 +359,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       </Part>
 
       {/* ROG STRIX RTX 3090: 세로로 세워 팬 셋이 유리 쪽을 본다. 철회색 몸체를 지나는 은색 사선 판 */}
-      <Part motion={{ start: 76, dx: 40, dy: 260, rot: -12 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 76, dx: 40, dy: 260, rot: -12 }}>
         <rect x={96} y={268} width={5} height={94} fill="#c9ccd2" />
         {range(5).map((i) => (
           <rect key={i} x={97.5} y={276 + i * 16} width={2} height={10} fill="#6d7178" />
@@ -378,7 +381,7 @@ export function AssemblyRig({ className }: { className?: string }) {
       </Part>
 
       {/* ROG THOR 1200W: 윗면 방열 줄무늬, 옆면의 가는 선 무늬와 전력 OLED, 사선 RGB 띠 */}
-      <Part motion={{ start: 84, dx: 220, dy: 160, rot: 16 }}>
+      <Part place={TORQUE_TRAY} motion={{ start: 84, dx: 220, dy: 160, rot: 16 }}>
         <rect x={150} y={366} width={124} height={54} rx={2} fill="#141518" />
         <rect x={150} y={366} width={124} height={5} rx={2} fill="#202226" />
         {range(15).map((i) => (
