@@ -35,6 +35,13 @@ async function assembly(page: Page, ratio: number) {
   await page.waitForTimeout(3000);
 }
 
+/** 빠른 견적에서 PC 견적 화면(/build)으로 넘어가 편집기가 그려질 때까지 기다립니다. */
+async function openedBuildEditor(page: Page) {
+  await page.waitForURL((url) => url.pathname === "/build");
+  await expect(page.getByRole("heading", { name: "PC 견적", level: 1 })).toBeVisible();
+  await expect(page.getByRole("button", { name: /고르기\s*:\s*CPU$/ })).toHaveCount(0);
+}
+
 async function loginShop(page: Page) {
   await page.goto(`${SHOP}/login?next=/my`);
   await page.getByRole("textbox", { name: "이메일", exact: true }).fill("demo@myfirstgear.dev");
@@ -67,7 +74,7 @@ test.describe("쇼핑몰", () => {
     await page.getByRole("button", { name: "이 구성으로 PC 견적 시작" }).waitFor();
     await shoot(page, "shop-quick-build");
     await page.getByRole("button", { name: "이 구성으로 PC 견적 시작" }).click();
-    await page.waitForURL("**/build**");
+    await openedBuildEditor(page);
     await shoot(page, "shop-build");
 
     await page.goto(`${SHOP}/product/samsung-odyssey-oled-g9`);
@@ -93,7 +100,7 @@ test.describe("쇼핑몰", () => {
     await page.getByRole("radio", { name: /^게임/ }).check();
     await page.getByRole("button", { name: "추천 받기" }).click();
     await page.getByRole("button", { name: "이 구성으로 PC 견적 시작" }).click();
-    await page.waitForURL("**/build**");
+    await openedBuildEditor(page);
     await page.getByLabel("견적 이름").fill("게임용 첫 PC");
     await page.getByRole("button", { name: "견적 저장" }).click();
     await page.waitForTimeout(800);
@@ -108,7 +115,6 @@ test.describe("쇼핑몰", () => {
     await page.waitForTimeout(1500);
 
     await page.goto(`${SHOP}/my#my-inquiries`);
-    await page.getByRole("button", { name: "문의 접수" }).click();
     await page.getByLabel(/문의 유형/).selectOption("delivery");
     await page.getByLabel("제목").fill("배송 일정 문의");
     await page.getByLabel("문의 내용").fill("조립 PC는 언제 출고되나요?");
