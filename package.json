@@ -14,12 +14,12 @@
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.8.2",
-    "@lhci/cli": "^0.16.0",
+    "@lhci/cli": "^0.16.1",
     "@size-limit/file": "^14.3.0",
     "prettier": "^3.10.1",
     "size-limit": "^14.3.0",
     "steiger": "0.10.0",
-    "turbo": "2.11.10"
+    "turbo": "2.11.11"
   },
   "packageManager": "pnpm@12.16.1",
   "engines": {
