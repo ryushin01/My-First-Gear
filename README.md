@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-0.10.5-ff3131)
+![version](https://img.shields.io/badge/version-0.11.0-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다.
 
@@ -124,14 +124,25 @@ packages/
 | [시퀀스 다이어그램](docs/sequence-diagrams.md) | PC 견적과 호환성 검사, 모의 결제 주문, 어드민 판매 정보 변경과 쇼핑몰 반영 |
 | [버전 기록](CHANGELOG.md) | 버전별 변경 내용 |
 
+## 웹 폰트
+
+| 글꼴 | 쓰는 곳 | 굵기 |
+|---|---|---|
+| Azeret Mono | 영문·숫자 (큰 제목·본문) | 100~900 가변 |
+| 블랙 앤 화이트 픽처 | 한글 큰 제목 | 400 |
+| Gothic A1 | 한글 본문 | 400·700 |
+| 나눔고딕코딩 | 라벨·견적 금액 | 400·700 |
+
+저작자·라이선스·원본은 아래 출처 표에 있습니다. 모두 `next/font/google`이 빌드 때 받아 같은 사이트에서 제공합니다(외부 글꼴 CDN 없음).
+
 ## 출처
 
 | 자료 | 저작자 | 사용 허락 | 원본 |
 |---|---|---|---|
 | 트로피 아이콘 (두 앱의 파비콘·홈 화면 아이콘·머리글 로고) | Slidicon | Flaticon 무료 라이선스(저작자 표기 조건) | [Flaticon "Trophy"](https://www.flaticon.com/free-icon/trophy_3865212) — [Trophy icons created by Slidicon - Flaticon](https://www.flaticon.com/free-icons/trophy) |
-| VT323 (영문 큰 제목) | Peter Hull | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/VT323) |
+| Azeret Mono (영문·숫자 큰 제목·본문) | Displaay, Martin Vácha | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Azeret+Mono) |
 | Black And White Picture (한글 큰 제목) | AsiaSoft Inc. | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Black+And+White+Picture) |
-| Gothic A1 (본문) | HanYang I&C Co | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Gothic+A1) |
+| Gothic A1 (본문 한글) | HanYang I&C Co | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Gothic+A1) |
 | Nanum Gothic Coding (라벨·금액) | Sandoll Communication (네이버 나눔글꼴) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Nanum+Gothic+Coding) |
 | Pretendard Bold (공유 이미지) | 길형진 (orioncactus) | SIL OFL 1.1 | [GitHub](https://github.com/orioncactus/pretendard) |
 
