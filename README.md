@@ -33,7 +33,7 @@
 
 | 홈 조립 장면 (스크롤 고정) | 모바일 조립 장면 |
 |---|---|
-| ![화면을 고정한 채 스크롤하면 메인보드, i9 CPU, DDR5 메모리 네 개, NVMe SSD 세 개와 M.2 방열판, 위 판을 따라 기운 360mm 수랭 쿨러, 세로 장착 RTX 3090, 1200W 파워가 차례로 날아와 앞으로 기운 흰색 안텍 토크 케이스 안에 조립된 모습과 네 단계 설명](docs/images/shop-assembly.jpg) | <img src="docs/images/mobile-assembly.jpg" alt="모바일 화면 속 조립이 끝난 앞으로 기운 흰색 안텍 토크 케이스와 그 아래 PC 견적 안내" width="240"> |
+| ![화면을 고정한 채 스크롤하면 메인보드, i9 CPU, DDR5 메모리 네 개, NVMe SSD 세 개와 M.2 방열판, 위 판을 따라 기운 360mm 수랭 쿨러, 세로 장착 RTX 3090, 1200W 파워가 차례로 날아와 앞으로 기운 흰색 안텍 토크 케이스 안에 조립된 모습과 네 단계 설명](docs/images/shop-assembly.jpg) | <img src="docs/images/mobile-assembly.jpg" alt="모바일 화면 속 '흩어진 부품이 한 대의 PC가 되기까지' 제목과 그래픽카드·파워 단계 설명, 조립이 끝난 흰색 안텍 토크 케이스" width="240"> |
 
 | 모바일 홈 | 어드민 문의 답변 |
 |---|---|
@@ -97,6 +97,7 @@ pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비
 | `pnpm test:e2e` | 프로덕션 빌드를 로컬 DB로 띄워 쇼핑몰·어드민 E2E |
 | `pnpm --filter shop size` / `lhci` | 쇼핑몰 번들 크기 / Lighthouse 기준 검사 (먼저 `build` 필요) |
 | `pnpm --filter shop test:smoke` | 운영 주소 스모크 테스트 (읽기 전용) |
+| `pnpm --filter admin screenshots` | README 화면 다시 찍기 (먼저 `build`, 임시 DB에 가상 주문·견적·문의를 만들어 찍음) |
 
 ## 프로젝트 구조
 

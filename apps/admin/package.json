@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "dev:db": "node ../../packages/db/scripts/with-db.mjs --persist ../shop/.local-db -- next dev --port 3001",
     "test:e2e": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test --project=screenshots",
     "test": "vitest run"
   },
   "dependencies": {
