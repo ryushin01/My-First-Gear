@@ -30,7 +30,7 @@ async function assembly(page: Page, ratio: number) {
   await page.goto(SHOP);
   await page.locator('section[aria-labelledby="home-assembly"]').evaluate((element, at) => {
     const top = element.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: top + Math.max(0, element.offsetHeight - window.innerHeight) * at, behavior: "instant" });
+    window.scrollTo({ top: top + Math.max(0, element.getBoundingClientRect().height - window.innerHeight) * at, behavior: "instant" });
   }, ratio);
   await page.waitForTimeout(3000);
 }
