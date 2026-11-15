@@ -39,6 +39,9 @@ async function assembly(page: Page, ratio: number) {
 async function openedBuildEditor(page: Page) {
   await page.waitForURL((url) => url.pathname === "/build");
   await expect(page.getByRole("heading", { name: "PC 견적", level: 1 })).toBeVisible();
+  // CPU 칸이 그려지고(고르기·바꾸기 중 하나), 추천 CPU가 들어가 있어 '바꾸기'인지 확인합니다.
+  await expect(page.getByRole("button", { name: /(고르기|바꾸기)\s*:\s*CPU$/ })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: /바꾸기\s*:\s*CPU$/ })).toHaveCount(1);
   await expect(page.getByRole("button", { name: /고르기\s*:\s*CPU$/ })).toHaveCount(0);
 }
 
