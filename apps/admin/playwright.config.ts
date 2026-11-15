@@ -12,6 +12,10 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], channel: process.env.CI ? undefined : "chrome" } },
     { name: "mobile", use: { ...devices["Pixel 7"], channel: process.env.CI ? undefined : "chrome" } },
+    // README 화면 촬영(pnpm screenshots). 화면 파일을 덮어쓰므로 SCREENSHOTS=1일 때만 넣습니다.
+    ...(process.env.SCREENSHOTS === "1"
+      ? [{ name: "screenshots", testMatch: /readme\.screenshots\.ts/, use: { ...devices["Desktop Chrome"] } }]
+      : []),
   ],
   webServer: {
     command: "node ../../packages/db/scripts/with-db.mjs -- node e2e/serve-both.mjs",
