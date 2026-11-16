@@ -1,4 +1,4 @@
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const actions = vi.hoisted(() => ({
@@ -116,6 +116,47 @@ describe("MemberSync", () => {
     expect(readCart()).toEqual([{ productId: "p-gpu-001", quantity: 1 }]);
     await vi.advanceTimersByTimeAsync(1000);
     expect(actions.saveMemberCartAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("이전 회원의 저장 결과가 늦게 와도 지금 회원의 동기화를 멈추지 않는다", async () => {
+    const { MemberSync, flushMemberSaves, notifyMemberChanged, addToCart } = await load();
+    let finishA = (_: string) => {};
+    actions.saveMemberCartAction.mockImplementationOnce(() => new Promise((resolve) => (finishA = resolve)));
+    render(<MemberSync />);
+    await vi.waitFor(() => expect(actions.loadMemberStateAction).toHaveBeenCalledTimes(1));
+    await vi.advanceTimersByTimeAsync(800); // 회원 A의 저장이 나갔고 응답을 기다린다
+    expect(actions.saveMemberCartAction).toHaveBeenCalledWith("tag-a", []);
+
+    // 다른 탭에서 회원 B로 로그인했다
+    document.cookie = "mfg_member=member-b; path=/";
+    actions.loadMemberStateAction.mockResolvedValue({ owner: "tag-b", cart: [], build: null });
+    await act(async () => notifyMemberChanged());
+    await vi.waitFor(() => expect(actions.loadMemberStateAction).toHaveBeenCalledTimes(2));
+    await vi.advanceTimersByTimeAsync(0);
+
+    finishA("other-member"); // A의 응답이 늦게 왔다
+    await vi.advanceTimersByTimeAsync(0);
+    addToCart("p-ssd-001");
+    await expect(flushMemberSaves()).resolves.toBe(true);
+    expect(actions.saveMemberCartAction).toHaveBeenLastCalledWith("tag-b", [{ productId: "p-ssd-001", quantity: 1 }]);
+    // B의 동기화가 끊기지 않아 다시 불러오지 않는다
+    expect(actions.loadMemberStateAction).toHaveBeenCalledTimes(2);
+  });
+
+  it("세션이 끝났다는 응답은 서버가 회원 쿠키를 함께 지워도 바로 정리한다", async () => {
+    const { MemberSync, addToCart, readCart } = await load();
+    addToCart("p-ssd-001");
+    window.localStorage.setItem(OWNER_KEY, "tag-a");
+    actions.loadMemberStateAction.mockImplementation(async () => {
+      document.cookie = "mfg_member=; path=/; max-age=0"; // 같은 응답에서 쿠키가 지워진다
+      return "signed-out";
+    });
+    const changed = vi.fn();
+    window.addEventListener("mfg:member", changed);
+    render(<MemberSync />);
+    await vi.waitFor(() => expect(changed).toHaveBeenCalled());
+    window.removeEventListener("mfg:member", changed);
+    expect(readCart()).toEqual([]);
   });
 
   it("회원 쿠키 없이 회원 값만 남아 있으면(세션이 끝난 뒤 다시 옴) 지운다", async () => {

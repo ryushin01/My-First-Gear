@@ -22,10 +22,12 @@ let checkedAt = 0;
 // 0.8초 모아서 저장한다. 화면을 옮겨도 남은 저장은 그대로 보낸다. 합친 회원의 표식을 함께 보내,
 // 그사이 다른 회원으로 바뀌었으면 서버가 저장하지 않는다.
 const cartSaver = createMemberSaver(async () => {
-  if (owner) settle(await saveMemberCartAction(owner, readCart()));
+  const saving = owner;
+  if (saving) settle(await saveMemberCartAction(saving, readCart()), saving);
 });
 const buildSaver = createMemberSaver(async () => {
-  if (owner) settle(await saveMemberBuildAction(owner, readBuild()));
+  const saving = owner;
+  if (saving) settle(await saveMemberBuildAction(saving, readBuild()), saving);
 });
 
 /** 이 기기의 회원 장바구니·견적과 남은 저장을 버린다(공용 컴퓨터에서 다음 사람에게 보이거나 그 사람 계정에 합쳐지지 않게). */
@@ -57,7 +59,9 @@ function signedOut() {
  * 저장 결과를 확인한다. 세션이 끝났거나 DB가 없으면 더 저장할 곳이 없으므로 끝난 것으로 본다.
  * 다른 회원으로 바뀌었으면(다른 탭에서 로그인) 이 탭의 저장만 멈추고, 이 기기의 값은 그 회원으로 불러올 때 가린다.
  */
-function settle(result: SaveResult) {
+function settle(result: SaveResult, saving: string) {
+  // 응답을 기다리는 사이 다른 회원으로 바뀌었으면(다른 탭에서 로그인) 이전 회원의 저장 결과는 무시한다.
+  if (saving !== owner) return;
   if (result === "signed-out") signedOut();
   if (result === "other-member") {
     resetSync();
@@ -72,13 +76,14 @@ function loadAndMerge(member: string): Promise<LoadOutcome> {
   if (loading?.member === member) return loading.done;
   const done = loadMemberStateAction()
     .then((remote): LoadOutcome => {
-      // 응답을 기다리는 사이 로그아웃했으면 합치지 않는다(지운 회원 장바구니가 이 기기에 다시 남지 않게).
-      if (readMemberName() !== member) return "stale";
-      if (!remote) return "off";
+      // 서버 세션이 끝났다. 서버가 같은 응답에서 회원 쿠키를 지우므로 이름을 비교하기 전에 정리한다.
       if (remote === "signed-out") {
         signedOut();
         return "signed-out";
       }
+      // 응답을 기다리는 사이 로그아웃했으면 합치지 않는다(지운 회원 장바구니가 이 기기에 다시 남지 않게).
+      if (readMemberName() !== member) return "stale";
+      if (!remote) return "off";
       // 이 기기의 값이 다른 회원 것이면(로그아웃하지 않고 다른 회원으로 로그인) 합치지 않고 버린다. 손님 값은 합친다.
       const deviceOwner = readDeviceOwner();
       if (deviceOwner !== null && deviceOwner !== remote.owner) forgetMemberData();
