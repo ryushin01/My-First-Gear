@@ -2,10 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { addToCart } from "@/entities/cart";
-import { useMemberName } from "@/entities/member";
 import { callAction, useSubmitLock } from "@/shared/lib";
 import { toggleRestockAction } from "../api/actions";
-import { decreaseRestockedCount } from "../model/restockNotice";
+import { refreshRestockedCount } from "../model/refreshRestocked";
 
 /**
  * 마이페이지 재입고 목록에서 다시 들어온 상품을 바로 담는다. 담으면 그 상품의 재입고 알림을 마쳐 머리글 알림도 줄인다.
@@ -16,7 +15,6 @@ export function RestockCartButton({ productId, productName }: { productId: strin
   const [done, setDone] = useState(false);
   const [pending, startTransition] = useTransition();
   const lock = useSubmitLock();
-  const member = useMemberName();
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -25,12 +23,11 @@ export function RestockCartButton({ productId, productName }: { productId: strin
         disabled={pending || done}
         onClick={() => {
           if (!lock.tryLock()) return;
-          const by = member; // 응답을 기다리는 사이 다른 회원으로 바뀌면 그 회원의 알림 수를 줄이지 않는다
           addToCart(productId);
           startTransition(async () => {
             const result = await callAction(() => toggleRestockAction(productId, false));
             setDone(true);
-            if (result.ok) decreaseRestockedCount(by);
+            if (result.ok) void refreshRestockedCount();
             setMessage(result.ok ? `${productName}을(를) 장바구니에 담고 재입고 알림을 마쳤습니다.` : `${productName}을(를) 장바구니에 담았습니다.`);
           });
         }}

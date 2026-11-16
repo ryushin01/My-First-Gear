@@ -1,17 +1,8 @@
 "use server";
 
-import {
-  getDb,
-  getMemberState,
-  hasDatabase,
-  listRestockByUser,
-  saveMemberBuild,
-  saveMemberCart,
-  type StoredBuild,
-  type StoredCartLine,
-} from "@mfg/db";
-import { getSalesInfo } from "@/entities/product/index.server";
+import { getDb, getMemberState, hasDatabase, saveMemberBuild, saveMemberCart, type StoredBuild, type StoredCartLine } from "@mfg/db";
 import { getActionUserId, memberTag } from "@/entities/member/index.server";
+import { countRestocked } from "@/features/restock-alert/index.server";
 
 const clean = (lines: StoredCartLine[]) =>
   lines
@@ -31,15 +22,8 @@ export async function loadMemberStateAction(): Promise<
   const userId = await getActionUserId();
   if (userId === null) return "signed-out";
   const db = getDb();
-  const [state, requested, sales] = await Promise.all([getMemberState(db, userId), listRestockByUser(db, userId), getSalesInfo()]);
-  // 재입고 알림을 신청한 상품 중 다시 들어온(재고가 있고 판매 중인) 것의 수. 머리글에 알린다.
-  const inStock = new Set(sales.filter((info) => info.stock > 0).map((info) => info.id));
-  return {
-    owner: memberTag(userId),
-    cart: state?.cart ?? [],
-    build: state?.build ?? null,
-    restocked: requested.filter((id) => inStock.has(id)).length,
-  };
+  const [state, restocked] = await Promise.all([getMemberState(db, userId), countRestocked(db, userId)]);
+  return { owner: memberTag(userId), cart: state?.cart ?? [], build: state?.build ?? null, restocked };
 }
 
 /**
