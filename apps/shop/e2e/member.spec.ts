@@ -130,7 +130,8 @@ test("결제 응답만 끊겨 다시 눌러도 주문은 하나만 생긴다", a
   // 첫 결제는 서버까지 가서 주문이 저장되지만 응답이 브라우저에 오지 않는다.
   let cut = false;
   await page.route("**/checkout", async (route) => {
-    if (route.request().method() === "POST" && !cut) {
+    // 회원 동기화도 같은 주소로 서버 액션을 보내므로 결제 요청(제출 번호가 든 본문)만 끊는다
+    if (route.request().method() === "POST" && !cut && route.request().postData()?.includes("submissionId")) {
       cut = true;
       await route.fetch();
       return route.abort("internetdisconnected");
@@ -138,8 +139,8 @@ test("결제 응답만 끊겨 다시 눌러도 주문은 하나만 생긴다", a
     return route.continue();
   });
   await page.getByRole("button", { name: /결제하기/ }).click();
-  await expect(page.getByRole("alert").filter({ hasText: "요청을 처리하지 못했습니다" })).toBeVisible();
-  await page.getByRole("button", { name: /결제하기/ }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  await page.getByRole("button", { name: "같은 내용으로 다시 결제" }).click();
   await expect(page.getByText("주문이 접수되었습니다.")).toBeVisible();
   await page.goto("/my");
   await expect(page.getByRole("table", { name: "회원 주문 내역" }).getByRole("rowheader")).toHaveCount(1);
