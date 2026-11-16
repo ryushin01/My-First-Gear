@@ -9,7 +9,7 @@ const actions = vi.hoisted(() => ({
 }));
 vi.mock("../api/memberSync", () => actions);
 // 재입고 버튼이 서버 액션(server-only)을 불러오므로 머리글 알림 수만 흉내 낸다
-vi.mock("@/features/restock-alert", () => ({ setRestockedCount: vi.fn() }));
+vi.mock("@/features/restock-alert", () => ({ setRestockedCount: vi.fn(), startRestockLoad: vi.fn() }));
 
 const OWNER_KEY = "mfg:member-owner";
 
