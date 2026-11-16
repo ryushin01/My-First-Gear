@@ -33,6 +33,7 @@ export async function placeOrderAction(request: PlaceOrderRequest): Promise<Resu
         memo: buyer.memo.trim().slice(0, 200),
       },
       payment: ["card", "transfer", "easy"].includes(request.payment) ? request.payment : "card",
+      submissionId: /^[A-Za-z0-9-]{8,64}$/.test(request.submissionId ?? "") ? request.submissionId : null,
     });
     updateTag(MERCH_TAG); // 재고가 바뀌었다
     return { ok: true, data: { id: order.id, status: order.status, total: order.total, lines: [] } };

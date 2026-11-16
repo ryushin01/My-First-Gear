@@ -5,7 +5,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import { formatPrice } from "@mfg/catalog";
 import { clearCart, useCartSummary } from "@/entities/cart";
 import { orderStatusLabel, paymentMethods, placeOrderAction, type OrderSummary, type PaymentMethod } from "@/entities/order";
-import { callAction, EMAIL_PATTERN, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
+import { ACTION_FAILED_MESSAGE, callAction, EMAIL_PATTERN, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
 import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
 
 const rules = {
@@ -18,6 +18,13 @@ const rules = {
   address: { required: "배송 주소를 입력해 주세요." },
 };
 
+/** 결제 제출 번호. 응답이 끊겨 다시 결제할 때 같은 번호를 보내 서버가 주문을 두 번 만들지 않게 한다. */
+function newSubmissionId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export function CheckoutForm() {
   const { lines, shipping, total } = useCartSummary();
   const [done, setDone] = useState<OrderSummary | null>(null);
@@ -27,6 +34,7 @@ export function CheckoutForm() {
   const [payment, setPayment] = useState<PaymentMethod>("card");
   const summaryRef = useRef<HTMLDivElement>(null);
   const lock = useSubmitLock();
+  const submissionId = useRef("");
   const titleId = useId();
 
   if (done) {
@@ -79,23 +87,30 @@ export function CheckoutForm() {
 
     setSubmitting(true);
     setServerError("");
+    submissionId.current ||= newSubmissionId();
     // 네트워크가 끊기거나 서버가 던져도 실패로 받아 잠금을 풀고 입력을 그대로 둔다.
-    const result = await callAction(() =>
-      placeOrderAction({
-        lines: lines.map(({ id, quantity }) => ({ itemId: id, quantity })),
-        buyer: {
-          name: data.name.trim(),
-          phone: data.phone.trim(),
-          email: (data.email ?? "").trim(),
-          address: data.address.trim(),
-          memo: (data.memo ?? "").trim(),
-        },
-        payment,
-      }),
+    const result = await callAction(
+      () =>
+        placeOrderAction({
+          lines: lines.map(({ id, quantity }) => ({ itemId: id, quantity })),
+          buyer: {
+            name: data.name.trim(),
+            phone: data.phone.trim(),
+            email: (data.email ?? "").trim(),
+            address: data.address.trim(),
+            memo: (data.memo ?? "").trim(),
+          },
+          payment,
+          submissionId: submissionId.current,
+        }),
+      () => ({ ok: false as const, message: ACTION_FAILED_MESSAGE, uncertain: true as const }),
     );
     setSubmitting(false);
     if (!result.ok) {
       lock.release(); // 실패했을 때만 푼다. 성공하면 완료 화면으로 바뀐다.
+      // 서버가 거절했으면(재고 부족 등) 주문이 없으니 다음 결제는 새 번호로 한다.
+      // 응답이 끊겼으면 저장됐을 수도 있어 같은 번호로 다시 보낸다(서버가 같은 주문을 돌려줌).
+      if (!("uncertain" in result)) submissionId.current = "";
       setServerError(result.message);
       return;
     }

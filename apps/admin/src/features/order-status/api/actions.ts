@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getDb, orderStatuses, updateOrderStatus, type OrderStatus } from "@mfg/db";
+import { revalidateShop } from "@/shared/api";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
 import { guardAction } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
@@ -24,6 +25,8 @@ export async function updateOrderStatusAction(_: ActionState, formData: FormData
       revalidatePath("/orders");
       revalidatePath(`/orders/${id}`);
       revalidatePath("/");
+      // 취소하면 재고가 돌아오므로 쇼핑몰의 판매 정보 캐시도 비운다.
+      if (status === "cancelled") await revalidateShop();
       return { ok: true, message: status === "cancelled" ? `${id}을(를) 취소하고 재고를 돌려놓았습니다.` : `${id} 상태를 바꿨습니다.` };
     },
     () => ({ ok: false, message: ACTION_FAILED_MESSAGE }),

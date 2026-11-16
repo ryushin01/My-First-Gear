@@ -14,6 +14,11 @@ export type PlaceOrderInput = {
   lines: { itemId: string; quantity: number }[];
   buyer: { name: string; phone: string; email: string; address: string; memo: string };
   payment: string;
+  /**
+   * 결제 화면이 만든 제출 번호. 주문은 저장됐는데 응답이 끊겨 다시 결제하면 같은 번호로 오므로,
+   * 이미 있으면 새로 만들지 않고(재고도 다시 빼지 않고) 그 주문을 돌려준다.
+   */
+  submissionId?: string | null;
 };
 
 export class OrderError extends Error {}
@@ -50,10 +55,17 @@ export async function placeOrder(db: Db, input: PlaceOrderInput, generateId: () 
   const lines = mergeLines(input.lines);
   if (lines.length === 0) throw new OrderError("주문할 상품이 없습니다.");
 
+  const submissionId = input.submissionId || null;
+  const findSubmitted = async (tx: Tx) => (submissionId ? tx.query.orders.findFirst({ where: eq(orders.submissionId, submissionId) }) : undefined);
+
   return db.transaction(async (tx) => {
     const productIds = lines.map((l) => l.itemId).filter((id) => getProductById(id));
     const merchRows = productIds.length ? await tx.select().from(productMerch).where(inArray(productMerch.productId, productIds)).for("update") : [];
     const merch = new Map(merchRows.map((m) => [m.productId, m]));
+
+    // 같은 제출을 이미 받았으면 그 주문을 그대로 돌려준다(판매 정보 행을 잠근 뒤라 동시에 와도 한 번만 만든다).
+    const submitted = await findSubmitted(tx);
+    if (submitted) return submitted;
 
     const resolved = lines.map((line) => {
       const product = getProductById(line.itemId);
@@ -75,6 +87,7 @@ export async function placeOrder(db: Db, input: PlaceOrderInput, generateId: () 
     const status: OrderStatus = assembly ? "assembling" : "paid";
 
     // 번호가 겹치면 트랜잭션을 깨지 않고(ON CONFLICT DO NOTHING) 새 번호로 다시 넣는다.
+    // 같은 제출 번호가 그사이 들어왔다면(잠글 상품이 없는 주문끼리 동시에 온 경우) 그 주문을 돌려준다.
     let order: Order | undefined;
     for (let attempt = 0; attempt < ORDER_ID_ATTEMPTS && !order; attempt++) {
       [order] = await tx
@@ -93,9 +106,14 @@ export async function placeOrder(db: Db, input: PlaceOrderInput, generateId: () 
           shipping,
           total: subtotal + shipping,
           assembly,
+          submissionId,
         })
-        .onConflictDoNothing({ target: orders.id })
+        .onConflictDoNothing()
         .returning();
+      if (!order) {
+        const raced = await findSubmitted(tx);
+        if (raced) return raced;
+      }
     }
     if (!order) throw new Error("주문 번호를 만들지 못했습니다.");
     const placed = order;

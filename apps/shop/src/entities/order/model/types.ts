@@ -25,6 +25,8 @@ export type PlaceOrderRequest = {
   lines: { itemId: string; quantity: number }[];
   buyer: Buyer;
   payment: PaymentMethod;
+  /** 결제 화면이 만든 제출 번호. 응답이 끊겨 다시 결제해도 주문이 두 번 생기지 않게 한다. */
+  submissionId?: string;
 };
 
 export type OrderSummary = {

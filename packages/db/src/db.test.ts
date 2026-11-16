@@ -291,3 +291,18 @@ describe("주문·재고 정합성", () => {
     expect(await updateOrderStatus(db, "MFG-000000-999999", "shipped")).toEqual({ ok: false, reason: "not-found" });
   });
 });
+
+describe("같은 결제를 다시 보내면", () => {
+  it("응답이 끊겨 같은 제출 번호로 다시 오면 주문을 다시 만들지 않고 재고도 한 번만 뺀다", async () => {
+    const stock = async () => (await listMerch(db)).find((m) => m.productId === "p-ssd-001")!.stock;
+    const before = await stock();
+    const input = { lines: [{ itemId: "p-ssd-001", quantity: 2 }], buyer, payment: "card", submissionId: "retry-test-0001" };
+    const first = await placeOrder(db, input);
+    const again = await placeOrder(db, input);
+    expect(again.id).toBe(first.id);
+    expect(await stock()).toBe(before - 2);
+    const other = await placeOrder(db, { ...input, submissionId: "retry-test-0002" });
+    expect(other.id).not.toBe(first.id);
+    expect(await stock()).toBe(before - 4);
+  });
+});
