@@ -31,3 +31,14 @@
 .admin-main {
   min-width: 0;
 }
+/*
+ * 셀렉트 화살표: 오른쪽 끝과 화살표 사이를 왼쪽 끝과 글자 사이(테두리 + 안쪽 여백 = .75em)와 같게 둔다(전역 기준).
+ * Bulma 화살표는 .625em 상자를 45도 돌린 것이라 보이는 폭이 약 .88em이고, 상자 가운데가 .88em/2 안쪽에 있다.
+ * 오른쪽 안쪽 여백은 화살표 자리(.75em + .88em)에 글자와의 틈을 더한 만큼만 둔다.
+ */
+.select:not(.is-multiple):not(.is-loading)::after {
+  inset-inline-end: 0.88em;
+}
+.select select:not([multiple]) {
+  padding-inline-end: 2.25em;
+}

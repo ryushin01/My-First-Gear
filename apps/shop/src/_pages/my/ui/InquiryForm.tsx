@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useId, useRef } from "react";
 import { useActionFormLock } from "@/shared/lib";
-import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
+import { ErrorSummary, Select, TextAreaField, TextField } from "@/shared/ui";
 import { createInquiryAction } from "../api/inquiryActions";
 import { inquiryCategoryLabel } from "../model/inquiryLabels";
 
@@ -27,7 +27,9 @@ export function InquiryForm() {
             *
           </span>
         </label>
-        <select
+        <Select
+          inset="md"
+          wrapperClassName="relative flex"
           id={categoryId}
           name="category"
           required
@@ -35,7 +37,7 @@ export function InquiryForm() {
           defaultValue={state?.values?.category ?? ""}
           aria-invalid={state?.errors?.category ? true : undefined}
           aria-describedby={state?.errors?.category ? `${categoryId}-error` : undefined}
-          className="min-h-11 rounded-md border border-white/20 bg-ink px-3 text-cream aria-[invalid=true]:border-brand"
+          className="min-h-11 w-full rounded-md border border-white/20 bg-ink text-cream aria-[invalid=true]:border-brand"
         >
           <option value="" disabled>
             골라 주세요
@@ -45,7 +47,7 @@ export function InquiryForm() {
               {label}
             </option>
           ))}
-        </select>
+        </Select>
         {state?.errors?.category && (
           <p id={`${categoryId}-error`} className="text-sm text-brand">
             {state.errors.category}

@@ -52,7 +52,7 @@ export {
   listRestockByUser,
   LOGIN_MAX_FAILURES,
   LOGIN_WINDOW_MINUTES,
-  purgeExpiredSessions,
+  purgeStaleRecords,
   RATE_LIMITS,
   recordAttempt,
   releaseAttempt,

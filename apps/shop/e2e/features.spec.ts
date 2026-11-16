@@ -178,3 +178,14 @@ test("비회원 주문 조회는 맞지 않는 조회가 많으면 잠시 막는
   await page.getByRole("button", { name: "조회하기" }).click();
   await expect(page.getByText(/맞지 않는 조회가 많아 10분 동안 막았습니다/)).toBeVisible();
 });
+
+test("카탈로그 화면은 판매 정보만 받고 상품 설명·사양을 다시 받지 않는다", async ({ request }) => {
+  for (const path of ["/build", "/cart", "/gear/memory"]) {
+    const html = await (await request.get(path)).text();
+    // 상품 설명은 브라우저 코드(원본 카탈로그)에만 있다. 화면 데이터(RSC)로 다시 보내지 않는다.
+    expect(html, path).not.toContain("16GB 모듈 2개로 듀얼 채널을 구성하는 DDR5 메모리입니다.");
+    // 화면 데이터에는 판매 정보만 실린다(상품 원본 객체의 설명 키가 없다). 크기는 캐시 상태에 따라 달라 보지 않는다.
+    expect(html, path).toContain('\\"sales\\":[');
+    expect(html, path).not.toContain('\\"description\\":');
+  }
+});

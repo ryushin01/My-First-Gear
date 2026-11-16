@@ -67,11 +67,10 @@ export function ConsultForm({ product }: { product?: Product }) {
     <form noValidate onSubmit={onSubmit} className="flex max-w-xl flex-col gap-4">
       <div ref={wrapRef}>
         <ErrorSummary errors={errors} titleId={titleId} />
-        {serverError && (
-          <p role="alert" className="rounded-md border border-brand/60 p-4 text-brand">
-            {serverError}
-          </p>
-        )}
+        {/* 알림 영역은 처음부터 두고 문구만 바꾼다. 비어 있으면 높이가 없다. */}
+        <p role="alert" className={serverError ? "rounded-md border border-brand/60 p-4 text-brand" : undefined}>
+          {serverError}
+        </p>
       </div>
       {product && (
         <p className="rounded-md border border-white/10 p-3 text-sm">

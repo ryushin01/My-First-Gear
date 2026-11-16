@@ -148,11 +148,10 @@ export function CheckoutForm() {
       <div className="flex flex-col gap-6">
         <div ref={summaryRef}>
           <ErrorSummary errors={errors} titleId={titleId} />
-          {shownError && (
-            <p role="alert" className="rounded-md border border-brand/60 p-4 text-brand">
-              {shownError}
-            </p>
-          )}
+          {/* 알림 영역은 처음부터 두고 문구만 바꾼다(그때 만들어 넣으면 화면 낭독기에 따라 읽히지 않음). 비어 있으면 높이가 없다. */}
+          <p role="alert" className={shownError ? "rounded-md border border-brand/60 p-4 text-brand" : undefined}>
+            {shownError}
+          </p>
         </div>
         <fieldset disabled={submitting || pending !== null} className="flex flex-col gap-4 disabled:opacity-60">
           <legend className="mono-label mb-3">[Shipping]</legend>

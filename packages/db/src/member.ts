@@ -34,8 +34,15 @@ export async function deleteSession(db: Db, id: string) {
   await db.delete(sessions).where(eq(sessions.id, id));
 }
 
-export async function purgeExpiredSessions(db: Db) {
-  await db.delete(sessions).where(lt(sessions.expiresAt, new Date()));
+/**
+ * 쌓이기만 하는 기록을 지운다: 만료된 세션, 하루 지난 시도 기록(제한 창은 길어야 1시간).
+ * 매일 크론이 부른다. 데모 초기화를 끈 실제 운영에서도 DB가 계속 커지지 않게 한다.
+ */
+export async function purgeStaleRecords(db: Db): Promise<{ sessions: number; attempts: number }> {
+  const expired = await db.delete(sessions).where(lt(sessions.expiresAt, new Date())).returning({ id: sessions.id });
+  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const old = await db.delete(loginAttempts).where(lt(loginAttempts.createdAt, dayAgo)).returning({ id: loginAttempts.id });
+  return { sessions: expired.length, attempts: old.length };
 }
 
 // 시도 제한 (로그인, 비회원 주문 조회, 상담 신청, 가입)

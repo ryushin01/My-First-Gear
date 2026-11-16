@@ -1,12 +1,13 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
-import { products as baseProducts, type Product } from "@mfg/catalog";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { products as baseProducts, withSalesInfo, type Product, type SalesInfo } from "@mfg/catalog";
 
 const CatalogContext = createContext<Product[]>(baseProducts);
 
-/** 서버에서 읽은 상품 목록(가격·재고 반영)을 클라이언트 컴포넌트에 나눠 준다. */
-export function CatalogProvider({ products, children }: { products: Product[]; children: ReactNode }) {
+/** 서버가 보낸 판매 정보(가격·재고·노출·평점)를 원본 카탈로그와 합쳐 클라이언트 컴포넌트에 나눠 준다. */
+export function CatalogProvider({ sales, children }: { sales: SalesInfo[]; children: ReactNode }) {
+  const products = useMemo(() => withSalesInfo(baseProducts, sales), [sales]);
   return <CatalogContext value={products}>{children}</CatalogContext>;
 }
 
