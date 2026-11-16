@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
-import { notifyMemberChanged } from "@/entities/member";
+import { forgetBuild } from "@/entities/build";
+import { clearCart } from "@/entities/cart";
+import { flushMemberSaves, notifyMemberChanged } from "@/entities/member";
 import { callAction, useActionFormLock } from "@/shared/lib";
 import { ErrorSummary, TextField } from "@/shared/ui";
 import { loginAction, logoutAction, signupAction, type AuthState } from "../api/actions";
@@ -138,11 +140,20 @@ export function SignupForm({ next }: { next: string }) {
   );
 }
 
+const SAVE_BEFORE_LOGOUT_FAILED = "장바구니와 견적을 저장하지 못해 로그아웃하지 않았습니다. 연결을 확인하고 다시 눌러 주세요.";
+
 export function LogoutButton() {
   const [message, setMessage] = useState("");
   return (
     <form
       action={async () => {
+        setMessage(""); // 같은 안내가 다시 나와도 읽히도록 비웠다가 채운다
+        // 모아 두었던 장바구니·견적 저장을 먼저 보내고, 서버가 받은 뒤에 세션을 지운다.
+        // 저장하지 못하면 로그아웃하지 않는다. 이 기기의 값을 지우면 저장하지 못한 변경이 사라지기 때문이다.
+        if (!(await flushMemberSaves())) {
+          setMessage(SAVE_BEFORE_LOGOUT_FAILED);
+          return;
+        }
         const result = await callAction(async () => {
           await logoutAction();
           return { ok: true as const };
@@ -151,6 +162,10 @@ export function LogoutButton() {
           setMessage(result.message);
           return;
         }
+        // 회원 장바구니·견적은 서버에 저장되어 다음 로그인 때 돌아온다. 이 기기에는 남기지 않는다(공용 컴퓨터 등).
+        // 세션을 먼저 지운 뒤 비우므로 빈 값이 서버에 저장되지 않는다.
+        clearCart();
+        forgetBuild();
         notifyMemberChanged();
         hardNavigate("/");
       }}

@@ -149,3 +149,53 @@ test("결제 응답만 끊겨 다시 눌러도 주문은 하나만 생긴다", a
   await page.goto("/my");
   await expect(page.getByRole("table", { name: "회원 주문 내역" }).getByRole("rowheader")).toHaveCount(1);
 });
+
+test("서버 세션이 사라지면 머리글·찜·후기 폼이 로그인 전 모습으로 돌아간다", async ({ page, context }) => {
+  await signup(page);
+  await expect(page.getByRole("link", { name: /페이지 \(테스트회원님\)/ })).toBeVisible();
+  // 세션 쿠키만 지운다: 화면 표시용 쿠키는 남고 서버 세션은 없는 상태(데모 초기화·만료와 같다)
+  await context.clearCookies({ name: "mfg_session" });
+  await page.goto("/product/antec-torque");
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  await expect(menu.getByRole("link", { name: "로그인" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "로그인하고 찜하기" })).toBeVisible();
+  await expect(page.getByLabel("후기 내용")).toHaveCount(0);
+  expect((await context.cookies()).map((c) => c.name)).not.toContain("mfg_member");
+});
+
+test("로그아웃하면 이 기기의 회원 장바구니를 비우고, 다시 로그인하면 돌아온다", async ({ page }) => {
+  const email = await signup(page);
+  // 회원 장바구니를 불러와 합친 뒤에 담는다(그 전에 담은 것은 합칠 때 저장한다)
+  const synced = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/product/"));
+  await page.goto("/product/samsung-990-pro-2tb");
+  await synced;
+  await page.getByRole("button", { name: "장바구니 담기" }).click();
+  await expect(page.getByRole("link", { name: /장바구니/ }).first()).toContainText("[1]");
+  // 0.8초 모아 두는 저장을 기다리지 않고 바로 로그아웃한다. 로그아웃이 남은 저장을 먼저 보낸다.
+  await page.getByRole("link", { name: /페이지 \(테스트회원님\)/ }).click();
+  await page.getByRole("button", { name: "로그아웃" }).click();
+  await page.waitForURL(/\/$/);
+  await expect(page.getByRole("link", { name: /장바구니/ }).first()).not.toContainText("[");
+
+  await page.goto("/login");
+  await page.getByRole("textbox", { name: "이메일", exact: true }).fill(email);
+  await page.getByLabel(/^비밀번호/).fill("password1");
+  await page.getByRole("button", { name: "로그인" }).click();
+  await page.waitForURL(/\/my/);
+  await expect(page.getByRole("link", { name: /장바구니/ }).first()).toContainText("[1]");
+});
+
+test("로그아웃하지 않고 같은 기기에서 다른 회원으로 가입해도 이전 회원의 장바구니가 합쳐지지 않는다", async ({ page }) => {
+  await signup(page);
+  const synced = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/product/"));
+  await page.goto("/product/samsung-990-pro-2tb");
+  await synced;
+  await page.getByRole("button", { name: "장바구니 담기" }).click();
+  const cartLink = page.getByRole("link", { name: /장바구니/ }).first();
+  await expect(cartLink).toContainText("[1]");
+  // 공용 컴퓨터: 다른 사람이 로그아웃하지 않은 채 새로 가입한다
+  await signup(page);
+  await expect(cartLink).not.toContainText("[");
+  await page.goto("/cart");
+  await expect(cartLink).not.toContainText("[");
+});

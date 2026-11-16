@@ -33,7 +33,8 @@ async function MyContent() {
     listRestockByUser(db, user.id),
     getCatalog(),
   ]);
-  const wishedProducts = wished.flatMap((id) => getProductById(id) ?? []);
+  // 가격·재고·노출은 DB 판매 정보를 반영한 카탈로그로 그린다(숨긴 상품은 빠진다).
+  const wishedProducts = wished.flatMap((id) => getProductById(id, catalog) ?? []);
 
   return (
     <div className="flex flex-col gap-14 py-10">

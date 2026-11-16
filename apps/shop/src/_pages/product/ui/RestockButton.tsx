@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { useMemberName } from "@/entities/member";
+import { notifyMemberChanged, useMemberName } from "@/entities/member";
 import { callAction, useSubmitLock } from "@/shared/lib";
 import { getRestockAction, toggleRestockAction } from "../api/restockActions";
 
@@ -22,7 +22,12 @@ export function RestockButton({ productId }: { productId: string }) {
     void callAction(
       () => getRestockAction(productId),
       () => false,
-    ).then((value) => alive && setOn(value));
+    ).then((value) => {
+      if (!alive) return;
+      // 서버 세션이 없으면 서버가 쿠키를 지웠다. 로그인 안내로 바꾼다.
+      if (value === null) notifyMemberChanged();
+      setOn(value);
+    });
     return () => {
       alive = false;
     };

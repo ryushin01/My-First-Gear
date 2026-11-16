@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { buildSlots, getProductById, type Build, type PartKind, type Product } from "@mfg/catalog";
 import { createLocalStore } from "@/shared/lib";
+import { createShareUndo } from "@/shared/lib/share-undo";
 
 export type BuildState = {
   parts: Partial<Record<PartKind, string>>;
@@ -29,7 +30,30 @@ export function parseBuildState(value: unknown): BuildState | null {
   return { parts: cleanParts, services: cleanServices };
 }
 
+/**
+ * 견적 내용이 같은지. 칸을 고른 순서·서비스 순서와 상관없이 비교한다.
+ * (공유 주소는 고른 순서대로 담기므로, 같은 견적도 주소 문자열은 다를 수 있다)
+ */
+export function sameBuild(a: BuildState, b: BuildState): boolean {
+  if (!buildSlots.every((slot) => a.parts[slot.part] === b.parts[slot.part])) return false;
+  const services = new Set(a.services);
+  const other = new Set(b.services);
+  return services.size === other.size && [...services].every((id) => other.has(id));
+}
+
 const store = createLocalStore<BuildState>("mfg:build", EMPTY, parseBuildState);
+/** 공유 주소(/build?b=, 마이페이지 "불러오기")로 덮어쓰기 전의 견적. 되돌리기에 쓴다. */
+const share = createShareUndo(store, "mfg:build:previous", {
+  parse: parseBuildState,
+  isEmpty: (state) => Object.keys(state.parts).length === 0,
+  same: sameBuild,
+});
+
+/** 공유 주소의 견적으로 바꾼다. 고르던 견적이 다르면 되돌릴 수 있게 남겨 둔다. */
+export const applySharedBuild = share.apply;
+export const usePreviousBuild = share.usePrevious;
+export const restorePreviousBuild = share.restore;
+export const dismissPreviousBuild = share.dismiss;
 
 export function useBuildState(): BuildState {
   return useSyncExternalStore(store.subscribe, store.get, store.getServer);
@@ -56,6 +80,12 @@ export function toggleService(id: string, on: boolean) {
 
 export function resetBuild() {
   store.set(EMPTY);
+}
+
+/** 로그아웃용: 고르던 견적과 공유 주소로 덮어쓰기 전 견적까지 지운다(공용 컴퓨터에 회원 견적이 남지 않게). */
+export function forgetBuild() {
+  resetBuild();
+  share.dismiss();
 }
 
 /** 회원 동기화용: 바뀔 때마다 알림을 받고, 현재 값을 읽는다. */

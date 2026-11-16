@@ -1,2 +1,18 @@
-export { clearPart, onBuildChange, readBuild, replaceBuild, resetBuild, selectPart, toBuild, toggleService, useBuildState } from "./model/build";
+export {
+  applySharedBuild,
+  clearPart,
+  dismissPreviousBuild,
+  forgetBuild,
+  onBuildChange,
+  readBuild,
+  replaceBuild,
+  resetBuild,
+  restorePreviousBuild,
+  sameBuild,
+  selectPart,
+  toBuild,
+  toggleService,
+  useBuildState,
+  usePreviousBuild,
+} from "./model/build";
 export { decodeBuild, encodeBuild } from "./model/codec";

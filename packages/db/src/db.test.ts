@@ -100,7 +100,7 @@ import { DEMO_MEMBER } from "./seed";
 
 describe("회원", () => {
   it("데모 회원으로 로그인한다", async () => {
-    expect(verifyPassword("demo1234", DEMO_MEMBER.passwordHash)).toBe(true);
+    expect(await verifyPassword("demo1234", DEMO_MEMBER.passwordHash)).toBe(true);
     expect((await authenticate(db, "DEMO@myfirstgear.dev", "demo1234"))?.name).toBe("김기어");
     expect(await authenticate(db, DEMO_MEMBER.email, "wrong")).toBeNull();
   });
@@ -152,7 +152,10 @@ import {
   getSessionUser,
   isLockedOut,
   listRestockByUser,
+  RATE_LIMITS,
   recordAttempt,
+  releaseAttempt,
+  reserveAttempt,
   requestRestock,
   restockCounts,
   saveMemberBuild,
@@ -304,5 +307,48 @@ describe("같은 결제를 다시 보내면", () => {
     const other = await placeOrder(db, { ...input, submissionId: "retry-test-0002" });
     expect(other.id).not.toBe(first.id);
     expect(await stock()).toBe(before - 4);
+  });
+});
+
+describe("시도 제한 규칙", () => {
+  it("상담·가입처럼 성공한 횟수를 세는 키는 성공해도 기록을 남겨 한도에 닿는다", async () => {
+    const key = attemptKey("consult", "203.0.113.7");
+    for (let i = 0; i < 4; i++) await recordAttempt(db, key, true, false);
+    expect(await isLockedOut(db, key, RATE_LIMITS.consult)).toBe(false);
+    await recordAttempt(db, key, true, false);
+    expect(await isLockedOut(db, key, RATE_LIMITS.consult)).toBe(true);
+  });
+
+  it("없는 이메일도 해시를 검사하고 로그인은 실패한다", async () => {
+    expect(await authenticate(db, "nobody@example.com", "demo1234")).toBeNull();
+  });
+});
+
+describe("시도 자리 잡기(동시 요청에도 한도 지키기)", () => {
+  it("성공 횟수를 세는 규칙은 한도까지 자리를 잡고, 넘치면 자기 기록을 지운다", async () => {
+    const key = attemptKey("signup", "198.51.100.7");
+    const limit = { windowMinutes: 60, max: 3, failuresOnly: false };
+    const ids = [];
+    for (let i = 0; i < 3; i++) ids.push(await reserveAttempt(db, key, limit));
+    expect(ids.every((id) => typeof id === "number")).toBe(true);
+    expect(await reserveAttempt(db, key, limit)).toBeNull();
+    expect(await isLockedOut(db, key, limit)).toBe(true); // 넘친 요청의 기록은 남지 않는다(3개)
+  });
+
+  it("동시에 몰려도 한도보다 많이 통과하지 못한다", async () => {
+    const key = attemptKey("consult", "198.51.100.8");
+    const limit = { windowMinutes: 60, max: 5, failuresOnly: false };
+    const results = await Promise.all(Array.from({ length: 12 }, () => reserveAttempt(db, key, limit)));
+    expect(results.filter((id) => id !== null).length).toBeLessThanOrEqual(5);
+  });
+
+  it("실패만 세는 규칙은 성공하면 잡아 둔 자리를 돌려준다", async () => {
+    const key = attemptKey("lookup", "198.51.100.9");
+    const limit = { windowMinutes: 10, max: 2, failuresOnly: true };
+    const first = await reserveAttempt(db, key, limit);
+    await releaseAttempt(db, first!); // 찾았다(실패 아님)
+    expect(await reserveAttempt(db, key, limit)).not.toBeNull(); // 실패 1
+    expect(await reserveAttempt(db, key, limit)).not.toBeNull(); // 실패 2
+    expect(await reserveAttempt(db, key, limit)).toBeNull(); // 막힘
   });
 });

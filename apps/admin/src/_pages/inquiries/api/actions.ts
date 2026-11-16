@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { answerInquiry, answerQuestion, getDb } from "@mfg/db";
 import { revalidateShop } from "@/shared/api";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
-import { guardAction } from "@/shared/lib/server";
+import { guardAction, isAdmin, NOT_ADMIN_MESSAGE } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
 
 function readAnswer(formData: FormData) {
@@ -12,6 +12,7 @@ function readAnswer(formData: FormData) {
 }
 
 export async function answerInquiryAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { ok: false, message: NOT_ADMIN_MESSAGE };
   const { id, answer } = readAnswer(formData);
   if (!Number.isInteger(id)) return { ok: false, message: "잘못된 요청입니다." };
   if (answer.length < 2) return { ok: false, message: "답변을 입력해 주세요.", values: { answer } };
@@ -29,6 +30,7 @@ export async function answerInquiryAction(_: ActionState, formData: FormData): P
 }
 
 export async function answerQuestionAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { ok: false, message: NOT_ADMIN_MESSAGE };
   const { id, answer } = readAnswer(formData);
   if (!Number.isInteger(id)) return { ok: false, message: "잘못된 요청입니다." };
   if (answer.length < 2) return { ok: false, message: "답변을 입력해 주세요.", values: { answer } };

@@ -49,6 +49,20 @@
 
 어드민은 `X-Robots-Tag: noindex` 헤더(`next.config.ts`)와 `robots` 메타로 검색에 노출하지 않습니다.
 
+## 보안 헤더
+
+두 앱의 `next.config.ts`가 모든 응답에 붙입니다. `X-Powered-By`는 끕니다(`poweredByHeader: false`).
+
+| 헤더 | 값 | 막는 것 |
+|---|---|---|
+| `Content-Security-Policy` | `frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'` | 다른 사이트가 iframe으로 겹쳐 누르게 하는 클릭재킹, `<base>`·플러그인·다른 곳으로 보내는 폼 |
+| `X-Frame-Options` | `DENY` | 클릭재킹(오래된 브라우저) |
+| `X-Content-Type-Options` | `nosniff` | MIME 추측 |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | 다른 사이트로 전체 주소(쿼리) 유출 |
+| `Permissions-Policy` | 카메라·마이크·위치·topics 끔 | 쓰지 않는 브라우저 기능 |
+
+`script-src`까지 막는 전체 CSP는 넣지 않습니다. Next의 인라인 스크립트에 nonce가 필요해져 모든 화면이 요청마다 렌더링되기 때문입니다. HSTS는 Vercel이 붙입니다.
+
 ## 마이그레이션 규칙
 
 - 스키마를 바꾼 뒤 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 새 파일을 만들고 커밋합니다. 운영 배포가 적용합니다.
@@ -65,7 +79,7 @@
 4. `pnpm build`
 5. 쇼핑몰 E2E, 어드민 + 쇼핑몰 E2E (실패하면 결과를 아티팩트로 올림)
 
-`.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `repository_dispatch`(`vercel.deployment.success`) 이벤트에 맞춰(프로젝트 Git 설정에서 저장소 이벤트를 켜 둠), 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.
+`.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `repository_dispatch`(`vercel.deployment.success`) 이벤트에 맞춰(프로젝트 Git 설정에서 저장소 이벤트를 켜 둠), 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`, 두 앱의 보안 헤더를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.
 
 ## PR 미리보기 배포
 

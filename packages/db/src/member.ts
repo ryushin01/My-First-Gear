@@ -1,7 +1,8 @@
 import { and, count, eq, gt, lt, sql } from "drizzle-orm";
 import { createHash, randomBytes } from "node:crypto";
 import type { Db } from "./client";
-import { loginAttempts, memberStates, restockRequests, sessions, type StoredBuild, type StoredCartLine } from "./schema";
+import type { PublicUser } from "./auth";
+import { loginAttempts, memberStates, restockRequests, sessions, users, type StoredBuild, type StoredCartLine } from "./schema";
 
 // 세션
 
@@ -18,6 +19,17 @@ export async function getSessionUser(db: Db, id: string): Promise<number | null>
   return row?.userId ?? null;
 }
 
+/** 살아 있는 세션의 회원(id, 이메일, 이름)을 한 번의 질의로 읽는다. 없으면 null */
+export async function getSessionMember(db: Db, id: string): Promise<PublicUser | null> {
+  const [row] = await db
+    .select({ id: users.id, email: users.email, name: users.name })
+    .from(sessions)
+    .innerJoin(users, eq(users.id, sessions.userId))
+    .where(and(eq(sessions.id, id), gt(sessions.expiresAt, new Date())))
+    .limit(1);
+  return row ?? null;
+}
+
 export async function deleteSession(db: Db, id: string) {
   await db.delete(sessions).where(eq(sessions.id, id));
 }
@@ -26,30 +38,80 @@ export async function purgeExpiredSessions(db: Db) {
   await db.delete(sessions).where(lt(sessions.expiresAt, new Date()));
 }
 
-// 로그인 시도 제한
+// 시도 제한 (로그인, 비회원 주문 조회, 상담 신청, 가입)
 
 export const LOGIN_WINDOW_MINUTES = 10;
 export const LOGIN_MAX_FAILURES = 5;
 
+/** windowMinutes 안에 max번에 닿으면 막는다. failuresOnly면 실패한 시도만 센다. */
+export type RateLimit = { windowMinutes: number; max: number; failuresOnly: boolean };
+
+export const RATE_LIMITS = {
+  /** 회원 로그인: 같은 이메일+IP로 10분에 5번 틀리면. IP를 함께 봐서 남의 계정을 다른 곳에서 잠그지 못한다 */
+  memberLogin: { windowMinutes: LOGIN_WINDOW_MINUTES, max: LOGIN_MAX_FAILURES, failuresOnly: true },
+  /** 회원 로그인: 한 IP에서 여러 계정을 대입하면 10분에 30번 */
+  memberLoginIp: { windowMinutes: LOGIN_WINDOW_MINUTES, max: 30, failuresOnly: true },
+  /** 어드민 로그인: IP별 10분에 5번 */
+  adminLogin: { windowMinutes: LOGIN_WINDOW_MINUTES, max: LOGIN_MAX_FAILURES, failuresOnly: true },
+  /** 비회원 주문 조회: IP별로 맞지 않는 조회 10분에 10번 (주문 번호를 돌려 남의 주문을 찾지 못하게) */
+  orderLookup: { windowMinutes: 10, max: 10, failuresOnly: true },
+  /** 구매 상담 신청: IP별 1시간에 5번 */
+  consult: { windowMinutes: 60, max: 5, failuresOnly: false },
+  /** 회원 가입: IP별 1시간에 5번 */
+  signup: { windowMinutes: 60, max: 5, failuresOnly: false },
+} satisfies Record<string, RateLimit>;
+
+export type AttemptKind = "member" | "member-ip" | "admin" | "lookup" | "consult" | "signup";
+
 /** 개인정보(이메일·IP)를 그대로 남기지 않도록 해시한 키 */
-export function attemptKey(kind: "member" | "admin", value: string) {
+export function attemptKey(kind: AttemptKind, value: string) {
   return createHash("sha256").update(`${kind}:${value.trim().toLowerCase()}`).digest("base64url");
 }
 
-/** 최근 10분 안에 실패가 5번 이상이면 true */
-export async function isLockedOut(db: Db, key: string): Promise<boolean> {
-  const since = new Date(Date.now() - LOGIN_WINDOW_MINUTES * 60 * 1000);
+/** 최근 기록이 한도에 닿았으면 true (기본: 회원 로그인 규칙) */
+export async function isLockedOut(db: Db, key: string, limit: RateLimit = RATE_LIMITS.memberLogin): Promise<boolean> {
+  const since = new Date(Date.now() - limit.windowMinutes * 60 * 1000);
+  const where = [eq(loginAttempts.key, key), gt(loginAttempts.createdAt, since)];
+  if (limit.failuresOnly) where.push(eq(loginAttempts.ok, false));
   const [row] = await db
     .select({ value: count() })
     .from(loginAttempts)
-    .where(and(eq(loginAttempts.key, key), eq(loginAttempts.ok, false), gt(loginAttempts.createdAt, since)));
-  return row.value >= LOGIN_MAX_FAILURES;
+    .where(and(...where));
+  return row.value >= limit.max;
 }
 
-/** 시도를 기록한다. 성공하면 그 키의 실패 기록을 지운다. */
-export async function recordAttempt(db: Db, key: string, ok: boolean) {
-  if (ok) await db.delete(loginAttempts).where(eq(loginAttempts.key, key));
+/**
+ * 시도를 기록한다. 로그인처럼 성공하면 실패 기록을 지우는 키는 clearOnSuccess(기본)로,
+ * 상담 신청·가입처럼 성공한 횟수를 세는 키는 clearOnSuccess=false로 남긴다.
+ */
+export async function recordAttempt(db: Db, key: string, ok: boolean, clearOnSuccess = true) {
+  if (ok && clearOnSuccess) await db.delete(loginAttempts).where(eq(loginAttempts.key, key));
   else await db.insert(loginAttempts).values({ key, ok });
+}
+
+/**
+ * 한도 안이면 이번 시도를 먼저 기록해 자리를 잡고 그 기록 id를, 한도를 넘으면 null을 돌려준다.
+ * "세고 나서 기록"하면 동시에 온 요청이 모두 같은 수를 읽고 통과한다. 먼저 기록하고 자기 기록까지 세면
+ * 기록이 r번째로 들어간 요청은 r개 이상을 보므로, 동시에 몰려도 한도보다 많이 통과하지 못한다(넘친 요청은 자기 기록을 지움).
+ * failuresOnly 규칙(로그인·주문 조회)은 실패로 기록해 두었다가 성공하면 releaseAttempt로 지운다.
+ */
+export async function reserveAttempt(db: Db, key: string, limit: RateLimit): Promise<number | null> {
+  const [reserved] = await db.insert(loginAttempts).values({ key, ok: !limit.failuresOnly }).returning({ id: loginAttempts.id });
+  const since = new Date(Date.now() - limit.windowMinutes * 60 * 1000);
+  const where = [eq(loginAttempts.key, key), gt(loginAttempts.createdAt, since)];
+  if (limit.failuresOnly) where.push(eq(loginAttempts.ok, false));
+  const [row] = await db
+    .select({ value: count() })
+    .from(loginAttempts)
+    .where(and(...where));
+  if (row.value <= limit.max) return reserved.id;
+  await releaseAttempt(db, reserved.id);
+  return null;
+}
+
+/** 잡아 둔 시도 기록을 지운다(실패로 세지 않을 결과일 때, 한도를 넘어 되돌릴 때). */
+export async function releaseAttempt(db: Db, id: number) {
+  await db.delete(loginAttempts).where(eq(loginAttempts.id, id));
 }
 
 // 장바구니·견적 동기화

@@ -11,13 +11,15 @@ export const OG_SIZE = { width: 1200, height: 630 };
 // 한글이 들어가므로 Satori가 읽을 수 있는 OTF 글꼴을 쓴다. 요청과 상관없으니 한 번만 읽는다.
 const fontData = readFile(join(process.cwd(), "node_modules/pretendard/dist/public/static/Pretendard-Bold.otf"));
 
+// 머리글 로고는 사이트 머리글·파비콘과 같은 트로피 그림(public/brand/logo.png)을 그대로 읽는다. 로고 파일을 바꾸면 공유 이미지도 함께 바뀐다.
+// 빌드가 이 경로를 추적해 이 파일을 쓰는 서버 함수마다 넣는다(.next/server/app/**/*.nft.json).
+const logoSrc = readFile(join(process.cwd(), "public/brand/logo.png")).then((png) => `data:image/png;base64,${png.toString("base64")}`);
+
 /** 상품 그림(SVG)을 이미지 주소로 바꾼다. 선 색(currentColor)은 크림색으로 칠한다. */
 export function artDataUri(art: GearArtValue) {
   const svg = toSvgString(<GearArt art={art} width={200} height={200} xmlns="http://www.w3.org/2000/svg" />).replaceAll("currentColor", "#fcf8ef");
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 }
-
-const BARS = ["#c0c0c0", "#c0c000", "#00c0c0", "#00c000", "#c000c0", "#c00000", "#0000c0"];
 
 /** 브라운관 화면처럼 꾸민 1200×630 공유 이미지 틀 */
 export async function renderOg(children: ReactNode) {
@@ -37,11 +39,7 @@ export async function renderOg(children: ReactNode) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 30 }}>
-          <div style={{ display: "flex", height: 26, borderRadius: 4, overflow: "hidden" }}>
-            {BARS.map((color) => (
-              <div key={color} style={{ width: 9, height: 26, background: color }} />
-            ))}
-          </div>
+          <img src={await logoSrc} width={40} height={40} alt="" />
           My First Gear
         </div>
         {children}

@@ -202,7 +202,7 @@ export const sessions = pgTable(
   (table) => [index("sessions_user_idx").on(table.userId)],
 );
 
-/** 로그인 시도 기록. key는 "member:이메일" 또는 "admin:IP" 같은 문자열의 해시다. */
+/** 시도 기록(로그인·비회원 주문 조회·상담 신청·가입 제한). key는 "member:이메일|IP", "lookup:IP" 같은 문자열의 해시다. */
 export const loginAttempts = pgTable(
   "login_attempts",
   {

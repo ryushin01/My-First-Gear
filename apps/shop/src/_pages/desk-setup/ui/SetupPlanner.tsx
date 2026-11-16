@@ -6,7 +6,8 @@ import { useEffect, useId, useState } from "react";
 import { checkSetup, decodeSetup, encodeSetup, formatPrice, setupSlots, setupTotal, toSetup, type SetupSlotId } from "@mfg/catalog";
 import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
-import { PlannerSlot } from "@/widgets/gear-planner";
+import { copyLink } from "@/shared/lib";
+import { PlannerSlot, SharedNotice } from "@/widgets/gear-planner";
 import {
   applySharedSetup,
   clearSetupItem,
@@ -49,13 +50,7 @@ export function SetupPlanner() {
   const canOrder = filled > 0 && errors.length === 0 && soldOut.length === 0;
 
   async function share() {
-    const url = `${window.location.origin}/setup?s=${encodeURIComponent(encodeSetup(state))}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setNotice("셋업 주소를 복사했습니다.");
-    } catch {
-      setNotice(`복사하지 못했습니다. 이 주소를 직접 복사하세요: ${url}`);
-    }
+    setNotice(await copyLink(`${window.location.origin}/setup?s=${encodeURIComponent(encodeSetup(state))}`, "셋업"));
   }
 
   function addAllToCart() {
@@ -66,17 +61,7 @@ export function SetupPlanner() {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section aria-labelledby={`${uid}slots`} className="flex flex-col gap-4">
-        {previous && (
-          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[#f2c230]/50 p-3 text-sm">
-            <p className="flex-1">공유받은 셋업을 불러왔습니다. 고르던 셋업은 따로 남겨 두었습니다.</p>
-            <button type="button" onClick={restorePreviousSetup} className="min-h-11 rounded-md border border-white/30 px-4 hover:border-white">
-              이전 셋업으로 되돌리기
-            </button>
-            <button type="button" onClick={dismissPreviousSetup} className="min-h-11 rounded-md px-3 text-mute-200 hover:text-cream">
-              닫기<span className="sr-only">: 이전 셋업 안내</span>
-            </button>
-          </div>
-        )}
+        {previous && <SharedNotice what="셋업" onRestore={restorePreviousSetup} onDismiss={dismissPreviousSetup} />}
         <h2 id={`${uid}slots`} className="mono-label">
           [Desk Setup · {filled} / {setupSlots.length}]
         </h2>

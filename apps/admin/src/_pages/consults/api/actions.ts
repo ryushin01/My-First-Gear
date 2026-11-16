@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { consultStatuses, getDb, updateConsultStatus, type ConsultStatus } from "@mfg/db";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
-import { guardAction } from "@/shared/lib/server";
+import { guardAction, isAdmin, NOT_ADMIN_MESSAGE } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
 
 export async function updateConsultStatusAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { ok: false, message: NOT_ADMIN_MESSAGE };
   const id = Number(formData.get("id"));
   const status = String(formData.get("status") ?? "") as ConsultStatus;
   if (!Number.isInteger(id) || !consultStatuses.includes(status)) return { ok: false, message: "잘못된 요청입니다." };

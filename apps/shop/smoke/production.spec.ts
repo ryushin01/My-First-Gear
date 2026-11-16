@@ -35,3 +35,14 @@ test("어드민은 로그인 화면으로 보내고 검색에 노출하지 않�
   expect(res.status()).toBe(200);
   expect(res.headers()["x-robots-tag"]).toContain("noindex");
 });
+
+test("두 앱 모두 보안 헤더를 붙이고 프레임워크를 드러내지 않는다", async ({ request }) => {
+  for (const url of [SHOP + "/", SHOP + "/checkout", ADMIN + "/login"]) {
+    const headers = (await request.get(url)).headers();
+    expect(headers["content-security-policy"], url).toContain("frame-ancestors 'none'");
+    expect(headers["x-frame-options"], url).toBe("DENY");
+    expect(headers["x-content-type-options"], url).toBe("nosniff");
+    expect(headers["referrer-policy"], url).toBe("strict-origin-when-cross-origin");
+    expect(headers["x-powered-by"], url).toBeUndefined();
+  }
+});

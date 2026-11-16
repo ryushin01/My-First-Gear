@@ -168,3 +168,14 @@ test("데모 초기화 크론은 비밀 값이 맞을 때만 주문·상담을 �
   await page.goto("/members");
   await expect(page.getByRole("rowheader")).toHaveCount(3); // 시드 회원 3명만 남는다
 });
+
+test("두 앱 모두 보안 헤더를 붙이고 프레임워크를 드러내지 않는다", async ({ request }) => {
+  for (const url of [`${SHOP}/`, `${SHOP}/checkout`, "/login"]) {
+    const headers = (await request.get(url, { maxRedirects: 0 })).headers();
+    expect(headers["content-security-policy"], url).toContain("frame-ancestors 'none'");
+    expect(headers["x-frame-options"], url).toBe("DENY");
+    expect(headers["x-content-type-options"], url).toBe("nosniff");
+    expect(headers["referrer-policy"], url).toBe("strict-origin-when-cross-origin");
+    expect(headers["x-powered-by"], url).toBeUndefined();
+  }
+});
