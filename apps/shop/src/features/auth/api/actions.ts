@@ -7,10 +7,11 @@ import {
   createUser,
   getDb,
   hasDatabase,
-  isLockedOut,
   LOGIN_WINDOW_MINUTES,
   RATE_LIMITS,
   recordAttempt,
+  releaseAttempt,
+  reserveAttempt,
 } from "@mfg/db";
 import { endSession, startSession } from "@/entities/member/index.server";
 import { ACTION_FAILED_MESSAGE, EMAIL_PATTERN } from "@/shared/lib";
@@ -48,16 +49,21 @@ export async function loginAction(_: AuthState, formData: FormData): Promise<Aut
       const db = getDb();
       // 비밀번호 대입 방지: 같은 이메일+IP로 10분에 5번, 한 IP에서 여러 계정으로 10분에 30번 틀리면 잠시 막는다.
       // 이메일만 보면 남의 이메일로 일부러 틀려 그 사람을 잠글 수 있어 IP를 함께 본다.
+      // 비밀번호를 확인하기 전에 실패 자리를 먼저 잡는다(동시에 대입해도 한도를 넘지 못하게). 맞으면 그 자리를 지운다.
       const ip = await clientIp();
       const key = attemptKey("member", `${email}|${ip ?? "local"}`);
       const ipKey = ip ? attemptKey("member-ip", ip) : null;
-      if ((await isLockedOut(db, key)) || (ipKey && (await isLockedOut(db, ipKey, RATE_LIMITS.memberLoginIp)))) {
+      const reserved = await reserveAttempt(db, key, RATE_LIMITS.memberLogin);
+      const ipReserved = reserved !== null && ipKey ? await reserveAttempt(db, ipKey, RATE_LIMITS.memberLoginIp) : null;
+      if (reserved === null || (ipKey && ipReserved === null)) {
+        if (reserved !== null) await releaseAttempt(db, reserved);
         return { ok: false, message: `로그인에 여러 번 실패해 ${LOGIN_WINDOW_MINUTES}분 동안 막았습니다. 잠시 뒤 다시 시도해 주세요.`, values };
       }
       const user = await authenticate(db, email, password);
-      await recordAttempt(db, key, Boolean(user));
-      if (ipKey && !user) await recordAttempt(db, ipKey, false);
+      // 틀리면 잡아 둔 자리가 그대로 실패 기록이 된다.
       if (!user) return { ok: false, message: "이메일 또는 비밀번호가 맞지 않습니다.", values };
+      await recordAttempt(db, key, true); // 이 이메일+IP의 실패 기록(잡아 둔 자리 포함)을 지운다
+      if (ipReserved !== null) await releaseAttempt(db, ipReserved);
       await startSession(user);
       return { ok: true, message: `${user.name}님, 반갑습니다.`, next: safeNext(formData.get("next")) };
     },
@@ -86,10 +92,10 @@ export async function signupAction(_: AuthState, formData: FormData): Promise<Au
       // 가입으로 DB를 채우지 못하게 한 IP에서 1시간에 5번까지 받는다.
       const ip = await clientIp();
       const key = ip ? attemptKey("signup", ip) : null;
-      if (key && (await isLockedOut(db, key, RATE_LIMITS.signup))) {
+      // 자리를 먼저 잡고 센다(동시에 몰려도 한도를 넘지 못하게).
+      if (key && (await reserveAttempt(db, key, RATE_LIMITS.signup)) === null) {
         return { ok: false, message: "가입 요청이 많아 잠시 막았습니다. 1시간 뒤 다시 시도해 주세요.", values };
       }
-      if (key) await recordAttempt(db, key, true, false);
       try {
         const user = await createUser(db, { name, email, password });
         await startSession(user);

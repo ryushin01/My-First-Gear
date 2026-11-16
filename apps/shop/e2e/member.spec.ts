@@ -165,11 +165,14 @@ test("서버 세션이 사라지면 머리글·찜·후기 폼이 로그인 전 
 
 test("로그아웃하면 이 기기의 회원 장바구니를 비우고, 다시 로그인하면 돌아온다", async ({ page }) => {
   const email = await signup(page);
+  // 회원 장바구니를 불러와 합친 뒤에 담는다(그 전에 담은 것은 합칠 때 저장한다)
+  const synced = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/product/"));
   await page.goto("/product/samsung-990-pro-2tb");
+  await synced;
   await page.getByRole("button", { name: "장바구니 담기" }).click();
   await expect(page.getByRole("link", { name: /장바구니/ }).first()).toContainText("[1]");
-  await page.waitForTimeout(1500); // 서버 저장 대기(0.8초 디바운스)
-  await page.goto("/my");
+  // 0.8초 모아 두는 저장을 기다리지 않고 바로 로그아웃한다. 로그아웃이 남은 저장을 먼저 보낸다.
+  await page.getByRole("link", { name: /페이지 \(테스트회원님\)/ }).click();
   await page.getByRole("button", { name: "로그아웃" }).click();
   await page.waitForURL(/\/$/);
   await expect(page.getByRole("link", { name: /장바구니/ }).first()).not.toContainText("[");

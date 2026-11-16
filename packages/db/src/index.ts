@@ -55,6 +55,8 @@ export {
   purgeExpiredSessions,
   RATE_LIMITS,
   recordAttempt,
+  releaseAttempt,
+  reserveAttempt,
   requestRestock,
   restockCounts,
   saveMemberBuild,

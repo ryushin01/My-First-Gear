@@ -8,11 +8,11 @@ import {
   findOrderForBuyer,
   getDb,
   hasDatabase,
-  isLockedOut,
   OrderError,
   placeOrder,
   RATE_LIMITS,
-  recordAttempt,
+  releaseAttempt,
+  reserveAttempt,
 } from "@mfg/db";
 import { EMAIL_PATTERN, PHONE_PATTERN } from "@/shared/lib";
 import { clientIp } from "@/shared/lib/server";
@@ -67,14 +67,14 @@ export async function lookupOrderAction(id: string, name: string): Promise<Resul
   const db = getDb();
   const ip = await clientIp();
   const key = ip ? attemptKey("lookup", ip) : null;
-  if (key && (await isLockedOut(db, key, RATE_LIMITS.orderLookup))) {
+  // 실패 자리를 먼저 잡고 센다(동시에 몰려도 한도를 넘지 못하게). 찾으면 그 자리를 지운다.
+  const reserved = key ? await reserveAttempt(db, key, RATE_LIMITS.orderLookup) : null;
+  if (key && reserved === null) {
     return { ok: false, message: "맞지 않는 조회가 많아 10분 동안 막았습니다. 주문 번호와 받는 분 이름을 확인한 뒤 잠시 뒤 다시 시도해 주세요." };
   }
   const order = await findOrderForBuyer(db, String(id).slice(0, 40), String(name).slice(0, 50));
-  if (!order) {
-    if (key) await recordAttempt(db, key, false);
-    return { ok: true, data: null };
-  }
+  if (!order) return { ok: true, data: null }; // 잡아 둔 자리가 그대로 실패 기록이 된다
+  if (reserved !== null) await releaseAttempt(db, reserved);
   return {
     ok: true,
     data: {
@@ -103,11 +103,11 @@ export async function createConsultAction(input: {
   // 신청으로 DB를 채우지 못하게 한 IP에서 1시간에 5번까지 받는다.
   const ip = await clientIp();
   const key = ip ? attemptKey("consult", ip) : null;
-  if (key && (await isLockedOut(db, key, RATE_LIMITS.consult))) {
+  // 자리를 먼저 잡고 센다(동시에 몰려도 한도를 넘지 못하게).
+  if (key && (await reserveAttempt(db, key, RATE_LIMITS.consult)) === null) {
     return { ok: false, message: "상담 신청이 많아 잠시 막았습니다. 1시간 뒤 다시 신청해 주세요." };
   }
   const product = input.productSlug ? getProductBySlug(input.productSlug) : undefined;
-  if (key) await recordAttempt(db, key, true, false);
   await createConsult(db, {
     productSlug: product?.slug ?? null,
     name: input.name.trim().slice(0, 50),

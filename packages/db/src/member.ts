@@ -89,6 +89,31 @@ export async function recordAttempt(db: Db, key: string, ok: boolean, clearOnSuc
   else await db.insert(loginAttempts).values({ key, ok });
 }
 
+/**
+ * 한도 안이면 이번 시도를 먼저 기록해 자리를 잡고 그 기록 id를, 한도를 넘으면 null을 돌려준다.
+ * "세고 나서 기록"하면 동시에 온 요청이 모두 같은 수를 읽고 통과한다. 먼저 기록하고 자기 기록까지 세면
+ * 기록이 r번째로 들어간 요청은 r개 이상을 보므로, 동시에 몰려도 한도보다 많이 통과하지 못한다(넘친 요청은 자기 기록을 지움).
+ * failuresOnly 규칙(로그인·주문 조회)은 실패로 기록해 두었다가 성공하면 releaseAttempt로 지운다.
+ */
+export async function reserveAttempt(db: Db, key: string, limit: RateLimit): Promise<number | null> {
+  const [reserved] = await db.insert(loginAttempts).values({ key, ok: !limit.failuresOnly }).returning({ id: loginAttempts.id });
+  const since = new Date(Date.now() - limit.windowMinutes * 60 * 1000);
+  const where = [eq(loginAttempts.key, key), gt(loginAttempts.createdAt, since)];
+  if (limit.failuresOnly) where.push(eq(loginAttempts.ok, false));
+  const [row] = await db
+    .select({ value: count() })
+    .from(loginAttempts)
+    .where(and(...where));
+  if (row.value <= limit.max) return reserved.id;
+  await releaseAttempt(db, reserved.id);
+  return null;
+}
+
+/** 잡아 둔 시도 기록을 지운다(실패로 세지 않을 결과일 때, 한도를 넘어 되돌릴 때). */
+export async function releaseAttempt(db: Db, id: number) {
+  await db.delete(loginAttempts).where(eq(loginAttempts.id, id));
+}
+
 // 장바구니·견적 동기화
 
 export async function getMemberState(db: Db, userId: number) {

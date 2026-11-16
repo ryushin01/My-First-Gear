@@ -21,6 +21,12 @@ export async function loadMemberStateAction(): Promise<{ cart: StoredCartLine[];
   return { cart: state?.cart ?? [], build: state?.build ?? null };
 }
 
+/** 서버 세션이 아직 있는지 본다. 없으면 쿠키를 지우고 "signed-out", DB가 없으면 null */
+export async function checkMemberSessionAction(): Promise<"ok" | "signed-out" | null> {
+  if (!hasDatabase()) return null;
+  return (await getActionUserId()) === null ? "signed-out" : "ok";
+}
+
 export async function saveMemberCartAction(lines: StoredCartLine[]) {
   const userId = await getActionUserId();
   if (userId === null || !hasDatabase() || !Array.isArray(lines)) return;

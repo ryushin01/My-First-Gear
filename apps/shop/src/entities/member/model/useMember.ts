@@ -5,7 +5,8 @@ import { MEMBER_COOKIE } from "./cookie";
 
 const EVENT = "mfg:member";
 
-function read(): string | null {
+/** 화면 표시용 쿠키의 회원 이름. 로그아웃하면 서버가 지운다. */
+export function readMemberName(): string | null {
   const match = document.cookie.split("; ").find((part) => part.startsWith(`${MEMBER_COOKIE}=`));
   if (!match) return null;
   try {
@@ -26,7 +27,7 @@ function subscribe(onChange: () => void) {
 
 /** 로그인한 회원 이름. 로그인 전이거나 서버 렌더링 중이면 null */
 export function useMemberName(): string | null {
-  return useSyncExternalStore(subscribe, read, () => null);
+  return useSyncExternalStore(subscribe, readMemberName, () => null);
 }
 
 /** 로그인·로그아웃 뒤 화면의 회원 표시를 갱신한다. */
