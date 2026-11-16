@@ -21,25 +21,33 @@ export async function loadMemberStateAction(): Promise<{ cart: StoredCartLine[];
   return { cart: state?.cart ?? [], build: state?.build ?? null };
 }
 
+/** 저장 결과. "signed-out": 서버 세션이 없어 쿠키를 지웠다. "off": DB가 없어 동기화하지 않는다. */
+export type SaveResult = "saved" | "signed-out" | "off";
+
 /** 서버 세션이 아직 있는지 본다. 없으면 쿠키를 지우고 "signed-out", DB가 없으면 null */
 export async function checkMemberSessionAction(): Promise<"ok" | "signed-out" | null> {
   if (!hasDatabase()) return null;
   return (await getActionUserId()) === null ? "signed-out" : "ok";
 }
 
-export async function saveMemberCartAction(lines: StoredCartLine[]) {
+export async function saveMemberCartAction(lines: StoredCartLine[]): Promise<SaveResult> {
+  if (!hasDatabase()) return "off";
+  if (!Array.isArray(lines)) throw new Error("장바구니 형식이 아닙니다.");
   const userId = await getActionUserId();
-  if (userId === null || !hasDatabase() || !Array.isArray(lines)) return;
+  if (userId === null) return "signed-out";
   await saveMemberCart(getDb(), userId, clean(lines));
+  return "saved";
 }
 
-export async function saveMemberBuildAction(build: StoredBuild | null) {
+export async function saveMemberBuildAction(build: StoredBuild | null): Promise<SaveResult> {
+  if (!hasDatabase()) return "off";
   const userId = await getActionUserId();
-  if (userId === null || !hasDatabase()) return;
+  if (userId === null) return "signed-out";
   const parts = Object.fromEntries(
     Object.entries(build?.parts ?? {})
       .filter(([, v]) => typeof v === "string")
       .slice(0, 8),
   );
   await saveMemberBuild(getDb(), userId, build ? { parts, services: (build.services ?? []).slice(0, 8) } : null);
+  return "saved";
 }

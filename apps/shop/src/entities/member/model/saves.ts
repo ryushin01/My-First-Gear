@@ -1,15 +1,13 @@
 /**
  * 회원 장바구니·견적을 서버에 저장하는 일을 잠시 모았다가 한 번에 보낸다(바뀔 때마다 보내지 않게).
- * 로그아웃은 세션을 지우기 전에 flushMemberSaves로 남은 저장을 바로 보내고, 서버가 받았는지 확인한다.
+ * 로그아웃은 세션을 지우기 전에 flushMemberSaves로 남은 일을 바로 끝내고, 서버가 받았는지 확인한다.
  */
 export type MemberSaver = {
   /** 바뀌었다고 알린다. delay가 지나도록 더 바뀌지 않으면 저장한다. */
   schedule(): void;
-  /** 남은 저장을 바로 보내고 끝날 때까지 기다린다. 서버가 받았거나 보낼 것이 없으면 true */
+  /** 남은 저장을 바로 보내고 끝날 때까지 기다린다. 끝났거나 보낼 것이 없으면 true, save가 던지면 false */
   flush(): Promise<boolean>;
 };
-
-const savers = new Set<MemberSaver>();
 
 /** save가 던지면(네트워크 끊김, 서버 오류) 실패로 보고, 다음 저장 때 다시 보낸다. */
 export function createMemberSaver(save: () => Promise<unknown>, delay = 800): MemberSaver {
@@ -39,7 +37,7 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
     }
   }
 
-  const saver: MemberSaver = {
+  return {
     schedule() {
       dirty = true;
       clearTimeout(timer);
@@ -47,12 +45,25 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
     },
     flush,
   };
-  savers.add(saver);
-  return saver;
 }
 
-/** 모든 저장을 바로 보내고 기다린다. 하나라도 서버가 받지 못했으면 false */
+type SyncHandler = () => Promise<boolean>;
+let syncHandler: SyncHandler | null = null;
+
+/** 회원 동기화(widgets/crt-screen의 MemberSync)가 "지금 서버와 맞추기"를 맡긴다. */
+export function setMemberSyncHandler(handler: SyncHandler | null) {
+  syncHandler = handler;
+}
+
+/**
+ * 로그아웃 전에 부른다. 아직 서버 값과 합치지 않았거나 모아 둔 저장이 있으면 지금 보내고 기다린다.
+ * 서버가 받았거나 더 저장할 곳이 없으면(서버 세션이 끝남, DB 없음) true, 받지 못했으면 false.
+ */
 export async function flushMemberSaves(): Promise<boolean> {
-  const results = await Promise.all([...savers].map((saver) => saver.flush()));
-  return results.every(Boolean);
+  if (!syncHandler) return true;
+  try {
+    return await syncHandler();
+  } catch {
+    return false;
+  }
 }
