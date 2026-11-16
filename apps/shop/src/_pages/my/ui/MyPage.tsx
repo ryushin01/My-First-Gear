@@ -9,6 +9,7 @@ import { getCatalog } from "@/entities/product/index.server";
 import { orderStatusLabel, OrderTimeline } from "@/entities/order";
 import { ProductCard } from "@/entities/product";
 import { LogoutButton } from "@/features/auth";
+import { RestockCartButton } from "@/features/restock-alert";
 import { inquiryCategoryLabel } from "../model/inquiryLabels";
 import { InquiryForm } from "./InquiryForm";
 import { PageHeading } from "@/shared/ui";
@@ -192,6 +193,7 @@ async function MyContent() {
                   <span className={product.stock > 0 ? "text-[#3cb371]" : "text-mute-200"}>
                     {product.stock > 0 ? `입고됨 · 재고 ${product.stock}개` : "아직 품절"}
                   </span>
+                  {product.stock > 0 && product.purchaseMode === "cart" && <RestockCartButton productId={product.id} productName={product.name} />}
                 </li>
               ))}
           </ul>

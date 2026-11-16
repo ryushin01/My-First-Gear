@@ -50,7 +50,8 @@ export function SetupPlanner() {
   const canOrder = filled > 0 && errors.length === 0 && soldOut.length === 0;
 
   async function share() {
-    setNotice(await copyLink(`${window.location.origin}/setup?s=${encodeURIComponent(encodeSetup(state))}`, "셋업"));
+    // 공유 주소는 메신저 미리보기에 이 셋업의 그림을 보여 주고 열면 셋업 화면으로 넘어간다(/share/setup).
+    setNotice(await copyLink(`${window.location.origin}/share/setup?s=${encodeURIComponent(encodeSetup(state))}`, "셋업"));
   }
 
   function addAllToCart() {

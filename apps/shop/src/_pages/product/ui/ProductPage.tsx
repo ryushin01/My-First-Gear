@@ -10,7 +10,7 @@ import { PriceTag, RecentlyViewed, RecordRecentView } from "@/entities/product";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductCommunity } from "./ProductCommunity";
 import { CompareButton } from "./CompareButton";
-import { RestockButton } from "./RestockButton";
+import { RestockButton } from "@/features/restock-alert";
 import { WishButton } from "./WishButton";
 import { CrtScreen } from "@/widgets/crt-screen";
 

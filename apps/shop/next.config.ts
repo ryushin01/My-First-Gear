@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
     "/product/[slug]/opengraph-image": ["./node_modules/pretendard/dist/public/static/Pretendard-Bold.otf"],
     "/opengraph-image": ["./node_modules/pretendard/dist/public/static/Pretendard-Bold.otf"],
     "/api/og/build": ["./node_modules/pretendard/dist/public/static/Pretendard-Bold.otf"],
+    "/api/og/setup": ["./node_modules/pretendard/dist/public/static/Pretendard-Bold.otf"],
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

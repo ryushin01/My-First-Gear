@@ -8,6 +8,8 @@ const actions = vi.hoisted(() => ({
   saveMemberBuildAction: vi.fn(),
 }));
 vi.mock("../api/memberSync", () => actions);
+// 재입고 버튼이 서버 액션(server-only)을 불러오므로 머리글 알림 수만 흉내 낸다
+vi.mock("@/features/restock-alert", () => ({ setRestockedCount: vi.fn() }));
 
 const OWNER_KEY = "mfg:member-owner";
 
@@ -25,7 +27,7 @@ describe("MemberSync", () => {
     vi.clearAllMocks();
     window.localStorage.clear();
     document.cookie = "mfg_member=member; path=/";
-    actions.loadMemberStateAction.mockResolvedValue({ owner: "tag-a", cart: [], build: null });
+    actions.loadMemberStateAction.mockResolvedValue({ owner: "tag-a", cart: [], build: null, restocked: 0 });
     actions.checkMemberSessionAction.mockResolvedValue("ok");
     actions.saveMemberCartAction.mockResolvedValue("saved");
     actions.saveMemberBuildAction.mockResolvedValue("saved");

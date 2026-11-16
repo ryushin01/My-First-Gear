@@ -21,6 +21,6 @@ export async function toggleRestockAction(productId: string, on: boolean): Promi
   return {
     ok: true,
     on,
-    message: on ? `${product.name} 재입고 알림을 신청했습니다. 입고되면 마이페이지에 표시됩니다.` : "재입고 알림을 취소했습니다.",
+    message: on ? `${product.name} 재입고 알림을 신청했습니다. 입고되면 머리글과 마이페이지에 알려 드립니다.` : "재입고 알림을 취소했습니다.",
   };
 }

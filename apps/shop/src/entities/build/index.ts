@@ -16,3 +16,5 @@ export {
   usePreviousBuild,
 } from "./model/build";
 export { decodeBuild, encodeBuild } from "./model/codec";
+export { summarizeBuild } from "./model/summary";
+export type { BuildSummary } from "./model/summary";

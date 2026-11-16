@@ -62,7 +62,8 @@ export function BuildPlanner() {
   const canOrder = missingRequired.length === 0 && errors.length === 0;
 
   async function share() {
-    setNotice(await copyLink(`${window.location.origin}/build?b=${encodeURIComponent(encodeBuild(state))}`, "견적"));
+    // 공유 주소는 메신저 미리보기에 이 견적의 그림을 보여 주고 열면 견적 화면으로 넘어간다(/share/build).
+    setNotice(await copyLink(`${window.location.origin}/share/build?b=${encodeURIComponent(encodeBuild(state))}`, "견적"));
   }
 
   async function save(name: string) {

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { notifyMemberChanged, useMemberName } from "@/entities/member";
 import { callAction, useSubmitLock } from "@/shared/lib";
-import { getRestockAction, toggleRestockAction } from "../api/restockActions";
+import { getRestockAction, toggleRestockAction } from "../api/actions";
 
 /** 품절 상품의 재입고 알림 신청. 토글 버튼이라 상태는 aria-pressed로 알리고, 버튼 이름은 그대로 둔다. */
 export function RestockButton({ productId }: { productId: string }) {

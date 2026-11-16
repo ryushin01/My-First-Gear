@@ -46,6 +46,8 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
 - 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
 - **공유 주소:** `/build?b=`(마이페이지 "불러오기" 포함)와 `/setup?s=`는 열 때 한 번만 적용하고 주소에서 공유 값을 지웁니다. 고르던 것이 다르면 따로 남겨 "이전 ○○으로 되돌리기"를 보여 줍니다(`createShareUndo`, `SharedNotice`).
+- **공유 미리보기:** "주소 복사"는 공유 주소(`/share/build?b=`, `/share/setup?s=`)를 줍니다. 이 경로는 메신저 미리보기 봇에 그 구성의 제목(칸 수·총액)과 공유 이미지(`/api/og/build`, `/api/og/setup`, 지금 판매가) 태그가 든 작은 HTML을 주고, 사람은 바로 `/build?b=`·`/setup?s=`로 넘깁니다(`sharePage`, `noindex`). 견적·셋업 화면의 메타데이터가 주소 값을 읽게 하면 Cache Components에서 화면이 요청마다 다시 그려지고 화면 데이터(RSC)가 두 번 실려(PC 견적 34 → 72 KB) 공유할 때만 도는 별도 경로로 나눴습니다.
+- **재입고 알림:** 신청한 상품이 다시 들어오면(재고가 있고 판매 중) 회원 동기화가 처음 불러올 때 개수를 받아 머리글 My 옆에 `[입고 n]`으로 알리고, 누르면 마이페이지 재입고 목록으로 갑니다. 목록에서 "장바구니 담기"를 누르면 담고 그 알림을 마칩니다(`features/restock-alert`). 문자·메일 발송은 비용 항목이라 하지 않습니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 마이그레이션을 만듭니다. 운영 배포(Vercel 빌드)와 로컬 DB 모두 `scripts/migrate.mjs`(Drizzle 마이그레이터)로 적용합니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
 
 ## 오류 처리
