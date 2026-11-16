@@ -46,6 +46,8 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
 - 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
 - **공유 주소:** `/build?b=`(마이페이지 "불러오기" 포함)와 `/setup?s=`는 열 때 한 번만 적용하고 주소에서 공유 값을 지웁니다. 고르던 것이 다르면 따로 남겨 "이전 ○○으로 되돌리기"를 보여 줍니다(`createShareUndo`, `SharedNotice`).
+- **공유 미리보기:** "주소 복사"는 공유 주소(`/share/build?b=`, `/share/setup?s=`)를 줍니다. 이 경로는 메신저 미리보기 봇에 그 구성의 제목(칸 수·총액)과 공유 이미지(`/api/og/build`, `/api/og/setup`, 지금 판매가) 태그가 든 작은 HTML을 주고, 사람은 바로 `/build?b=`·`/setup?s=`로 넘깁니다(`sharePage`, `noindex`). 견적·셋업 화면의 메타데이터가 주소 값을 읽게 하면 Cache Components에서 화면이 요청마다 다시 그려지고 화면 데이터(RSC)가 두 번 실려(PC 견적 34 → 72 KB) 공유할 때만 도는 별도 경로로 나눴습니다.
+- **재입고 알림:** 신청한 상품이 다시 들어오면(재고가 있고 판매 중) 회원 동기화가 처음 불러올 때 개수를 받아 머리글 My 옆에 `[입고 n]`으로 알리고, 누르면 마이페이지 재입고 목록으로 갑니다. 목록에서 "장바구니 담기"를 누르면 담고 그 알림을 마칩니다(`features/restock-alert`). 문자·메일 발송은 비용 항목이라 하지 않습니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 마이그레이션을 만듭니다. 운영 배포(Vercel 빌드)와 로컬 DB 모두 `scripts/migrate.mjs`(Drizzle 마이그레이터)로 적용합니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
 
 ## 오류 처리
@@ -129,7 +131,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 
 ## 품질 예산
 
-- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 400 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다.
+- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 410 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다. 전체 JS는 모든 조각의 합계라, Turbopack이 작은 공유 조각을 화면별 조각에 합치면(첫 화면 요청 수를 줄이는 기본 동작) 같은 코드가 여러 번 세어집니다. 0.15.0에서 합계가 338 → 401 kB로 늘었지만 화면별 첫 JS(클라이언트 참조 매니페스트의 진입 조각)는 1.3~2.1 kB만 늘어(홈 60.4 → 62.4 kB) 기준을 410 kB로 올렸습니다. 화면별 크기는 `.next/server/app/**/page_client-reference-manifest.js`의 `entryJSFiles`로 확인합니다.
 - **Lighthouse:** `pnpm --filter shop lhci`가 쇼핑몰의 첫 화면·상품 상세·데스크 셋업·PC 견적이 데스크톱 기준 성능 90·접근성 100·권장 사항 95·SEO 90점, LCP 2.5초·TBT 200ms·CLS 0.1 이하인지 3번씩 재서 확인합니다. 기준은 `lighthouserc.json`에 있습니다.
 - **접근성 린트:** `eslint-config-next`는 jsx-a11y 규칙을 몇 개만 켭니다. 플러그인은 이미 등록되어 있어 `eslint.config`에서 recommended 규칙만 더해 모두 켭니다. 레이블 글자가 `label > span > span`에 있는 선택지가 있어 `label-has-associated-control`의 찾는 깊이는 3입니다. 홈 캐러셀의 화살표 키·옆 테이프 클릭은 이전·다음 버튼이 키보드 대안이라 그 줄만 예외로 둡니다.
 

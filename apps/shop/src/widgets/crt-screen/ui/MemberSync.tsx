@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { forgetBuild, onBuildChange, readBuild, replaceBuild } from "@/entities/build";
 import { clearCart, onCartChange, readCart, replaceCart } from "@/entities/cart";
 import { createMemberSaver, notifyMemberChanged, readMemberName, setMemberSyncHandler, useMemberName } from "@/entities/member";
+import { applyRestockedCount, nextRestockRequest, resetRestockedCount } from "@/features/restock-alert";
 import { checkMemberSessionAction, loadMemberStateAction, saveMemberBuildAction, saveMemberCartAction, type SaveResult } from "../api/memberSync";
 import { readDeviceOwner, writeDeviceOwner } from "../model/deviceOwner";
 import { mergeBuild, mergeCart } from "../model/merge";
@@ -74,6 +75,7 @@ function settle(result: SaveResult, saving: string) {
 /** 서버에 저장한 값과 이 기기의 값을 합친다(같은 상품은 많은 수량). 불러오는 사이 이 기기에서 바꾼 것도 함께 합쳐 저장한다. */
 function loadAndMerge(member: string): Promise<LoadOutcome> {
   if (loading?.member === member) return loading.done;
+  const restockRequest = nextRestockRequest();
   const done = loadMemberStateAction()
     .then((remote): LoadOutcome => {
       // 서버 세션이 끝났다. 서버가 같은 응답에서 회원 쿠키를 지우므로(이름이 null) 그때도 정리한다.
@@ -90,6 +92,7 @@ function loadAndMerge(member: string): Promise<LoadOutcome> {
       // 이 기기의 값이 다른 회원 것이면(로그아웃하지 않고 다른 회원으로 로그인) 합치지 않고 버린다. 손님 값은 합친다.
       const deviceOwner = readDeviceOwner();
       if (deviceOwner !== null && deviceOwner !== remote.owner) forgetMemberData();
+      applyRestockedCount(restockRequest, remote.restocked);
       replaceCart(mergeCart(readCart(), remote.cart));
       replaceBuild(mergeBuild(readBuild(), remote.build));
       writeDeviceOwner(remote.owner);
@@ -137,6 +140,7 @@ export function MemberSync() {
       // 처음 그릴 때(하이드레이션)는 서버 값(null)으로 한 번 그려진다. 쿠키를 직접 읽어 정말 로그인하지 않았을 때만 정리한다.
       if (readMemberName() !== null) return;
       resetSync();
+      resetRestockedCount();
       // 회원 쿠키가 없는데 회원 값이 남아 있으면(세션이 끝난 뒤 다시 온 경우) 지운다. 손님 값은 그대로 둔다.
       if (readDeviceOwner() !== null) forgetMemberData();
       return;

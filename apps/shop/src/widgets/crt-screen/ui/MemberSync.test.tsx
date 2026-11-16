@@ -8,6 +8,8 @@ const actions = vi.hoisted(() => ({
   saveMemberBuildAction: vi.fn(),
 }));
 vi.mock("../api/memberSync", () => actions);
+// 재입고 버튼이 서버 액션(server-only)을 불러오므로 머리글 알림 수만 흉내 낸다
+vi.mock("@/features/restock-alert", () => ({ applyRestockedCount: vi.fn(), nextRestockRequest: vi.fn(() => 1), resetRestockedCount: vi.fn() }));
 
 const OWNER_KEY = "mfg:member-owner";
 
@@ -25,7 +27,7 @@ describe("MemberSync", () => {
     vi.clearAllMocks();
     window.localStorage.clear();
     document.cookie = "mfg_member=member; path=/";
-    actions.loadMemberStateAction.mockResolvedValue({ owner: "tag-a", cart: [], build: null });
+    actions.loadMemberStateAction.mockResolvedValue({ owner: "tag-a", cart: [], build: null, restocked: 0 });
     actions.checkMemberSessionAction.mockResolvedValue("ok");
     actions.saveMemberCartAction.mockResolvedValue("saved");
     actions.saveMemberBuildAction.mockResolvedValue("saved");
@@ -120,7 +122,7 @@ describe("MemberSync", () => {
 
   it("이전 회원의 저장 결과가 늦게 와도 지금 회원의 동기화를 멈추지 않는다", async () => {
     const { MemberSync, flushMemberSaves, notifyMemberChanged, addToCart } = await load();
-    let finishA = (_: string) => {};
+    let finishA: (result: string) => void = () => {};
     actions.saveMemberCartAction.mockImplementationOnce(() => new Promise((resolve) => (finishA = resolve)));
     render(<MemberSync />);
     await vi.waitFor(() => expect(actions.loadMemberStateAction).toHaveBeenCalledTimes(1));
@@ -161,7 +163,7 @@ describe("MemberSync", () => {
 
   it("이전 회원의 불러오기가 늦게 세션 종료로 와도 지금 회원의 값을 지우지 않는다", async () => {
     const { MemberSync, notifyMemberChanged, readCart } = await load();
-    let finishA = (_: unknown) => {};
+    let finishA: (result: unknown) => void = () => {};
     actions.loadMemberStateAction.mockImplementationOnce(() => new Promise((resolve) => (finishA = resolve)));
     render(<MemberSync />); // 회원 A를 불러오는 중
 

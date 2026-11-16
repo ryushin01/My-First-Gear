@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { notifyMemberChanged, useMemberName } from "@/entities/member";
 import { callAction, useSubmitLock } from "@/shared/lib";
-import { getRestockAction, toggleRestockAction } from "../api/restockActions";
+import { getRestockAction, toggleRestockAction } from "../api/actions";
+import { refreshRestockedCount } from "../model/refreshRestocked";
 
 /** 품절 상품의 재입고 알림 신청. 토글 버튼이라 상태는 aria-pressed로 알리고, 버튼 이름은 그대로 둔다. */
 export function RestockButton({ productId }: { productId: string }) {
@@ -51,7 +52,10 @@ export function RestockButton({ productId }: { productId: string }) {
           startTransition(async () => {
             const result = await callAction(() => toggleRestockAction(productId, !on));
             lock.release();
-            if (result.ok) setOn(Boolean(result.on));
+            if (result.ok) {
+              setOn(Boolean(result.on));
+              void refreshRestockedCount(); // 이미 들어온 상품의 알림을 바꾸면 머리글 수도 바뀐다
+            }
             setMessage(result.message);
           });
         }}

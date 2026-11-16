@@ -2,6 +2,7 @@
 
 import { getDb, getMemberState, hasDatabase, saveMemberBuild, saveMemberCart, type StoredBuild, type StoredCartLine } from "@mfg/db";
 import { getActionUserId, memberTag } from "@/entities/member/index.server";
+import { countRestocked } from "@/features/restock-alert/index.server";
 
 const clean = (lines: StoredCartLine[]) =>
   lines
@@ -14,12 +15,15 @@ const clean = (lines: StoredCartLine[]) =>
  * 서버 세션이 없으면 "signed-out"(쿠키를 지웠으니 화면을 로그인 전 모습으로 바꾼다).
  * owner는 이 회원의 표식이다. 이 기기의 값이 누구 것인지 기억했다가 저장할 때 함께 보낸다.
  */
-export async function loadMemberStateAction(): Promise<{ owner: string; cart: StoredCartLine[]; build: StoredBuild | null } | "signed-out" | null> {
+export async function loadMemberStateAction(): Promise<
+  { owner: string; cart: StoredCartLine[]; build: StoredBuild | null; restocked: number } | "signed-out" | null
+> {
   if (!hasDatabase()) return null;
   const userId = await getActionUserId();
   if (userId === null) return "signed-out";
-  const state = await getMemberState(getDb(), userId);
-  return { owner: memberTag(userId), cart: state?.cart ?? [], build: state?.build ?? null };
+  const db = getDb();
+  const [state, restocked] = await Promise.all([getMemberState(db, userId), countRestocked(db, userId)]);
+  return { owner: memberTag(userId), cart: state?.cart ?? [], build: state?.build ?? null, restocked };
 }
 
 /**

@@ -189,3 +189,26 @@ test("카탈로그 화면은 판매 정보만 받고 상품 설명·사양을 �
     expect(html, path).not.toContain('\\"description\\":');
   }
 });
+
+test("공유 주소는 메신저 미리보기에 그 구성의 제목·이미지를 주고, 열면 견적·셋업 화면으로 넘어간다", async ({ page, request }) => {
+  const buildValue = encodeURIComponent("cpu:p-cpu-001,gpu:p-gpu-001|svc-assembly");
+  const buildHtml = await (await request.get(`/share/build?b=${buildValue}`)).text();
+  expect(buildHtml).toMatch(/<meta property="og:title" content="PC 견적 · 2\/8칸 · [\d,]+원">/);
+  expect(buildHtml).toContain(`/api/og/build?b=${buildValue}`);
+  const setupValue = encodeURIComponent("desk:p-desk-001,chair:p-chair-001");
+  const setupHtml = await (await request.get(`/share/setup?s=${setupValue}`)).text();
+  expect(setupHtml).toMatch(/<meta property="og:title" content="데스크 셋업 · 2\/9칸 · [\d,]+원">/);
+  expect(setupHtml).toContain(`/api/og/setup?s=${setupValue}`);
+  // 읽을 수 없는 값이면 빈 견적 화면으로
+  expect((await request.get("/share/build?b=nothing", { maxRedirects: 0 })).status()).toBe(302);
+
+  const image = await request.get(`/api/og/setup?s=${setupValue}`);
+  expect(image.status()).toBe(200);
+  expect(image.headers()["content-type"]).toContain("image/png");
+  expect((await request.get("/api/og/setup?s=nothing")).status()).toBe(400);
+
+  // 사람이 열면 견적 화면으로 넘어가 그 견적을 불러온다
+  await page.goto(`/share/build?b=${buildValue}`);
+  await expect(page).toHaveURL(/\/build$/);
+  await expect(page.getByRole("listitem").filter({ hasText: "01 · CPU" })).toContainText("9800X3D");
+});

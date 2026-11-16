@@ -154,6 +154,39 @@ for (const path of ["/", "/products", "/orders", "/consults", "/inquiries", "/me
   });
 }
 
+test("재입고 알림을 신청한 상품이 다시 들어오면 회원 머리글에 알리고, 마이페이지에서 바로 담는다", async ({ page }) => {
+  const shop = await page.context().newPage();
+  await shop.goto(`${SHOP}/signup?next=/my`);
+  await shop.getByRole("textbox", { name: "이름", exact: true }).fill("재입고회원");
+  await shop.getByRole("textbox", { name: "이메일", exact: true }).fill(`restock-${Date.now()}@example.com`);
+  await shop.getByLabel(/^비밀번호/).fill("password1");
+  await shop.getByLabel(/개인정보/).check();
+  await shop.getByRole("button", { name: "가입하기" }).click();
+  await expect(shop.getByRole("heading", { name: "재입고회원님의 채널" })).toBeVisible();
+  await shop.goto(`${SHOP}/product/nintendo-switch-2`);
+  await shop.getByRole("button", { name: "재입고 알림 신청" }).click();
+  await expect(shop.getByRole("button", { name: "재입고 알림 신청" })).toHaveAttribute("aria-pressed", "true");
+
+  // 어드민이 재고를 채운다
+  await login(page);
+  await page.goto("/products?category=console");
+  await page.getByLabel("닌텐도 스위치 2 재고").fill("5");
+  await page.getByRole("button", { name: /저장\s*:\s*닌텐도 스위치 2/ }).click();
+  await expect(page.getByText("닌텐도 스위치 2을(를) 저장했습니다.")).toBeVisible();
+
+  // 회원이 쇼핑몰을 다시 열면 머리글에 알리고, 누르면 재입고 목록으로 간다
+  const notice = shop.getByRole("navigation", { name: "주요 메뉴" }).getByRole("link", { name: /입고 1/ });
+  await expect(async () => {
+    await shop.goto(`${SHOP}/`);
+    await expect(notice).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 20_000 });
+  await notice.click();
+  await shop.getByRole("button", { name: /장바구니 담기\s*:\s*닌텐도 스위치 2/ }).click();
+  await expect(shop.getByText("닌텐도 스위치 2을(를) 장바구니에 담고 재입고 알림을 마쳤습니다.")).toBeVisible();
+  await expect(shop.getByRole("link", { name: /입고 \d/ })).toHaveCount(0);
+  await expect(shop.getByRole("link", { name: /장바구니/ }).first()).toContainText("[1]");
+});
+
 test("두 앱 모두 보안 헤더를 붙이고 프레임워크를 드러내지 않는다", async ({ request }) => {
   for (const url of [`${SHOP}/`, `${SHOP}/checkout`, "/login"]) {
     const headers = (await request.get(url, { maxRedirects: 0 })).headers();
