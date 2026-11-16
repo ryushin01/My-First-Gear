@@ -14,7 +14,7 @@ export {
   placeOrder,
   updateOrderStatus,
 } from "./orders";
-export type { Order, OrderEvent, OrderLine, OrderWithLines, PlaceOrderInput } from "./orders";
+export type { Order, OrderEvent, OrderLine, OrderWithLines, PlaceOrderInput, StatusChange } from "./orders";
 export { createConsult, listConsults, updateConsultStatus } from "./consults";
 export type { ConsultRequest } from "./consults";
 export { resetDemoData } from "./reset";

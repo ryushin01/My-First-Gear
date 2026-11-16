@@ -5,7 +5,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import { formatPrice } from "@mfg/catalog";
 import { clearCart, useCartSummary } from "@/entities/cart";
 import { orderStatusLabel, paymentMethods, placeOrderAction, type OrderSummary, type PaymentMethod } from "@/entities/order";
-import { EMAIL_PATTERN, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
+import { callAction, EMAIL_PATTERN, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
 import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
 
 const rules = {
@@ -79,17 +79,20 @@ export function CheckoutForm() {
 
     setSubmitting(true);
     setServerError("");
-    const result = await placeOrderAction({
-      lines: lines.map(({ id, quantity }) => ({ itemId: id, quantity })),
-      buyer: {
-        name: data.name.trim(),
-        phone: data.phone.trim(),
-        email: (data.email ?? "").trim(),
-        address: data.address.trim(),
-        memo: (data.memo ?? "").trim(),
-      },
-      payment,
-    });
+    // 네트워크가 끊기거나 서버가 던져도 실패로 받아 잠금을 풀고 입력을 그대로 둔다.
+    const result = await callAction(() =>
+      placeOrderAction({
+        lines: lines.map(({ id, quantity }) => ({ itemId: id, quantity })),
+        buyer: {
+          name: data.name.trim(),
+          phone: data.phone.trim(),
+          email: (data.email ?? "").trim(),
+          address: data.address.trim(),
+          memo: (data.memo ?? "").trim(),
+        },
+        payment,
+      }),
+    );
     setSubmitting(false);
     if (!result.ok) {
       lock.release(); // 실패했을 때만 푼다. 성공하면 완료 화면으로 바뀐다.

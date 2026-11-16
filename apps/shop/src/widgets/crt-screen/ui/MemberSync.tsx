@@ -32,19 +32,23 @@ export function MemberSync() {
     }
     let active = true;
     let ready = loadedFor === member;
-    const saveCart = debounce(() => void saveMemberCartAction(readCart()), 800);
-    const saveBuild = debounce(() => void saveMemberBuildAction(readBuild()), 800);
+    // 저장하지 못해도(네트워크 끊김 등) 화면에는 영향이 없다. 다음에 바뀔 때 다시 저장한다.
+    const saveCart = debounce(() => void saveMemberCartAction(readCart()).catch(() => undefined), 800);
+    const saveBuild = debounce(() => void saveMemberBuildAction(readBuild()).catch(() => undefined), 800);
 
     if (!ready) {
-      void loadMemberStateAction().then((remote) => {
-        if (!active || !remote) return;
-        replaceCart(mergeCart(readCart(), remote.cart));
-        replaceBuild(mergeBuild(readBuild(), remote.build));
-        loadedFor = member;
-        ready = true;
-        saveCart();
-        saveBuild();
-      });
+      void loadMemberStateAction()
+        .then((remote) => {
+          if (!active || !remote) return;
+          replaceCart(mergeCart(readCart(), remote.cart));
+          replaceBuild(mergeBuild(readBuild(), remote.build));
+          loadedFor = member;
+          ready = true;
+          saveCart();
+          saveBuild();
+        })
+        // 불러오지 못하면 이번 화면에서는 동기화하지 않는다. 다음 화면에서 다시 불러온다.
+        .catch(() => undefined);
     }
     const offCart = onCartChange(() => ready && saveCart());
     const offBuild = onBuildChange(() => ready && saveBuild());

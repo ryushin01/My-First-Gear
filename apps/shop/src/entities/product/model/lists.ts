@@ -1,13 +1,13 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { createLocalStore } from "@/shared/lib";
+import { createLocalStore, parseStringList } from "@/shared/lib";
 
 export const COMPARE_MAX = 4;
 const RECENT_MAX = 8;
 
-const compareStore = createLocalStore<string[]>("mfg:compare", []);
-const recentStore = createLocalStore<string[]>("mfg:recent", []);
+const compareStore = createLocalStore<string[]>("mfg:compare", [], (value) => parseStringList(value)?.slice(0, COMPARE_MAX) ?? null);
+const recentStore = createLocalStore<string[]>("mfg:recent", [], (value) => parseStringList(value)?.slice(0, RECENT_MAX) ?? null);
 
 /** 비교 목록 (상품 slug, 최대 4개) */
 export function useCompareList(): string[] {

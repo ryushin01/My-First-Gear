@@ -26,6 +26,7 @@ const pages = [
   "/build/quick",
   "/setup",
   "/compare",
+  "/product/no-such-gear",
 ];
 
 for (const path of pages) {

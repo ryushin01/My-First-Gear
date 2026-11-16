@@ -78,6 +78,13 @@ test("쇼핑몰 주문을 어드민에서 처리한다", async ({ page }) => {
   await shop.getByLabel("받는 분 이름").fill("박데모");
   await shop.getByRole("button", { name: "조회하기" }).click();
   await expect(shop.getByText("배송 중").first()).toBeVisible();
+
+  // 어드민이 취소하면 재고를 돌려놓고, 취소한 주문은 다시 바꿀 수 없다.
+  await page.getByLabel(`${orderId} 상태`).selectOption("cancelled");
+  await page.getByRole("button", { name: new RegExp(`변경\\s*:\\s*${orderId}`) }).click();
+  await expect(page.getByText(`${orderId}을(를) 취소하고 재고를 돌려놓았습니다.`)).toBeVisible();
+  await expect(page.getByText("취소한 주문이라 바꿀 수 없습니다.")).toBeVisible();
+  await expect(page.getByLabel(`${orderId} 상태`)).toHaveCount(0);
 });
 
 test("상담 신청이 어드민에 쌓인다", async ({ page }) => {

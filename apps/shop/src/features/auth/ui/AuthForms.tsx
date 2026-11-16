@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useId, useRef } from "react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { notifyMemberChanged } from "@/entities/member";
-import { useActionFormLock } from "@/shared/lib";
+import { callAction, useActionFormLock } from "@/shared/lib";
 import { ErrorSummary, TextField } from "@/shared/ui";
 import { loginAction, logoutAction, signupAction, type AuthState } from "../api/actions";
 
@@ -139,10 +139,18 @@ export function SignupForm({ next }: { next: string }) {
 }
 
 export function LogoutButton() {
+  const [message, setMessage] = useState("");
   return (
     <form
       action={async () => {
-        await logoutAction();
+        const result = await callAction(async () => {
+          await logoutAction();
+          return { ok: true as const };
+        });
+        if (!result.ok) {
+          setMessage(result.message);
+          return;
+        }
         notifyMemberChanged();
         hardNavigate("/");
       }}
@@ -150,6 +158,10 @@ export function LogoutButton() {
       <button type="submit" className="min-h-11 rounded-md border border-white/30 px-4 text-sm hover:border-white">
         로그아웃
       </button>
+      {/* 알림 영역은 처음부터 두고 내용만 바꾼다. 비어 있으면 높이가 없다. */}
+      <p role="status" className="mt-1 text-sm text-brand empty:mt-0">
+        {message}
+      </p>
     </form>
   );
 }

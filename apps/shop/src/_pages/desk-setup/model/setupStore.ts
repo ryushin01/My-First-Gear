@@ -10,9 +10,9 @@ function isSetupState(value: unknown): value is SetupState {
   return Object.entries(value).every(([slot, id]) => setupSlots.some((s) => s.id === slot) && typeof id === "string");
 }
 
-const store = createLocalStore<SetupState>("mfg:setup", {}, isSetupState);
+const store = createLocalStore<SetupState>("mfg:setup", {}, (value) => (isSetupState(value) ? value : null));
 /** 공유 주소로 덮어쓰기 전의 셋업. 되돌리기에 쓴다. */
-const previous = createLocalStore<SetupState | null>("mfg:setup:previous", null, (v): v is SetupState | null => v === null || isSetupState(v));
+const previous = createLocalStore<SetupState | null>("mfg:setup:previous", null, (value) => (isSetupState(value) ? value : null));
 
 export function useSetupState(): SetupState {
   return useSyncExternalStore(store.subscribe, store.get, store.getServer);

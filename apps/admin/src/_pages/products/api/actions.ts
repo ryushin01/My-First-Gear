@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { getProductById } from "@mfg/catalog";
 import { getDb, updateMerch } from "@mfg/db";
 import { revalidateShop } from "@/shared/api";
+import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
+import { guardAction } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
 
 function toInt(value: FormDataEntryValue | null): number | null {
@@ -30,14 +32,20 @@ export async function updateMerchAction(_: ActionState, formData: FormData): Pro
   if (listPrice !== null && listPrice <= price) return fail(`${product.name}: 정가는 판매가보다 커야 합니다. 할인이 없으면 비워 두세요.`);
   if (stock === null || Number.isNaN(stock)) return fail(`${product.name}: 재고는 0 이상 정수로 입력해 주세요.`);
 
-  await updateMerch(getDb(), productId, {
-    price,
-    listPrice,
-    stock,
-    featured: formData.get("featured") === "on",
-    visible: formData.get("visible") === "on",
-  });
-  revalidatePath("/products");
-  await revalidateShop();
-  return { ok: true, message: `${product.name}을(를) 저장했습니다.` };
+  return guardAction<ActionState>(
+    "update-merch",
+    async () => {
+      await updateMerch(getDb(), productId, {
+        price,
+        listPrice,
+        stock,
+        featured: formData.get("featured") === "on",
+        visible: formData.get("visible") === "on",
+      });
+      revalidatePath("/products");
+      await revalidateShop();
+      return { ok: true, message: `${product.name}을(를) 저장했습니다.` };
+    },
+    () => fail(`${product.name}: ${ACTION_FAILED_MESSAGE}`),
+  );
 }

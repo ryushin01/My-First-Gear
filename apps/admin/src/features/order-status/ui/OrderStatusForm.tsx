@@ -10,6 +10,15 @@ export function OrderStatusForm({ orderId, status }: { orderId: string; status: 
   const [state, action] = useActionState(updateOrderStatusAction, null);
   const guardSubmit = useActionFormLock(state);
   const selectId = `status-${orderId}`;
+  // 취소한 주문은 재고가 이미 돌아가 다시 바꿀 수 없다(서버도 막는다). 방금 취소한 결과 안내는 남겨 둔다.
+  if (status === "cancelled") {
+    return (
+      <div>
+        <p className="is-size-7 has-text-grey-dark">취소한 주문이라 바꿀 수 없습니다.</p>
+        <ActionMessage state={state} />
+      </div>
+    );
+  }
   return (
     <form action={action} onSubmit={guardSubmit}>
       <input type="hidden" name="orderId" value={orderId} />

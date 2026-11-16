@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useMemberName } from "@/entities/member";
-import { useSubmitLock } from "@/shared/lib";
+import { callAction, useSubmitLock } from "@/shared/lib";
 import { getWishAction, toggleWishAction } from "../api/wishActions";
 
 /** 찜 버튼. 상태는 aria-pressed로 알린다. */
@@ -19,7 +19,11 @@ export function WishButton({ productId, productName }: { productId: string; prod
   useEffect(() => {
     if (!name) return;
     let alive = true;
-    getWishAction(productId).then((value) => alive && setWished(value));
+    // 불러오지 못하면 버튼을 켜 둔 채(눌러서 다시 시도) 둔다.
+    void callAction(
+      () => getWishAction(productId),
+      () => false,
+    ).then((value) => alive && setWished(value));
     return () => {
       alive = false;
     };
@@ -42,7 +46,7 @@ export function WishButton({ productId, productName }: { productId: string; prod
         onClick={() => {
           if (!lock.tryLock()) return;
           startTransition(async () => {
-            const result = await toggleWishAction(productId);
+            const result = await callAction(() => toggleWishAction(productId));
             lock.release();
             if (result.ok) {
               setWished(Boolean(result.wished));
