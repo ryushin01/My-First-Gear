@@ -131,7 +131,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 
 ## 품질 예산
 
-- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 400 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다.
+- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 410 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다. 전체 JS는 모든 조각의 합계라, Turbopack이 작은 공유 조각을 화면별 조각에 합치면(첫 화면 요청 수를 줄이는 기본 동작) 같은 코드가 여러 번 세어집니다. 0.15.0에서 합계가 338 → 401 kB로 늘었지만 화면별 첫 JS(클라이언트 참조 매니페스트의 진입 조각)는 1.3~2.1 kB만 늘어(홈 60.4 → 62.4 kB) 기준을 410 kB로 올렸습니다. 화면별 크기는 `.next/server/app/**/page_client-reference-manifest.js`의 `entryJSFiles`로 확인합니다.
 - **Lighthouse:** `pnpm --filter shop lhci`가 쇼핑몰의 첫 화면·상품 상세·데스크 셋업·PC 견적이 데스크톱 기준 성능 90·접근성 100·권장 사항 95·SEO 90점, LCP 2.5초·TBT 200ms·CLS 0.1 이하인지 3번씩 재서 확인합니다. 기준은 `lighthouserc.json`에 있습니다.
 - **접근성 린트:** `eslint-config-next`는 jsx-a11y 규칙을 몇 개만 켭니다. 플러그인은 이미 등록되어 있어 `eslint.config`에서 recommended 규칙만 더해 모두 켭니다. 레이블 글자가 `label > span > span`에 있는 선택지가 있어 `label-has-associated-control`의 찾는 깊이는 3입니다. 홈 캐러셀의 화살표 키·옆 테이프 클릭은 이전·다음 버튼이 키보드 대안이라 그 줄만 예외로 둡니다.
 
