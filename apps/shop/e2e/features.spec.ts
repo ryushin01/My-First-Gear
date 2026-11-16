@@ -143,3 +143,38 @@ test("성능 예산: 홈 글꼴 700KB 이하, 홈에는 추천 상품만 싣는�
   // 추천 상품(14)과 모니터 존(4)만 싣고 전체 카탈로그(91)는 싣지 않는다.
   expect(new Set(html.match(/p-[a-z]+-0\d\d/g)).size).toBeLessThanOrEqual(18);
 });
+
+test("공유받은 견적은 한 번만 적용하고, 고르던 견적으로 되돌릴 수 있다", async ({ page }) => {
+  const cpuSlot = () => page.getByRole("listitem").filter({ hasText: "01 · CPU" });
+  await page.goto("/build");
+  await page.getByRole("button", { name: /고르기\s*:\s*CPU$/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /9600X/ }).click();
+
+  await page.goto(`/build?b=${encodeURIComponent("cpu:p-cpu-001|svc-assembly")}`);
+  await expect(page.getByText("공유받은 견적을 불러왔습니다")).toBeVisible();
+  await expect(page).toHaveURL(/\/build$/);
+  await expect(cpuSlot()).toContainText("9800X3D");
+
+  // 바꾼 뒤 새로 고쳐도 공유 견적으로 다시 덮어쓰지 않는다
+  await page.getByRole("button", { name: /빼기\s*:\s*CPU$/ }).click();
+  await page.reload();
+  await expect(cpuSlot()).toContainText("부품을 골라 주세요");
+
+  await page.getByRole("button", { name: "이전 견적으로 되돌리기" }).click();
+  await expect(cpuSlot()).toContainText("9600X");
+});
+
+test("비회원 주문 조회는 맞지 않는 조회가 많으면 잠시 막는다", async ({ page }) => {
+  // 운영(Vercel)처럼 접속 IP를 붙인다. 같은 컴퓨터에서 온 요청은 IP 기준 제한을 건너뛴다.
+  await page.context().setExtraHTTPHeaders({ "x-forwarded-for": `203.0.113.${Math.floor(Math.random() * 250) + 1}` });
+  await page.goto("/orders");
+  for (let i = 0; i < 10; i++) {
+    await page.getByLabel("주문 번호").fill(`MFG-000000-00000${i}`);
+    await page.getByLabel("받는 분 이름").fill("없는사람");
+    await page.getByRole("button", { name: "조회하기" }).click();
+    await expect(page.getByText("일치하는 주문이 없습니다.", { exact: false })).toBeVisible();
+    await expect(page.getByRole("button", { name: "조회하기" })).toBeEnabled();
+  }
+  await page.getByRole("button", { name: "조회하기" }).click();
+  await expect(page.getByText(/맞지 않는 조회가 많아 10분 동안 막았습니다/)).toBeVisible();
+});

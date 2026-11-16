@@ -100,7 +100,7 @@ import { DEMO_MEMBER } from "./seed";
 
 describe("회원", () => {
   it("데모 회원으로 로그인한다", async () => {
-    expect(verifyPassword("demo1234", DEMO_MEMBER.passwordHash)).toBe(true);
+    expect(await verifyPassword("demo1234", DEMO_MEMBER.passwordHash)).toBe(true);
     expect((await authenticate(db, "DEMO@myfirstgear.dev", "demo1234"))?.name).toBe("김기어");
     expect(await authenticate(db, DEMO_MEMBER.email, "wrong")).toBeNull();
   });
@@ -152,6 +152,7 @@ import {
   getSessionUser,
   isLockedOut,
   listRestockByUser,
+  RATE_LIMITS,
   recordAttempt,
   requestRestock,
   restockCounts,
@@ -304,5 +305,19 @@ describe("같은 결제를 다시 보내면", () => {
     const other = await placeOrder(db, { ...input, submissionId: "retry-test-0002" });
     expect(other.id).not.toBe(first.id);
     expect(await stock()).toBe(before - 4);
+  });
+});
+
+describe("시도 제한 규칙", () => {
+  it("상담·가입처럼 성공한 횟수를 세는 키는 성공해도 기록을 남겨 한도에 닿는다", async () => {
+    const key = attemptKey("consult", "203.0.113.7");
+    for (let i = 0; i < 4; i++) await recordAttempt(db, key, true, false);
+    expect(await isLockedOut(db, key, RATE_LIMITS.consult)).toBe(false);
+    await recordAttempt(db, key, true, false);
+    expect(await isLockedOut(db, key, RATE_LIMITS.consult)).toBe(true);
+  });
+
+  it("없는 이메일도 해시를 검사하고 로그인은 실패한다", async () => {
+    expect(await authenticate(db, "nobody@example.com", "demo1234")).toBeNull();
   });
 });

@@ -3,9 +3,9 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ACTION_FAILED_MESSAGE, createSessionValue, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/shared/lib";
-import { guardAction } from "@/shared/lib/server";
+import { guardAction, samePassword } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
-import { attemptKey, getDb, hasDatabase, isLockedOut, LOGIN_WINDOW_MINUTES, recordAttempt } from "@mfg/db";
+import { attemptKey, getDb, hasDatabase, isLockedOut, LOGIN_WINDOW_MINUTES, RATE_LIMITS, recordAttempt } from "@mfg/db";
 import { DEMO_PASSWORD_HINT } from "../model/demo";
 
 export async function loginAction(_: ActionState, formData: FormData): Promise<ActionState> {
@@ -19,11 +19,12 @@ export async function loginAction(_: ActionState, formData: FormData): Promise<A
       const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
       const key = attemptKey("admin", ip);
       const db = hasDatabase() ? getDb() : null;
-      if (db && (await isLockedOut(db, key))) {
+      if (db && (await isLockedOut(db, key, RATE_LIMITS.adminLogin))) {
         return { ok: false, message: `로그인에 여러 번 실패해 ${LOGIN_WINDOW_MINUTES}분 동안 막았습니다. 잠시 뒤 다시 시도해 주세요.` };
       }
-      if (db) await recordAttempt(db, key, password === expected);
-      if (password !== expected) {
+      const ok = samePassword(password, expected);
+      if (db) await recordAttempt(db, key, ok);
+      if (!ok) {
         return { ok: false, message: "비밀번호가 맞지 않습니다. 다시 입력해 주세요." };
       }
       const jar = await cookies();

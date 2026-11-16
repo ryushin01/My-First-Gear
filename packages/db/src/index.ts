@@ -36,6 +36,7 @@ export {
   maskName,
   reviewStats,
 } from "./community";
+export type { AttemptKind, RateLimit } from "./member";
 export { deleteSavedBuild, isWished, listOrdersByUser, listSavedBuilds, listWishlist, saveBuild, toggleWish } from "./mypage";
 export { DEMO_MEMBER } from "./seed";
 export {
@@ -44,6 +45,7 @@ export {
   createSession,
   deleteSession,
   getMemberState,
+  getSessionMember,
   getSessionUser,
   hasRestockRequest,
   isLockedOut,
@@ -51,6 +53,7 @@ export {
   LOGIN_MAX_FAILURES,
   LOGIN_WINDOW_MINUTES,
   purgeExpiredSessions,
+  RATE_LIMITS,
   recordAttempt,
   requestRestock,
   restockCounts,

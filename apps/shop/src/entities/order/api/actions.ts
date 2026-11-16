@@ -2,8 +2,20 @@
 
 import { updateTag } from "next/cache";
 import { getProductBySlug } from "@mfg/catalog";
-import { createConsult, findOrderForBuyer, getDb, hasDatabase, OrderError, placeOrder } from "@mfg/db";
+import {
+  attemptKey,
+  createConsult,
+  findOrderForBuyer,
+  getDb,
+  hasDatabase,
+  isLockedOut,
+  OrderError,
+  placeOrder,
+  RATE_LIMITS,
+  recordAttempt,
+} from "@mfg/db";
 import { EMAIL_PATTERN, PHONE_PATTERN } from "@/shared/lib";
+import { clientIp } from "@/shared/lib/server";
 import { MERCH_TAG } from "@/entities/product/@x/order";
 import { getSessionUserId } from "@/entities/member/@x/order";
 import type { OrderSummary, PlaceOrderRequest, Result } from "../model/types";
@@ -46,11 +58,23 @@ export async function placeOrderAction(request: PlaceOrderRequest): Promise<Resu
   return { ok: true, data: { id: order.id, status: order.status, total: order.total, lines: [] } };
 }
 
-/** 비회원 주문 조회 */
+/**
+ * 비회원 주문 조회. 주문 번호(하루 100만 개)를 차례로 넣어 남의 주문을 찾지 못하게,
+ * 같은 IP에서 맞지 않는 조회가 10분에 10번이면 잠시 막는다.
+ */
 export async function lookupOrderAction(id: string, name: string): Promise<Result<OrderSummary | null>> {
   if (!hasDatabase()) return { ok: false, message: NO_DB };
-  const order = await findOrderForBuyer(getDb(), id.slice(0, 40), name.slice(0, 50));
-  if (!order) return { ok: true, data: null };
+  const db = getDb();
+  const ip = await clientIp();
+  const key = ip ? attemptKey("lookup", ip) : null;
+  if (key && (await isLockedOut(db, key, RATE_LIMITS.orderLookup))) {
+    return { ok: false, message: "맞지 않는 조회가 많아 10분 동안 막았습니다. 주문 번호와 받는 분 이름을 확인한 뒤 잠시 뒤 다시 시도해 주세요." };
+  }
+  const order = await findOrderForBuyer(db, String(id).slice(0, 40), String(name).slice(0, 50));
+  if (!order) {
+    if (key) await recordAttempt(db, key, false);
+    return { ok: true, data: null };
+  }
   return {
     ok: true,
     data: {
@@ -75,8 +99,16 @@ export async function createConsultAction(input: {
     return { ok: false, message: "이름과 휴대폰 번호를 확인해 주세요." };
   }
   if (!hasDatabase()) return { ok: false, message: NO_DB };
+  const db = getDb();
+  // 신청으로 DB를 채우지 못하게 한 IP에서 1시간에 5번까지 받는다.
+  const ip = await clientIp();
+  const key = ip ? attemptKey("consult", ip) : null;
+  if (key && (await isLockedOut(db, key, RATE_LIMITS.consult))) {
+    return { ok: false, message: "상담 신청이 많아 잠시 막았습니다. 1시간 뒤 다시 신청해 주세요." };
+  }
   const product = input.productSlug ? getProductBySlug(input.productSlug) : undefined;
-  await createConsult(getDb(), {
+  if (key) await recordAttempt(db, key, true, false);
+  await createConsult(db, {
     productSlug: product?.slug ?? null,
     name: input.name.trim().slice(0, 50),
     phone: input.phone.trim(),

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { resetBuild } from "@/entities/build";
+import { clearCart } from "@/entities/cart";
 import { notifyMemberChanged } from "@/entities/member";
 import { callAction, useActionFormLock } from "@/shared/lib";
 import { ErrorSummary, TextField } from "@/shared/ui";
@@ -151,6 +153,10 @@ export function LogoutButton() {
           setMessage(result.message);
           return;
         }
+        // 회원 장바구니·견적은 서버에 저장되어 다음 로그인 때 돌아온다. 이 기기에는 남기지 않는다(공용 컴퓨터 등).
+        // 세션을 먼저 지운 뒤 비우므로 빈 값이 서버에 저장되지 않는다.
+        clearCart();
+        resetBuild();
         notifyMemberChanged();
         hardNavigate("/");
       }}

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createInquiry, getDb, hasDatabase, inquiryCategories, type InquiryCategory } from "@mfg/db";
-import { getSessionUserId } from "@/entities/member/index.server";
+import { getActionUserId } from "@/entities/member/index.server";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
 import { guardAction } from "@/shared/lib/server";
 
@@ -21,7 +21,7 @@ export async function createInquiryAction(_: InquiryState, formData: FormData): 
   return guardAction<InquiryState>(
     "inquiry",
     async () => {
-      const userId = await getSessionUserId();
+      const userId = await getActionUserId();
       if (userId === null) return { ok: false, message: "로그인한 회원만 문의할 수 있습니다.", values };
       if (!hasDatabase()) return { ok: false, message: "지금은 저장할 수 없습니다.", values };
       await createInquiry(getDb(), { userId, category, title: title.slice(0, 80), body: body.slice(0, 2000) });

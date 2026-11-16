@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
-import { createSession, deleteSession, getDb, getSessionUser as findSessionUser, getUser, hasDatabase, type PublicUser } from "@mfg/db";
+import { createSession, deleteSession, getDb, getSessionMember, getSessionUser as findSessionUser, hasDatabase, type PublicUser } from "@mfg/db";
 import { MEMBER_COOKIE } from "../model/cookie";
 
 const SESSION_COOKIE = "mfg_session";
@@ -39,10 +39,29 @@ export async function getSessionUserId(): Promise<number | null> {
   return findSessionUser(getDb(), id);
 }
 
+/** 로그인한 회원(id, 이메일, 이름). 세션과 회원을 한 번의 질의로 읽는다. */
 export async function getSessionUser(): Promise<PublicUser | null> {
+  await connection();
+  const id = verify((await cookies()).get(SESSION_COOKIE)?.value);
+  if (!id || !hasDatabase()) return null;
+  return getSessionMember(getDb(), id);
+}
+
+/**
+ * 서버 액션용 회원 확인. 서버 세션이 없는데(매일 새벽 데모 초기화, 만료 등) 쿠키가 남아 있으면 두 쿠키를 지운다.
+ * 화면 표시용 쿠키(mfg_member)만 남으면 머리글·찜·후기 폼이 계속 회원으로 그려지므로,
+ * 지우면 Next가 화면을 새로 그려 로그인 전 모습으로 돌아간다.
+ */
+export async function getActionUserId(): Promise<number | null> {
   const id = await getSessionUserId();
-  if (id === null || !hasDatabase()) return null;
-  return getUser(getDb(), id);
+  if (id === null && hasDatabase()) {
+    const jar = await cookies();
+    if (jar.has(SESSION_COOKIE) || jar.has(MEMBER_COOKIE)) {
+      jar.delete(SESSION_COOKIE);
+      jar.delete(MEMBER_COOKIE);
+    }
+  }
+  return id;
 }
 
 export async function startSession(user: PublicUser) {

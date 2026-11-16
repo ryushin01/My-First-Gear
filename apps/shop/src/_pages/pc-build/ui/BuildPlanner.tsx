@@ -6,15 +6,29 @@ import { useEffect, useId, useState } from "react";
 import { assemblyServices, buildSlots, buildTotal, checkBuild, estimateWatts, formatPrice, recommendedWatts, type PartKind } from "@mfg/catalog";
 import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
-import { clearPart, decodeBuild, encodeBuild, replaceBuild, resetBuild, selectPart, toBuild, toggleService, useBuildState } from "@/entities/build";
+import {
+  applySharedBuild,
+  clearPart,
+  decodeBuild,
+  dismissPreviousBuild,
+  encodeBuild,
+  resetBuild,
+  restorePreviousBuild,
+  selectPart,
+  toBuild,
+  toggleService,
+  useBuildState,
+  usePreviousBuild,
+} from "@/entities/build";
 import { useMemberName } from "@/entities/member";
-import { callAction, useSubmitLock } from "@/shared/lib";
-import { PlannerSlot } from "@/widgets/gear-planner";
+import { callAction, copyLink, useSubmitLock } from "@/shared/lib";
+import { PlannerSlot, SharedNotice } from "@/widgets/gear-planner";
 import { saveBuildAction } from "../api/actions";
 import { PartPicker } from "./PartPicker";
 
 export function BuildPlanner() {
   const state = useBuildState();
+  const previous = usePreviousBuild();
   const catalog = useCatalog();
   const params = useSearchParams();
   const [picking, setPicking] = useState<PartKind | null>(null);
@@ -26,12 +40,14 @@ export function BuildPlanner() {
   const saveLock = useSubmitLock();
   const [saving, setSaving] = useState(false);
 
-  // 공유 주소로 들어오면 그 견적을 불러온다.
+  // 공유 주소(마이페이지 "불러오기" 포함)로 들어오면 그 견적을 불러온다. 고르던 견적이 다르면 되돌릴 수 있게 남겨 두고,
+  // 새로 고칠 때 다시 덮어쓰지 않도록 주소에서 공유 값을 지운다.
   const shared = params.get("b");
   useEffect(() => {
     if (!shared) return;
     const decoded = decodeBuild(shared);
-    if (decoded) replaceBuild(decoded);
+    if (decoded) applySharedBuild(decoded);
+    window.history.replaceState(null, "", "/build");
   }, [shared]);
 
   const build = toBuild(state, catalog);
@@ -46,13 +62,7 @@ export function BuildPlanner() {
   const canOrder = missingRequired.length === 0 && errors.length === 0;
 
   async function share() {
-    const url = `${window.location.origin}/build?b=${encodeURIComponent(encodeBuild(state))}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setNotice("견적 주소를 복사했습니다.");
-    } catch {
-      setNotice(`복사하지 못했습니다. 이 주소를 직접 복사하세요: ${url}`);
-    }
+    setNotice(await copyLink(`${window.location.origin}/build?b=${encodeURIComponent(encodeBuild(state))}`, "견적"));
   }
 
   async function save(name: string) {
@@ -73,6 +83,7 @@ export function BuildPlanner() {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section aria-labelledby={`${uid}slots`} className="flex flex-col gap-4">
+        {previous && <SharedNotice what="견적" onRestore={restorePreviousBuild} onDismiss={dismissPreviousBuild} />}
         <div className="flex items-center justify-between gap-4">
           <h2 id={`${uid}slots`} className="mono-label">
             [Parts · {filled} / {buildSlots.length}]

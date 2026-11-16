@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { onBuildChange, readBuild, replaceBuild } from "@/entities/build";
 import { onCartChange, readCart, replaceCart } from "@/entities/cart";
-import { useMemberName } from "@/entities/member";
+import { notifyMemberChanged, useMemberName } from "@/entities/member";
 import { loadMemberStateAction, saveMemberBuildAction, saveMemberCartAction } from "../api/memberSync";
 import { mergeBuild, mergeCart } from "../model/merge";
 
@@ -40,6 +40,11 @@ export function MemberSync() {
       void loadMemberStateAction()
         .then((remote) => {
           if (!active || !remote) return;
+          // 서버 세션이 사라져 서버가 쿠키를 지웠다. 머리글·찜·후기 폼을 로그인 전 모습으로 바꾼다.
+          if (remote === "signed-out") {
+            notifyMemberChanged();
+            return;
+          }
           replaceCart(mergeCart(readCart(), remote.cart));
           replaceBuild(mergeBuild(readBuild(), remote.build));
           loadedFor = member;

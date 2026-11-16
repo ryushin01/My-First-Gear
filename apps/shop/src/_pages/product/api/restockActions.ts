@@ -2,10 +2,10 @@
 
 import { getProductById } from "@mfg/catalog";
 import { cancelRestock, getDb, hasDatabase, hasRestockRequest, requestRestock } from "@mfg/db";
-import { getSessionUserId } from "@/entities/member/index.server";
+import { getActionUserId } from "@/entities/member/index.server";
 
 export async function getRestockAction(productId: string): Promise<boolean | null> {
-  const userId = await getSessionUserId();
+  const userId = await getActionUserId();
   if (userId === null || !hasDatabase()) return null;
   return hasRestockRequest(getDb(), userId, productId);
 }
@@ -13,7 +13,7 @@ export async function getRestockAction(productId: string): Promise<boolean | nul
 export async function toggleRestockAction(productId: string, on: boolean): Promise<{ ok: boolean; on?: boolean; message: string }> {
   const product = getProductById(productId);
   if (!product) return { ok: false, message: "상품을 찾지 못했습니다." };
-  const userId = await getSessionUserId();
+  const userId = await getActionUserId();
   if (userId === null) return { ok: false, message: "로그인한 회원만 신청할 수 있습니다." };
   if (!hasDatabase()) return { ok: false, message: "지금은 저장할 수 없습니다." };
   if (on) await requestRestock(getDb(), userId, productId);

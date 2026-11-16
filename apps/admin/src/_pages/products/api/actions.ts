@@ -5,7 +5,7 @@ import { getProductById } from "@mfg/catalog";
 import { getDb, updateMerch } from "@mfg/db";
 import { revalidateShop } from "@/shared/api";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
-import { guardAction } from "@/shared/lib/server";
+import { guardAction, isAdmin, NOT_ADMIN_MESSAGE } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
 
 function toInt(value: FormDataEntryValue | null): number | null {
@@ -18,6 +18,7 @@ function toInt(value: FormDataEntryValue | null): number | null {
 }
 
 export async function updateMerchAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { ok: false, message: NOT_ADMIN_MESSAGE };
   const productId = String(formData.get("productId") ?? "");
   const product = getProductById(productId);
   if (!product) return { ok: false, message: "상품을 찾지 못했습니다." };

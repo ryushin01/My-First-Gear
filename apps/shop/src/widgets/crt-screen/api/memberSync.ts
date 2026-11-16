@@ -1,7 +1,7 @@
 "use server";
 
 import { getDb, getMemberState, hasDatabase, saveMemberBuild, saveMemberCart, type StoredBuild, type StoredCartLine } from "@mfg/db";
-import { getSessionUserId } from "@/entities/member/index.server";
+import { getActionUserId } from "@/entities/member/index.server";
 
 const clean = (lines: StoredCartLine[]) =>
   lines
@@ -9,21 +9,26 @@ const clean = (lines: StoredCartLine[]) =>
     .slice(0, 50)
     .map((l) => ({ productId: l.productId.slice(0, 40), quantity: Math.min(l.quantity, 99) }));
 
-export async function loadMemberStateAction(): Promise<{ cart: StoredCartLine[]; build: StoredBuild | null } | null> {
-  const userId = await getSessionUserId();
-  if (userId === null || !hasDatabase()) return null;
+/**
+ * 회원의 장바구니·견적을 읽는다. DB가 없으면 null(이번에는 동기화하지 않음),
+ * 서버 세션이 없으면 "signed-out"(쿠키를 지웠으니 화면을 로그인 전 모습으로 바꾼다).
+ */
+export async function loadMemberStateAction(): Promise<{ cart: StoredCartLine[]; build: StoredBuild | null } | "signed-out" | null> {
+  if (!hasDatabase()) return null;
+  const userId = await getActionUserId();
+  if (userId === null) return "signed-out";
   const state = await getMemberState(getDb(), userId);
   return { cart: state?.cart ?? [], build: state?.build ?? null };
 }
 
 export async function saveMemberCartAction(lines: StoredCartLine[]) {
-  const userId = await getSessionUserId();
+  const userId = await getActionUserId();
   if (userId === null || !hasDatabase() || !Array.isArray(lines)) return;
   await saveMemberCart(getDb(), userId, clean(lines));
 }
 
 export async function saveMemberBuildAction(build: StoredBuild | null) {
-  const userId = await getSessionUserId();
+  const userId = await getActionUserId();
   if (userId === null || !hasDatabase()) return;
   const parts = Object.fromEntries(
     Object.entries(build?.parts ?? {})

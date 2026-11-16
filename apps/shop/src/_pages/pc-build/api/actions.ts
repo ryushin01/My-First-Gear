@@ -1,11 +1,11 @@
 "use server";
 
 import { getDb, hasDatabase, saveBuild } from "@mfg/db";
-import { getSessionUserId } from "@/entities/member/index.server";
+import { getActionUserId } from "@/entities/member/index.server";
 import { decodeBuild } from "@/entities/build";
 
 export async function saveBuildAction(name: string, encoded: string, total: number): Promise<{ ok: boolean; message: string }> {
-  const userId = await getSessionUserId();
+  const userId = await getActionUserId();
   if (userId === null) return { ok: false, message: "로그인한 회원만 견적을 저장할 수 있습니다." };
   if (!decodeBuild(encoded)) return { ok: false, message: "저장할 부품이 없습니다." };
   if (!hasDatabase()) return { ok: false, message: "지금은 저장할 수 없습니다." };

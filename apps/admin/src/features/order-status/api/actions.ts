@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getDb, orderStatuses, updateOrderStatus, type OrderStatus } from "@mfg/db";
 import { revalidateShop } from "@/shared/api";
 import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
-import { guardAction } from "@/shared/lib/server";
+import { guardAction, isAdmin, NOT_ADMIN_MESSAGE } from "@/shared/lib/server";
 import type { ActionState } from "@/shared/ui";
 
 const FAILURE = {
@@ -14,6 +14,7 @@ const FAILURE = {
 } as const;
 
 export async function updateOrderStatusAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await isAdmin())) return { ok: false, message: NOT_ADMIN_MESSAGE };
   const id = String(formData.get("orderId") ?? "");
   const status = String(formData.get("status") ?? "") as OrderStatus;
   if (!orderStatuses.includes(status)) return { ok: false, message: "알 수 없는 상태입니다." };

@@ -3,6 +3,8 @@
 import { useSyncExternalStore } from "react";
 import { buildSlots, getProductById, type Build, type PartKind, type Product } from "@mfg/catalog";
 import { createLocalStore } from "@/shared/lib";
+import { createShareUndo } from "@/shared/lib/share-undo";
+import { encodeBuild } from "./codec";
 
 export type BuildState = {
   parts: Partial<Record<PartKind, string>>;
@@ -30,6 +32,18 @@ export function parseBuildState(value: unknown): BuildState | null {
 }
 
 const store = createLocalStore<BuildState>("mfg:build", EMPTY, parseBuildState);
+/** 공유 주소(/build?b=, 마이페이지 "불러오기")로 덮어쓰기 전의 견적. 되돌리기에 쓴다. */
+const share = createShareUndo(store, "mfg:build:previous", {
+  parse: parseBuildState,
+  isEmpty: (state) => Object.keys(state.parts).length === 0,
+  same: (a, b) => encodeBuild(a) === encodeBuild(b),
+});
+
+/** 공유 주소의 견적으로 바꾼다. 고르던 견적이 다르면 되돌릴 수 있게 남겨 둔다. */
+export const applySharedBuild = share.apply;
+export const usePreviousBuild = share.usePrevious;
+export const restorePreviousBuild = share.restore;
+export const dismissPreviousBuild = share.dismiss;
 
 export function useBuildState(): BuildState {
   return useSyncExternalStore(store.subscribe, store.get, store.getServer);
