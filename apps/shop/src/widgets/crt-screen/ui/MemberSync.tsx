@@ -17,6 +17,10 @@ let loading: { member: string; done: Promise<LoadOutcome> } | null = null;
 const SESSION_CHECK_MS = 60_000;
 let checkedAt = 0;
 
+// 0.8초 모아서 저장한다. 화면을 옮겨도 남은 저장은 그대로 보낸다.
+const cartSaver = createMemberSaver(async () => settle(await saveMemberCartAction(readCart())));
+const buildSaver = createMemberSaver(async () => settle(await saveMemberBuildAction(readBuild())));
+
 /**
  * 서버 세션이 끝났다(서버가 쿠키를 지웠다). 로그아웃과 같이 이 기기의 회원 장바구니·견적을 지우고
  * (공용 컴퓨터에서 다음 사람의 계정에 합쳐지지 않게) 머리글·찜·후기 폼을 로그인 전 모습으로 바꾼다.
@@ -24,6 +28,9 @@ let checkedAt = 0;
  */
 function signedOut() {
   loadedFor = null;
+  // 남은 저장은 버린다(보낼 곳이 없다).
+  cartSaver.cancel();
+  buildSaver.cancel();
   clearCart();
   forgetBuild();
   notifyMemberChanged();
@@ -33,10 +40,6 @@ function signedOut() {
 function settle(result: SaveResult) {
   if (result === "signed-out") signedOut();
 }
-
-// 0.8초 모아서 저장한다. 화면을 옮겨도 남은 저장은 그대로 보낸다.
-const cartSaver = createMemberSaver(async () => settle(await saveMemberCartAction(readCart())));
-const buildSaver = createMemberSaver(async () => settle(await saveMemberBuildAction(readBuild())));
 
 /** 서버에 저장한 값과 이 기기의 값을 합친다(같은 상품은 많은 수량). 불러오는 사이 이 기기에서 바꾼 것도 함께 합쳐 저장한다. */
 function loadAndMerge(member: string): Promise<LoadOutcome> {
@@ -59,7 +62,8 @@ function loadAndMerge(member: string): Promise<LoadOutcome> {
       return "merged";
     })
     .finally(() => {
-      loading = null;
+      // 그사이 다른 회원의 요청이 시작됐으면(다른 탭에서 로그인) 그 기록은 남긴다.
+      if (loading?.done === done) loading = null;
     });
   loading = { member, done };
   return done;

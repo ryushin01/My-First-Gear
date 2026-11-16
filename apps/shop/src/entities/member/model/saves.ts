@@ -5,8 +5,10 @@
 export type MemberSaver = {
   /** 바뀌었다고 알린다. delay가 지나도록 더 바뀌지 않으면 저장한다. */
   schedule(): void;
-  /** 남은 저장을 바로 보내고 끝날 때까지 기다린다. 끝났거나 보낼 것이 없으면 true, save가 던지면 false */
+  /** 남은 저장을 바로 보내고 끝날 때까지 기다린다(보내는 사이 또 바뀐 것까지). 다 보냈거나 보낼 것이 없으면 true, save가 던지면 false */
   flush(): Promise<boolean>;
+  /** 남은 저장을 버린다. 서버 세션이 끝나 더 저장할 곳이 없을 때 쓴다. */
+  cancel(): void;
 };
 
 /** save가 던지면(네트워크 끊김, 서버 오류) 실패로 보고, 다음 저장 때 다시 보낸다. */
@@ -16,25 +18,30 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
   let running: Promise<boolean> | null = null;
 
   async function flush(): Promise<boolean> {
-    clearTimeout(timer);
-    timer = undefined;
     // 보내는 중이면 끝나기를 기다린다. 그사이 바뀌었거나 실패했으면 다시 보낸다.
     while (running) await running;
-    if (!dirty) return true;
-    dirty = false;
-    const attempt = save().then(
-      () => true,
-      () => {
-        dirty = true;
-        return false;
-      },
-    );
-    running = attempt;
-    try {
-      return await attempt;
-    } finally {
-      if (running === attempt) running = null;
+    // 보내는 사이 또 바뀌면(schedule) 그것까지 보낸 뒤에 끝낸다.
+    while (dirty) {
+      clearTimeout(timer);
+      timer = undefined;
+      dirty = false;
+      const attempt = save().then(
+        () => true,
+        () => {
+          dirty = true;
+          return false;
+        },
+      );
+      running = attempt;
+      let ok: boolean;
+      try {
+        ok = await attempt;
+      } finally {
+        if (running === attempt) running = null;
+      }
+      if (!ok) return false;
     }
+    return true;
   }
 
   return {
@@ -44,6 +51,11 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
       timer = setTimeout(() => void flush(), delay);
     },
     flush,
+    cancel() {
+      clearTimeout(timer);
+      timer = undefined;
+      dirty = false;
+    },
   };
 }
 

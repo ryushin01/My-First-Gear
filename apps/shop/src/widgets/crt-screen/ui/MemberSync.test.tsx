@@ -18,6 +18,8 @@ async function load() {
 
 describe("MemberSync", () => {
   beforeEach(() => {
+    // 저장 타이머(0.8초)를 직접 다룬다. 모듈을 새로 불러와도 이전 모듈의 타이머가 다음 테스트로 넘어가지 않게 끝날 때 지운다.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
     vi.clearAllMocks();
     window.localStorage.clear();
     document.cookie = "mfg_member=member; path=/";
@@ -28,6 +30,8 @@ describe("MemberSync", () => {
   });
   afterEach(() => {
     cleanup();
+    vi.clearAllTimers();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -47,7 +51,7 @@ describe("MemberSync", () => {
     expect(actions.checkMemberSessionAction).not.toHaveBeenCalled();
 
     // 1분이 지나 옮기면 불러오기는 건너뛰되 세션은 확인한다
-    vi.spyOn(Date, "now").mockReturnValue(Date.now() + 61_000);
+    vi.setSystemTime(Date.now() + 61_000);
     actions.checkMemberSessionAction.mockResolvedValue("signed-out");
     const changed = vi.fn();
     window.addEventListener("mfg:member", changed);

@@ -36,6 +36,37 @@ describe("회원 저장 모으기", () => {
     expect(save).toHaveBeenCalledTimes(2);
   });
 
+  it("보내는 사이 또 바뀌면 그것까지 보낸 뒤에 끝난다", async () => {
+    const resolvers: Array<() => void> = [];
+    const save = vi.fn(() => new Promise<void>((resolve) => resolvers.push(resolve)));
+    const saver = createMemberSaver(save);
+    saver.schedule();
+    let done: boolean | null = null;
+    const flushed = saver.flush().then((ok) => (done = ok));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(save).toHaveBeenCalledTimes(1);
+    saver.schedule(); // 보내는 사이 또 바뀌었다
+    resolvers[0]();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(done).toBeNull();
+    expect(save).toHaveBeenCalledTimes(2);
+    resolvers[1]();
+    await flushed;
+    expect(done).toBe(true);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(save).toHaveBeenCalledTimes(2); // 타이머로 한 번 더 보내지 않는다
+  });
+
+  it("cancel하면 남은 저장을 버린다", async () => {
+    const save = vi.fn().mockResolvedValue(undefined);
+    const saver = createMemberSaver(save);
+    saver.schedule();
+    saver.cancel();
+    await vi.advanceTimersByTimeAsync(1000);
+    await expect(saver.flush()).resolves.toBe(true);
+    expect(save).not.toHaveBeenCalled();
+  });
+
   it("보내는 중이면 끝날 때까지 기다린다", async () => {
     let finish = () => {};
     const save = vi.fn(() => new Promise<void>((resolve) => (finish = resolve)));
