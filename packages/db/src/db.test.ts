@@ -1,5 +1,6 @@
 // @ts-expect-error 로컬 DB 스크립트는 JS 모듈이다
 import { startLocalDb } from "../scripts/local-db.mjs";
+import { sql } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createDb, type Db } from "./client";
 import { applyMerch, listMerch, updateMerch } from "./merch";
@@ -153,6 +154,7 @@ import {
   isLockedOut,
   listRestockByUser,
   RATE_LIMITS,
+  purgeStaleRecords,
   recordAttempt,
   releaseAttempt,
   reserveAttempt,
@@ -350,5 +352,18 @@ describe("시도 자리 잡기(동시 요청에도 한도 지키기)", () => {
     expect(await reserveAttempt(db, key, limit)).not.toBeNull(); // 실패 1
     expect(await reserveAttempt(db, key, limit)).not.toBeNull(); // 실패 2
     expect(await reserveAttempt(db, key, limit)).toBeNull(); // 막힘
+  });
+});
+
+describe("기록 정리", () => {
+  it("만료된 세션과 하루 지난 시도 기록만 지운다", async () => {
+    const live = await createSession(db, 1, 3600);
+    const expired = await createSession(db, 1, -60);
+    const key = attemptKey("lookup", "198.51.100.1");
+    await recordAttempt(db, key, false);
+    await db.execute(sql`insert into login_attempts (key, ok, created_at) values (${key}, false, now() - interval '2 days')`);
+    expect(await purgeStaleRecords(db)).toEqual({ sessions: 1, attempts: 1 });
+    expect(await getSessionUser(db, live.id)).toBe(1);
+    expect(await getSessionUser(db, expired.id)).toBeNull();
   });
 });

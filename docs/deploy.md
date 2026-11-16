@@ -17,7 +17,7 @@
 
 - 빌드 명령은 `packages/db/scripts/migrate.mjs`로 Drizzle 마이그레이션(테이블, 상품 판매 정보·데모 회원·후기 시드)을 적용한 뒤 앱을 빌드합니다. 마이그레이션은 풀러를 거치지 않는 `DATABASE_URL_UNPOOLED`로 적용합니다.
 - 프리뷰 배포에서는 마이그레이션을 건너뜁니다. Neon 연동에서 프리뷰마다 DB 브랜치를 만들도록 켰다면 `MFG_MIGRATE_ON_PREVIEW=1`을 프리뷰 환경 변수에 넣습니다.
-- Vercel Cron이 매일 04:00(KST, `0 19 * * *` UTC)에 `/api/cron/reset-demo`를 부릅니다. 주문·상담·회원(후기·문의·찜·견적 포함)을 지우고, 판매 정보와 데모 회원·후기·질문을 시드 값으로 되돌린 뒤 캐시를 비웁니다. Vercel이 보내는 `Authorization: Bearer $CRON_SECRET`이 맞을 때만 실행합니다.
+- Vercel Cron이 매일 04:00(KST, `0 19 * * *` UTC)에 `/api/cron/reset-demo`를 부릅니다. 먼저 만료된 세션과 하루 지난 시도 기록을 지우고(항상), 데모 초기화로 주문·상담·회원(후기·문의·찜·견적 포함)을 지우고 판매 정보와 데모 회원·후기·질문을 시드 값으로 되돌린 뒤 캐시를 비웁니다. 실제 서비스로 운영할 때는 `MFG_DEMO_RESET=off`로 데모 초기화만 끕니다. Vercel이 보내는 `Authorization: Bearer $CRON_SECRET`이 맞을 때만 실행하고, 지운 개수를 함수 로그에 한 줄 남깁니다.
 
 환경 변수:
 
@@ -28,6 +28,7 @@
 | `MFG_REVALIDATE_SECRET` | 캐시 갱신 엔드포인트 비밀 값 (어드민과 같게) |
 | `CRON_SECRET` | 크론 호출 확인용 임의의 긴 문자열 |
 | `NEXT_PUBLIC_SITE_URL` | 운영 주소 `https://my-first-gear-ryushin01.vercel.app`. 없으면 Vercel이 고른 운영 주소를 쓰는데, 주소가 여럿이면 짧은 옛 주소가 골라질 수 있어 지정합니다. |
+| `MFG_DEMO_RESET` | 선택. `off`면 매일 크론이 데모 초기화를 하지 않고 기록 정리만 합니다(실제 서비스로 운영할 때). |
 
 ## 2. 어드민 프로젝트
 

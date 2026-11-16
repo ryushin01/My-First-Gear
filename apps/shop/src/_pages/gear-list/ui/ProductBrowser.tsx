@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useId, useRef, type FormEvent } from "react";
 import { brandsOf, isSortKey, listProducts, sortOptions, type CategoryGroupId, type CategoryId } from "@mfg/catalog";
 import { ProductCard, useCatalog } from "@/entities/product";
+import { Select } from "@/shared/ui";
 
 type ProductBrowserProps = { categoryId?: CategoryId; group?: CategoryGroupId };
 
@@ -77,13 +78,13 @@ export function ProductBrowser({ categoryId, group }: ProductBrowserProps) {
             <label htmlFor={sortId} className="mono-label shrink-0 whitespace-nowrap">
               [Sort]
             </label>
-            <select id={sortId} name="sort" defaultValue={sort} className="min-h-9 rounded-md border border-white/20 bg-ink px-2 text-sm text-cream">
+            <Select id={sortId} name="sort" defaultValue={sort} className="min-h-9 rounded-md border border-white/20 bg-ink text-sm text-cream">
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
       </form>
