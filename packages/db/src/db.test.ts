@@ -365,5 +365,8 @@ describe("기록 정리", () => {
     expect(await purgeStaleRecords(db)).toEqual({ sessions: 1, attempts: 1 });
     expect(await getSessionUser(db, live.id)).toBe(1);
     expect(await getSessionUser(db, expired.id)).toBeNull();
+    // 지운 것은 이틀 전 기록이고, 방금 남긴 기록은 남는다
+    const left = await db.execute(sql`select created_at > now() - interval '1 hour' as recent from login_attempts where key = ${key}`);
+    expect(left.rows).toEqual([{ recent: true }]);
   });
 });
