@@ -36,12 +36,15 @@ function resolveLine(line: CartLine, catalog: Product[]): ResolvedLine | null {
   return null;
 }
 
-/** 장바구니를 상품 정보와 금액까지 풀어서 돌려준다. */
-export function useCartSummary() {
-  const cart = useCart();
-  const catalog = useCatalog();
+/** 장바구니 줄을 상품 정보와 금액까지 푼다. (결제 화면이 다시 보낼 요청의 줄을 보여 줄 때도 쓴다) */
+export function summarizeCart(cart: CartLine[], catalog: Product[]) {
   const lines = cart.map((line) => resolveLine(line, catalog)).filter((line): line is ResolvedLine => line !== null);
   const subtotal = lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
   const shipping = shippingFee(subtotal);
   return { lines, subtotal, shipping, total: subtotal + shipping, hasAssembly: lines.some((l) => l.id === "svc-assembly") };
+}
+
+/** 장바구니를 상품 정보와 금액까지 풀어서 돌려준다. */
+export function useCartSummary() {
+  return summarizeCart(useCart(), useCatalog());
 }

@@ -3,7 +3,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { formatPrice } from "@mfg/catalog";
 import { lookupOrderAction, orderStatusLabel, OrderTimeline, type OrderSummary } from "@/entities/order";
-import { useSubmitLock } from "@/shared/lib";
+import { callAction, useSubmitLock } from "@/shared/lib";
 import { TextField } from "@/shared/ui";
 
 type LookupState =
@@ -20,7 +20,7 @@ export function OrderLookup() {
     if (!lock.tryLock()) return;
     const data = new FormData(event.currentTarget);
     setState({ kind: "loading" });
-    const result = await lookupOrderAction(String(data.get("orderId") ?? ""), String(data.get("buyerName") ?? ""));
+    const result = await callAction(() => lookupOrderAction(String(data.get("orderId") ?? ""), String(data.get("buyerName") ?? "")));
     lock.release();
     if (!result.ok) setState({ kind: "error", message: result.message });
     else setState(result.data ? { kind: "found", order: result.data } : { kind: "missing" });

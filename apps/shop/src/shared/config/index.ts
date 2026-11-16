@@ -1,1 +1,1 @@
-export { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./site";
+export { NOT_FOUND_TITLE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./site";

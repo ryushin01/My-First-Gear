@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { channelOf, getCategory, getProductBySlug, nextInCategory, products, type Product } from "@mfg/catalog";
-import { SITE_URL } from "@/shared/config";
+import { NOT_FOUND_TITLE, SITE_URL } from "@/shared/config";
 import { getCatalog } from "@/entities/product/index.server";
 import { GearArt } from "@mfg/gear-art";
 import { PriceTag, RecentlyViewed, RecordRecentView } from "@/entities/product";
@@ -163,7 +163,8 @@ export function generateProductParams() {
 export async function generateProductMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (!product) return {};
+  // 없는 상품은 스트리밍 도중 404 화면이 되어 이 메타데이터가 그대로 쓰인다. 404 화면과 같은 제목을 준다.
+  if (!product) return { title: NOT_FOUND_TITLE };
   const description = `${product.tagline} · ${product.brand} ${getCategory(product.categoryId).name}`;
   return {
     title: product.name,

@@ -118,3 +118,34 @@ test("결제와 질문 등록을 빠르게 두 번 눌러도 한 번만 저장�
   await page.reload();
   await expect(page.getByText(question, { exact: true })).toHaveCount(1);
 });
+
+test("결제 응답만 끊겨 다시 눌러도 주문은 하나만 생긴다", async ({ page }) => {
+  await signup(page);
+  await page.goto("/product/samsung-990-pro-2tb");
+  await page.getByRole("button", { name: "장바구니 담기" }).click();
+  await page.goto("/checkout");
+  await page.getByLabel("받는 분").fill("테스트회원");
+  await page.getByLabel("휴대폰 번호").fill("010-1234-5678");
+  await page.getByLabel("배송 주소").fill("서울시 가상구 데모로 1");
+  // 첫 결제는 서버까지 가서 주문이 저장되지만 응답이 브라우저에 오지 않는다.
+  let cut = false;
+  await page.route("**/checkout", async (route) => {
+    // 회원 동기화도 같은 주소로 서버 액션을 보내므로 결제 요청(제출 번호가 든 본문)만 끊는다
+    if (route.request().method() === "POST" && !cut && route.request().postData()?.includes("submissionId")) {
+      cut = true;
+      await route.fetch();
+      return route.abort("internetdisconnected");
+    }
+    return route.continue();
+  });
+  await page.getByRole("button", { name: /결제하기/ }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  // 새로 고쳐도 같은 요청이 남아 입력은 잠기고, 같은 제출 번호로 결과를 확인한다
+  await page.reload();
+  await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  await expect(page.getByLabel("받는 분")).toBeDisabled();
+  await page.getByRole("button", { name: "같은 내용으로 다시 결제" }).click();
+  await expect(page.getByText("주문이 접수되었습니다.")).toBeVisible();
+  await page.goto("/my");
+  await expect(page.getByRole("table", { name: "회원 주문 내역" }).getByRole("rowheader")).toHaveCount(1);
+});

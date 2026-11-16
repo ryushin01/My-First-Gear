@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { categories, channelOf, getCategory, isCategoryId, type CategoryId } from "@mfg/catalog";
 import { ProductBrowser, ProductBrowserFallback } from "./ProductBrowser";
 import { CategoryNav } from "./CategoryNav";
+import { NOT_FOUND_TITLE } from "@/shared/config";
 import { CrtScreen } from "@/widgets/crt-screen";
 
 function sourceOf(categoryId?: CategoryId) {
@@ -69,5 +70,6 @@ export function generateCategoryParams() {
 
 export async function generateCategoryMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { category } = await params;
-  return isCategoryId(category) ? { title: getCategory(category).name } : {};
+  // 없는 카테고리는 스트리밍 도중 404 화면이 되어 이 메타데이터가 쓰인다. 404 화면과 같은 제목을 준다.
+  return { title: isCategoryId(category) ? getCategory(category).name : NOT_FOUND_TITLE };
 }

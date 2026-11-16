@@ -1,4 +1,5 @@
-export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
+/** uncertain: 서버가 처리했는지 알 수 없는 실패(커밋 뒤 연결이 끊김 등). 같은 요청을 다시 보내야 한다. */
+export type Result<T> = { ok: true; data: T } | { ok: false; message: string; uncertain?: true };
 
 export type OrderStatus = "paid" | "preparing" | "assembling" | "shipped" | "delivered" | "cancelled";
 
@@ -25,6 +26,8 @@ export type PlaceOrderRequest = {
   lines: { itemId: string; quantity: number }[];
   buyer: Buyer;
   payment: PaymentMethod;
+  /** 결제 화면이 만든 제출 번호. 응답이 끊겨 다시 결제해도 주문이 두 번 생기지 않게 한다. */
+  submissionId?: string;
 };
 
 export type OrderSummary = {

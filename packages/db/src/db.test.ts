@@ -225,3 +225,84 @@ describe("주문 취소와 상태 이력", () => {
     expect((await cancelOrderByUser(db, 1, order.id)).ok).toBe(false);
   });
 });
+
+describe("주문·재고 정합성", () => {
+  const stockOf = async (id: string) => (await listMerch(db)).find((m) => m.productId === id)!.stock;
+
+  it("같은 상품을 여러 줄로 보내도 합친 수량으로 재고를 확인하고 한 줄로 저장한다", async () => {
+    await updateMerch(db, "p-case-001", { stock: 4 });
+    const twice = [
+      { itemId: "p-case-001", quantity: 3 },
+      { itemId: "p-case-001", quantity: 3 },
+    ];
+    await expect(placeOrder(db, { lines: twice, buyer, payment: "card" })).rejects.toThrow(/재고가 부족합니다/);
+    expect(await stockOf("p-case-001")).toBe(4);
+
+    const order = await placeOrder(db, {
+      lines: [
+        { itemId: "p-case-001", quantity: 1 },
+        { itemId: "p-case-001", quantity: 2 },
+      ],
+      buyer,
+      payment: "card",
+    });
+    expect((await getOrder(db, order.id))?.lines).toEqual([expect.objectContaining({ itemId: "p-case-001", quantity: 3 })]);
+    expect(await stockOf("p-case-001")).toBe(1);
+  });
+
+  it("조립 서비스는 여러 번 보내도 한 번만 청구한다", async () => {
+    const order = await placeOrder(db, {
+      lines: [
+        { itemId: "p-mem-001", quantity: 1 },
+        { itemId: "svc-assembly", quantity: 1 },
+        { itemId: "svc-assembly", quantity: 3 },
+      ],
+      buyer,
+      payment: "card",
+    });
+    const memory = (await listMerch(db)).find((m) => m.productId === "p-mem-001")!;
+    expect(order.subtotal).toBe(memory.price + 30_000);
+  });
+
+  it("주문 번호가 겹치면 새 번호로 다시 넣는다", async () => {
+    const first = await placeOrder(db, { lines: [{ itemId: "p-mem-001", quantity: 1 }], buyer, payment: "card" });
+    const ids = [first.id, "MFG-000000-000001"];
+    const second = await placeOrder(db, { lines: [{ itemId: "p-mem-001", quantity: 1 }], buyer, payment: "card" }, () => ids.shift()!);
+    expect(second.id).toBe("MFG-000000-000001");
+  });
+
+  it("회원이 두 번 취소해도 재고는 한 번만 돌아온다", async () => {
+    const before = await stockOf("p-ssd-001");
+    const order = await placeOrder(db, { userId: 1, lines: [{ itemId: "p-ssd-001", quantity: 2 }], buyer, payment: "card" });
+    expect((await cancelOrderByUser(db, 1, order.id)).ok).toBe(true);
+    expect(await cancelOrderByUser(db, 1, order.id)).toEqual({ ok: false, message: "이미 취소한 주문입니다." });
+    expect(await stockOf("p-ssd-001")).toBe(before);
+  });
+
+  it("어드민이 취소하면 재고가 돌아오고, 취소한 주문과 같은 상태로는 바꾸지 않는다", async () => {
+    const before = await stockOf("p-mem-001");
+    const order = await placeOrder(db, { lines: [{ itemId: "p-mem-001", quantity: 2 }], buyer, payment: "card" });
+    expect(await updateOrderStatus(db, order.id, "paid")).toEqual({ ok: false, reason: "same" });
+    expect((await updateOrderStatus(db, order.id, "cancelled")).ok).toBe(true);
+    expect(await stockOf("p-mem-001")).toBe(before);
+    expect(await updateOrderStatus(db, order.id, "paid")).toEqual({ ok: false, reason: "cancelled" });
+    expect(await stockOf("p-mem-001")).toBe(before);
+    expect((await getOrder(db, order.id))?.events.map((e) => e.status)).toEqual(["paid", "cancelled"]);
+    expect(await updateOrderStatus(db, "MFG-000000-999999", "shipped")).toEqual({ ok: false, reason: "not-found" });
+  });
+});
+
+describe("같은 결제를 다시 보내면", () => {
+  it("응답이 끊겨 같은 제출 번호로 다시 오면 주문을 다시 만들지 않고 재고도 한 번만 뺀다", async () => {
+    const stock = async () => (await listMerch(db)).find((m) => m.productId === "p-ssd-001")!.stock;
+    const before = await stock();
+    const input = { lines: [{ itemId: "p-ssd-001", quantity: 2 }], buyer, payment: "card", submissionId: "retry-test-0001" };
+    const first = await placeOrder(db, input);
+    const again = await placeOrder(db, input);
+    expect(again.id).toBe(first.id);
+    expect(await stock()).toBe(before - 2);
+    const other = await placeOrder(db, { ...input, submissionId: "retry-test-0002" });
+    expect(other.id).not.toBe(first.id);
+    expect(await stock()).toBe(before - 4);
+  });
+});

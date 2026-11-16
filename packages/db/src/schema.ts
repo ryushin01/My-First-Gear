@@ -43,6 +43,8 @@ export const orders = pgTable(
     shipping: integer("shipping").notNull(),
     total: integer("total").notNull(),
     assembly: boolean("assembly").notNull().default(false),
+    /** 결제 화면이 만든 제출 번호. 응답이 끊겨 다시 결제해도 같은 번호면 주문을 다시 만들지 않는다. */
+    submissionId: text("submission_id").unique(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("orders_created_at_idx").on(table.createdAt), index("orders_user_id_idx").on(table.userId)],

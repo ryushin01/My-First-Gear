@@ -22,13 +22,18 @@ type CrtScreenProps = {
   children: ReactNode;
   /** 하단 상태 표시줄의 SOURCE 값. 지금 보고 있는 상품이나 카테고리 */
   source?: ReactNode;
+  /**
+   * 오류 화면용: 브라우저 저장값·회원 상태를 읽는 부분(장바구니 수량, 로그인 링크, 회원 동기화)을 빼고 그린다.
+   * 그 부분이 오류의 원인이어도 오류 화면은 다시 죽지 않는다.
+   */
+  bare?: boolean;
 };
 
 /** 브라운관 TV 화면 프레임. 헤더, 본문, 하단 상태 표시줄로 이루어진다. */
-export function CrtScreen({ children, source = "MY FIRST GEAR" }: CrtScreenProps) {
+export function CrtScreen({ children, source = "MY FIRST GEAR", bare = false }: CrtScreenProps) {
   return (
     <div className="crt-screen">
-      <MemberSync />
+      {!bare && <MemberSync />}
       <ScreenShell
         header={
           <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-12">
@@ -49,13 +54,15 @@ export function CrtScreen({ children, source = "MY FIRST GEAR" }: CrtScreenProps
                   <li key={item.href}>
                     <Link href={item.href} className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-cream">
                       {item.label}
-                      {item.href === "/cart" && <CartCount />}
+                      {!bare && item.href === "/cart" && <CartCount />}
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <AccountLink />
-                </li>
+                {!bare && (
+                  <li>
+                    <AccountLink />
+                  </li>
+                )}
               </ul>
             </nav>
           </header>

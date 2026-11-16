@@ -5,6 +5,8 @@ import { getProductById } from "@mfg/catalog";
 import { CommunityError, createQuestion, createReview, getDb, hasDatabase } from "@mfg/db";
 import { getSessionUserId } from "@/entities/member/index.server";
 import { MERCH_TAG } from "@/entities/product/index.server";
+import { ACTION_FAILED_MESSAGE } from "@/shared/lib";
+import { guardAction } from "@/shared/lib/server";
 import { communityTag } from "./communityQueries";
 
 export type CommunityState = { ok: boolean; message: string; field?: string; values?: { body: string; rating?: string } } | null;
@@ -24,26 +26,38 @@ export async function createReviewAction(_: CommunityState, formData: FormData):
   const values = { body, rating: rating ? String(rating) : undefined };
   if (!rating) return { ok: false, message: "별점을 골라 주세요.", field: "rating", values };
   if (body.length < 5) return { ok: false, message: "후기는 5자 이상 써 주세요.", field: "body", values };
-  const checked = await guard(productId);
-  if (!checked || !("userId" in checked)) return checked && { ...checked, values };
-  try {
-    await createReview(getDb(), { productId, userId: checked.userId, rating, body: body.slice(0, 1000) });
-  } catch (error) {
-    if (error instanceof CommunityError) return { ok: false, message: error.message, values };
-    throw error;
-  }
-  updateTag(communityTag(productId));
-  updateTag(MERCH_TAG); // 평점·후기 수가 바뀌었다
-  return { ok: true, message: "후기를 등록했습니다." };
+  return guardAction<CommunityState>(
+    "review",
+    async () => {
+      const checked = await guard(productId);
+      if (!checked || !("userId" in checked)) return checked && { ...checked, values };
+      try {
+        await createReview(getDb(), { productId, userId: checked.userId, rating, body: body.slice(0, 1000) });
+      } catch (error) {
+        if (error instanceof CommunityError) return { ok: false, message: error.message, values };
+        throw error;
+      }
+      updateTag(communityTag(productId));
+      updateTag(MERCH_TAG); // 평점·후기 수가 바뀌었다
+      return { ok: true, message: "후기를 등록했습니다." };
+    },
+    () => ({ ok: false, message: ACTION_FAILED_MESSAGE, values }),
+  );
 }
 
 export async function createQuestionAction(_: CommunityState, formData: FormData): Promise<CommunityState> {
   const productId = String(formData.get("productId") ?? "");
   const body = String(formData.get("body") ?? "").trim();
   if (body.length < 5) return { ok: false, message: "질문은 5자 이상 써 주세요.", field: "body", values: { body } };
-  const checked = await guard(productId);
-  if (!checked || !("userId" in checked)) return checked && { ...checked, values: { body } };
-  await createQuestion(getDb(), { productId, userId: checked.userId, body: body.slice(0, 1000) });
-  updateTag(communityTag(productId));
-  return { ok: true, message: "질문을 등록했습니다. 답변이 달리면 이곳에 보입니다." };
+  return guardAction<CommunityState>(
+    "question",
+    async () => {
+      const checked = await guard(productId);
+      if (!checked || !("userId" in checked)) return checked && { ...checked, values: { body } };
+      await createQuestion(getDb(), { productId, userId: checked.userId, body: body.slice(0, 1000) });
+      updateTag(communityTag(productId));
+      return { ok: true, message: "질문을 등록했습니다. 답변이 달리면 이곳에 보입니다." };
+    },
+    () => ({ ok: false, message: ACTION_FAILED_MESSAGE, values: { body } }),
+  );
 }

@@ -8,7 +8,7 @@ import { addToCart } from "@/entities/cart";
 import { useCatalog } from "@/entities/product";
 import { clearPart, decodeBuild, encodeBuild, replaceBuild, resetBuild, selectPart, toBuild, toggleService, useBuildState } from "@/entities/build";
 import { useMemberName } from "@/entities/member";
-import { useSubmitLock } from "@/shared/lib";
+import { callAction, useSubmitLock } from "@/shared/lib";
 import { PlannerSlot } from "@/widgets/gear-planner";
 import { saveBuildAction } from "../api/actions";
 import { PartPicker } from "./PartPicker";
@@ -58,7 +58,7 @@ export function BuildPlanner() {
   async function save(name: string) {
     if (!saveLock.tryLock()) return;
     setSaving(true);
-    const result = await saveBuildAction(name, encodeBuild(state), partsTotal + servicesTotal);
+    const result = await callAction(() => saveBuildAction(name, encodeBuild(state), partsTotal + servicesTotal));
     setSaving(false);
     saveLock.release();
     setNotice(result.message);

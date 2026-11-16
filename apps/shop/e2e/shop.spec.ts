@@ -155,3 +155,54 @@ test("흑백 토글 상태가 유지된다", async ({ page }) => {
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-bw", "on");
 });
+
+test("없는 주소는 브라운관 404 화면에서 다른 곳으로 안내하고 검색에 노출하지 않는다", async ({ page }) => {
+  for (const path of ["/product/no-such-gear", "/gear/no-such-category", "/no-such-page"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1, name: "신호를 찾지 못했습니다" }), path).toBeVisible();
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
+    await expect(page).toHaveTitle("신호를 찾지 못했습니다 · My First Gear");
+  }
+  await page.getByRole("link", { name: "전체 기어 보기" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "전체 기어" })).toBeVisible();
+});
+
+test("결제 중 연결이 끊기면 안내하고, 입력을 잠근 채 같은 내용으로 다시 결제할 수 있다", async ({ page }) => {
+  await page.goto("/product/samsung-990-pro-2tb");
+  await page.getByRole("button", { name: "장바구니 담기" }).click();
+  await page.goto("/checkout");
+  await page.getByLabel("받는 분").fill("김기어");
+  await page.getByLabel("휴대폰 번호").fill("010-1234-5678");
+  await page.getByLabel("배송 주소").fill("서울시 가상구 데모로 1");
+  // 서버 액션 요청(POST)만 한 번 끊는다
+  let cut = false;
+  await page.route("**/checkout", (route) => {
+    // 회원 동기화도 같은 주소로 서버 액션을 보내므로 결제 요청(제출 번호가 든 본문)만 끊는다
+    if (route.request().method() === "POST" && !cut && route.request().postData()?.includes("submissionId")) {
+      cut = true;
+      return route.abort("internetdisconnected");
+    }
+    return route.continue();
+  });
+  await page.getByRole("button", { name: /결제하기/ }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  // 이미 접수됐을 수 있어 다른 내용으로 바꾸지 못하게 잠그고, 입력은 그대로 둔다
+  await expect(page.getByLabel("받는 분")).toHaveValue("김기어");
+  await expect(page.getByLabel("받는 분")).toBeDisabled();
+  await page.getByRole("button", { name: "같은 내용으로 다시 결제" }).click();
+  await expect(page.getByText("주문이 접수되었습니다.")).toBeVisible();
+});
+
+test("브라우저에 저장된 값이 깨져 있어도 화면이 열린다", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("mfg:cart", "{}");
+    localStorage.setItem("mfg:build", '{"parts":null}');
+    localStorage.setItem("mfg:recent", '"x"');
+    localStorage.setItem("mfg:compare", "{}");
+  });
+  for (const path of ["/", "/build", "/compare", "/cart"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 }).first(), path).toBeVisible();
+  }
+  await expect(page.getByText("장바구니가 비어 있습니다.")).toBeVisible();
+});

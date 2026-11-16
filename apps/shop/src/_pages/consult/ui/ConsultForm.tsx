@@ -3,7 +3,7 @@
 import { useId, useRef, useState, type FormEvent } from "react";
 import { formatPrice, type Product } from "@mfg/catalog";
 import { createConsultAction } from "@/entities/order";
-import { PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
+import { callAction, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
 import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
 
 const rules = {
@@ -36,13 +36,15 @@ export function ConsultForm({ product }: { product?: Product }) {
     }
     setState("sending");
     setServerError("");
-    const result = await createConsultAction({
-      productSlug: product?.slug ?? null,
-      name: data.name ?? "",
-      phone: data.phone ?? "",
-      preferredDate: data.date ?? "",
-      message: data.message ?? "",
-    });
+    const result = await callAction(() =>
+      createConsultAction({
+        productSlug: product?.slug ?? null,
+        name: data.name ?? "",
+        phone: data.phone ?? "",
+        preferredDate: data.date ?? "",
+        message: data.message ?? "",
+      }),
+    );
     if (!result.ok) {
       lock.release();
       setServerError(result.message);

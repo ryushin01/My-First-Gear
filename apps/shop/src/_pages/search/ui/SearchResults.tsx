@@ -5,9 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useSyncExternalStore } from "react";
 import { searchProducts } from "@mfg/catalog";
 import { ProductCard, useCatalog } from "@/entities/product";
-import { createLocalStore } from "@/shared/lib";
+import { createLocalStore, parseStringList } from "@/shared/lib";
 
-const recentTerms = createLocalStore<string[]>("mfg:search", []);
+const recentTerms = createLocalStore<string[]>("mfg:search", [], parseStringList);
 
 /** 검색 상자와 결과. 검색어는 주소(?q=)에 담아 새로고침·공유해도 유지한다. */
 export function SearchResults() {

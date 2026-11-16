@@ -24,7 +24,7 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 
 - **콘텐츠는 코드, 판매 정보는 DB.** 상품 설명·사양·그림·호환 정보는 `packages/catalog`(기본 상품 `coreProducts.ts`, 데스크 셋업 `deskSetupProducts.ts`)에 두고, 어드민에서 바꾸는 가격·정가·재고·추천·노출만 `product_merch` 테이블에 둡니다.
 - 쇼핑몰은 `getCatalog()`(`"use cache"`, 태그 `merch`)로 두 값을 합쳐 읽고, `CatalogProvider`로 클라이언트 컴포넌트에 나눠 줍니다. DB에 연결할 수 없으면 코드의 기본값을 씁니다.
-- 주문은 서버 액션 `placeOrderAction`이 처리합니다. 클라이언트가 보낸 가격은 쓰지 않고, 한 트랜잭션 안에서 DB 가격으로 다시 계산하고 재고를 줄입니다. 그 뒤 `updateTag("merch")`로 캐시를 갱신합니다.
+- 주문은 서버 액션 `placeOrderAction`이 처리합니다. 클라이언트가 보낸 가격은 쓰지 않고, 한 트랜잭션 안에서 DB 가격으로 다시 계산하고 재고를 줄입니다. 같은 상품이 여러 줄이면 합친 수량으로 재고를 확인하고(서버 액션은 누구나 직접 부를 수 있음), 조립 서비스는 한 번만 받습니다. 주문 번호(`MFG-YYMMDD-NNNNNN`)는 암호학적 난수로 만들고 겹치면 새 번호로 다시 넣습니다. 그 뒤 `updateTag("merch")`로 캐시를 갱신합니다.
 - 어드민이 판매 정보를 바꾸면 쇼핑몰의 `POST /api/revalidate`(헤더 `x-revalidate-secret`)를 호출해 캐시를 비웁니다.
 - 장바구니와 PC 견적은 브라우저 `localStorage`에 둡니다. 견적은 `/build?b=…` 주소로 공유하고, 회원은 마이페이지에 저장할 수 있습니다.
 - **회원 세션:** 이메일·비밀번호(scrypt 해시) 로그인. 세션은 DB(`sessions`)에 두고 `httpOnly` 쿠키 `mfg_session`에는 서명한 세션 id만 담습니다. 로그아웃하면 행을 지워 그 쿠키는 바로 무효가 됩니다. 화면 표시용 이름만 `mfg_member` 쿠키에 둡니다.
@@ -32,10 +32,18 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 - **회원 장바구니·견적 동기화:** 로그인하면 서버에 저장한 값(`member_states`)과 이 기기의 값을 합치고(같은 상품은 많은 수량), 바뀔 때마다 0.8초 뒤 저장합니다(`widgets/crt-screen/ui/MemberSync.tsx`). 세션을 읽는 코드는 `connection()`으로 요청 시점에만 실행합니다. 로그인 상태가 바뀌면 전체 페이지를 다시 불러옵니다 (Cache Components가 숨겨 둔 이전 화면이 남지 않게).
 - **평점·후기 수:** 카탈로그의 누적 후기(가상 값)에 DB 후기를 더해 다시 계산합니다(`applyMerch`). 후기를 쓰면 `merch` 태그도 갱신합니다.
 - **카탈로그 전송:** 가격·재고를 반영한 카탈로그는 필요한 화면(목록, 검색, 견적, 장바구니, 결제, 비교)만 `WithCatalog`로 감싸 넘깁니다. 모든 화면에 상품 전체를 싣지 않습니다.
-- **주문 상태 이력:** 주문을 만들거나 상태를 바꿀 때 `order_events`에 남겨 배송 단계 타임라인으로 보여 줍니다. 회원은 결제 완료·상품 준비 중일 때만 직접 취소할 수 있고, 재고가 돌아옵니다.
+- **주문 상태 이력:** 주문을 만들거나 상태를 바꿀 때 `order_events`에 남겨 배송 단계 타임라인으로 보여 줍니다(같은 상태로는 남기지 않음). 회원은 결제 완료·상품 준비 중일 때만 직접 취소할 수 있고, 어드민이 취소해도 재고가 돌아옵니다. 취소는 "취소할 수 있는 상태일 때만" 바꾸는 UPDATE 한 번이라 동시에 두 번 와도 재고는 한 번만 돌아오고, 취소한 주문은 다시 바꿀 수 없습니다.
 - **후기·Q&A:** `"use cache"` + 태그 `community:{상품 id}`. 회원이 쓰면 `updateTag`, 어드민이 답하면 쇼핑몰 `/api/revalidate`에 태그를 보내 갱신합니다.
 - 회원으로 주문하면 `orders.user_id`에 연결되어 마이페이지 주문 내역에 나옵니다. 비회원 주문 조회도 그대로 됩니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 `packages/db/migrations`에 마이그레이션을 만듭니다. 운영 배포(Vercel 빌드)와 로컬 DB 모두 `scripts/migrate.mjs`(Drizzle 마이그레이터)로 적용합니다. 이미 적용한 마이그레이션은 고치지 않고 새 마이그레이션을 추가합니다.
+
+## 오류 처리
+
+- **404·오류 화면:** 쇼핑몰은 `app/not-found.tsx`·`error.tsx`·`global-error.tsx`가 `src/_app/errors`의 브라운관 화면을 다시 내보냅니다. 오류 화면은 저장값·회원 상태를 읽는 머리글 부분(장바구니 수량, 로그인 링크, 회원 동기화)을 뺀 `CrtScreen bare`로 그려, 그 부분이 원인이어도 다시 죽지 않습니다. 오류는 `reportError`로 모니터링에 보냅니다(Sentry DSN이 있을 때). 어드민은 Bulma 모양으로 같은 세 파일을 둡니다.
+- **없는 상품·카테고리:** Cache Components에서는 `dynamicParams`를 쓸 수 없고, 부분 프리렌더가 껍데기를 먼저 보내 상태 코드는 200입니다. 대신 Next가 `noindex`를 붙이고, 그 화면의 메타데이터 제목도 404 화면과 같게 둡니다(`NOT_FOUND_TITLE`).
+- **서버 액션을 직접 부를 때**(결제, 상담, 주문 조회, 견적 저장, 찜, 재입고, 로그아웃)는 `callAction`(`@mfg/hooks`)으로 감쌉니다. 연결이 끊기거나 서버가 던져도 `{ ok: false, message }`로 받아 잠금을 풀고 입력을 그대로 둡니다. 그대로 두면 `await`가 던져 버튼이 "처리 중"에 멈추고, 전환 안에서는 오류 화면까지 올라갑니다.
+- **폼 액션(`useActionState`)**은 감싸지 않고 서버 액션을 그대로 넘깁니다(JS를 받기 전에도 제출되게). 대신 액션 안에서 `guardAction`(각 앱 `shared/lib/server`)으로 예상하지 못한 DB 오류를 잡아 입력값과 함께 안내합니다. `redirect()` 같은 Next 신호는 그대로 던집니다.
+- **브라우저 저장값:** `createLocalStore`의 `parse`가 저장된 값을 정리합니다. 장바구니는 모양이 다른 줄을 빼고, 견적은 모르는 칸을 빼고, 목록은 문자열만 남깁니다. 쓸 수 없으면 초기값으로 시작합니다(머리글의 장바구니 수량이 모든 화면에서 읽으므로 깨진 값이 남으면 사이트 전체가 열리지 않음).
 
 ## 로컬 개발
 
@@ -67,7 +75,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 [Arc Marumo](https://www.arcmarumo.com/)의 브라운관 TV와 VHS 테이프 콘셉트를 참고했습니다. 로고와 레이아웃은 복제하지 않았습니다.
 
 - 색: 배경 `#111`, 포인트 `#ff3131`, 크림 `#fcf8ef`, 회색 `#e4dfd9`·`#b2aeab`, 색 번짐 `#ff2846`·`#2896ff` (`uno.config.ts`)
-- 글꼴: 큰 제목 VT323(영문, 브라운관 픽셀) + Black And White Picture(한글, 흑백 영화 자막), 본문 Gothic A1, 라벨과 견적 금액 Nanum Gothic Coding. 모두 `next/font/google`로 빌드 때 받아 함께 배포하고, 한글 글꼴은 화면에 쓰인 글자 묶음의 조각만 받습니다. 공유 이미지(`next/og`)는 그대로 Pretendard Bold를 씁니다.
+- 글꼴: 영문·숫자는 큰 제목과 본문 모두 Azeret Mono(고정폭, 가변 굵기), 한글 큰 제목 Black And White Picture(흑백 영화 자막), 한글 본문 Gothic A1, 라벨과 견적 금액 Nanum Gothic Coding. 모두 `next/font/google`로 빌드 때 받아 함께 배포하고, 한글 글꼴은 화면에 쓰인 글자 묶음의 조각만 받습니다. 공유 이미지(`next/og`)는 그대로 Pretendard Bold를 씁니다.
 - 장치: 화면 전체 브라운관 프레임(주사선·노이즈·비네트), 타임코드, `[대괄호]` 고정폭 라벨, 흑백 토글, 눈금 진행 막대, "Next tape"
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.
 - 상품 그림은 `packages/gear-art`에 있습니다. `art.model`(상품 slug)에 맞는 실사풍 그림이 `src/models/`(PC 부품 `pc.tsx`, 기기·모니터 `devices.tsx`, 탈것 `vehicles.tsx`, 시계 `watches.tsx`, 아웃도어 `outdoor.tsx`, 데스크 셋업 `desk.tsx`)에 있으면 그것을, 없으면 `art.kind`별 선 그림(`drawings.tsx`)을 씁니다.
