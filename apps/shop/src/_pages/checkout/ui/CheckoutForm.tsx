@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useId, useRef, useState, type FormEvent } from "react";
 import { formatPrice } from "@mfg/catalog";
-import { clearCart, useCartSummary } from "@/entities/cart";
-import { orderStatusLabel, paymentMethods, placeOrderAction, type OrderSummary, type PaymentMethod, type PlaceOrderRequest } from "@/entities/order";
+import { clearCart, summarizeCart, useCartSummary } from "@/entities/cart";
+import { orderStatusLabel, paymentMethods, placeOrderAction, type OrderSummary, type PaymentMethod } from "@/entities/order";
+import { useCatalog } from "@/entities/product";
+import { rememberPendingOrder, usePendingOrder } from "../model/pendingOrder";
 import { ACTION_FAILED_MESSAGE, callAction, EMAIL_PATTERN, PHONE_PATTERN, useSubmitLock, validate } from "@/shared/lib";
 import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
 
@@ -30,7 +32,8 @@ function newSubmissionId() {
 }
 
 export function CheckoutForm() {
-  const { lines, shipping, total } = useCartSummary();
+  const live = useCartSummary();
+  const catalog = useCatalog();
   const [done, setDone] = useState<OrderSummary | null>(null);
   const [serverError, setServerError] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -40,8 +43,19 @@ export function CheckoutForm() {
   const lock = useSubmitLock();
   // 결과를 모르는 결제 요청. 남아 있는 동안은 입력을 잠그고 이 요청(같은 제출 번호·같은 내용)을 그대로 다시 보낸다.
   // 다른 내용으로 다시 보내면 서버는 같은 번호의 이전 주문을 돌려주므로, 바뀐 내용이 접수된 것처럼 보일 수 있다.
-  const [pending, setPending] = useState<PlaceOrderRequest | null>(null);
+  // 새로 고쳐도 이 탭에 남아 있다(sessionStorage).
+  const pending = usePendingOrder();
   const titleId = useId();
+  // 결과를 모르는 요청이 남아 있으면(새로 고친 뒤 포함) 그 안내를 보여 준다.
+  const shownError = serverError || (pending ? UNCERTAIN_MESSAGE : "");
+
+  // 결과를 모르는 동안은 다시 보낼 요청의 줄과 금액을 보여 준다(그사이 장바구니가 바뀌어도 화면과 보낼 내용이 같게).
+  const { lines, shipping, total } = pending
+    ? summarizeCart(
+        pending.lines.map((line) => ({ productId: line.itemId, quantity: line.quantity })),
+        catalog,
+      )
+    : live;
 
   if (done) {
     return (
@@ -119,11 +133,11 @@ export function CheckoutForm() {
       lock.release(); // 실패했을 때만 푼다. 성공하면 완료 화면으로 바뀐다.
       // 서버가 분명히 거절했으면(재고 부족 등) 주문이 없으니 입력을 풀고, 다음 결제는 새 번호로 한다.
       // 결과를 모르면(응답이 끊김, 커밋 뒤 오류) 저장됐을 수도 있어 입력을 잠그고 같은 요청을 다시 보낸다(서버가 같은 주문을 돌려줌).
-      setPending(result.uncertain ? sent : null);
+      rememberPendingOrder(result.uncertain ? sent : null);
       setServerError(result.uncertain ? UNCERTAIN_MESSAGE : result.message);
       return;
     }
-    setPending(null);
+    rememberPendingOrder(null);
     clearCart();
     setDone(result.data);
     window.scrollTo({ top: 0 });
@@ -134,9 +148,9 @@ export function CheckoutForm() {
       <div className="flex flex-col gap-6">
         <div ref={summaryRef}>
           <ErrorSummary errors={errors} titleId={titleId} />
-          {serverError && (
+          {shownError && (
             <p role="alert" className="rounded-md border border-brand/60 p-4 text-brand">
-              {serverError}
+              {shownError}
             </p>
           )}
         </div>

@@ -140,6 +140,10 @@ test("결제 응답만 끊겨 다시 눌러도 주문은 하나만 생긴다", a
   });
   await page.getByRole("button", { name: /결제하기/ }).click();
   await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  // 새로 고쳐도 같은 요청이 남아 입력은 잠기고, 같은 제출 번호로 결과를 확인한다
+  await page.reload();
+  await expect(page.getByRole("alert").filter({ hasText: "결제 결과를 확인하지 못했습니다" })).toBeVisible();
+  await expect(page.getByLabel("받는 분")).toBeDisabled();
   await page.getByRole("button", { name: "같은 내용으로 다시 결제" }).click();
   await expect(page.getByText("주문이 접수되었습니다.")).toBeVisible();
   await page.goto("/my");
