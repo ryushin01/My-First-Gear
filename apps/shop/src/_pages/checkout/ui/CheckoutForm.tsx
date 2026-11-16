@@ -108,9 +108,9 @@ export function CheckoutForm() {
     setSubmitting(false);
     if (!result.ok) {
       lock.release(); // 실패했을 때만 푼다. 성공하면 완료 화면으로 바뀐다.
-      // 서버가 거절했으면(재고 부족 등) 주문이 없으니 다음 결제는 새 번호로 한다.
-      // 응답이 끊겼으면 저장됐을 수도 있어 같은 번호로 다시 보낸다(서버가 같은 주문을 돌려줌).
-      if (!("uncertain" in result)) submissionId.current = "";
+      // 서버가 분명히 거절했으면(재고 부족 등) 주문이 없으니 다음 결제는 새 번호로 한다.
+      // 결과를 모르면(응답이 끊김, 커밋 뒤 오류) 저장됐을 수도 있어 같은 번호로 다시 보낸다(서버가 같은 주문을 돌려줌).
+      if (!result.uncertain) submissionId.current = "";
       setServerError(result.message);
       return;
     }

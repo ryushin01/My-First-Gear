@@ -21,8 +21,9 @@ export async function placeOrderAction(request: PlaceOrderRequest): Promise<Resu
   }
   if (!hasDatabase()) return { ok: false, message: NO_DB };
 
+  let order: Awaited<ReturnType<typeof placeOrder>>;
   try {
-    const order = await placeOrder(getDb(), {
+    order = await placeOrder(getDb(), {
       userId: await getSessionUserId(),
       lines: request.lines.slice(0, 50),
       buyer: {
@@ -35,13 +36,14 @@ export async function placeOrderAction(request: PlaceOrderRequest): Promise<Resu
       payment: ["card", "transfer", "easy"].includes(request.payment) ? request.payment : "card",
       submissionId: /^[A-Za-z0-9-]{8,64}$/.test(request.submissionId ?? "") ? request.submissionId : null,
     });
-    updateTag(MERCH_TAG); // 재고가 바뀌었다
-    return { ok: true, data: { id: order.id, status: order.status, total: order.total, lines: [] } };
   } catch (error) {
     if (error instanceof OrderError) return { ok: false, message: error.message };
     console.error("[order] 주문 실패", error);
-    return { ok: false, message: "주문을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+    // 커밋 응답만 끊겼을 수도 있어(주문은 저장됨) 결과를 모른다고 알린다. 화면은 같은 제출 번호로 다시 보낸다.
+    return { ok: false, message: "주문을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.", uncertain: true };
   }
+  updateTag(MERCH_TAG); // 재고가 바뀌었다
+  return { ok: true, data: { id: order.id, status: order.status, total: order.total, lines: [] } };
 }
 
 /** 비회원 주문 조회 */

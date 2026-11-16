@@ -1,4 +1,5 @@
-export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
+/** uncertain: 서버가 처리했는지 알 수 없는 실패(커밋 뒤 연결이 끊김 등). 같은 요청을 다시 보내야 한다. */
+export type Result<T> = { ok: true; data: T } | { ok: false; message: string; uncertain?: true };
 
 export type OrderStatus = "paid" | "preparing" | "assembling" | "shipped" | "delivered" | "cancelled";
 
