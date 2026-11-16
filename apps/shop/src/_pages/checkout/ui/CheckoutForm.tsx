@@ -140,7 +140,7 @@ export function CheckoutForm() {
             </p>
           )}
         </div>
-        <fieldset disabled={pending !== null} className="flex flex-col gap-4 disabled:opacity-60">
+        <fieldset disabled={submitting || pending !== null} className="flex flex-col gap-4 disabled:opacity-60">
           <legend className="mono-label mb-3">[Shipping]</legend>
           <TextField id="name" label="받는 분" autoComplete="name" required error={errors.name} />
           <TextField
@@ -157,7 +157,7 @@ export function CheckoutForm() {
           <TextField id="address" label="배송 주소" autoComplete="street-address" required error={errors.address} />
           <TextAreaField id="memo" label="배송 메모" maxLength={200} />
         </fieldset>
-        <fieldset disabled={pending !== null} className="flex flex-col gap-2 disabled:opacity-60">
+        <fieldset disabled={submitting || pending !== null} className="flex flex-col gap-2 disabled:opacity-60">
           <legend className="mono-label mb-3">[Payment]</legend>
           {paymentMethods.map((method) => (
             <label key={method.value} className="inline-flex min-h-8 cursor-pointer items-center gap-3">
