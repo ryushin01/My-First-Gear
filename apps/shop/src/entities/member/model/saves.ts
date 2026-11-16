@@ -16,6 +16,8 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
   let timer: ReturnType<typeof setTimeout> | undefined;
   let dirty = false;
   let running: Promise<boolean> | null = null;
+  // cancel()마다 올라간다. 취소하기 전에 보낸 저장은 실패해도 다시 보내지 않는다.
+  let epoch = 0;
 
   async function flush(): Promise<boolean> {
     // 보내는 중이면 끝나기를 기다린다. 그사이 바뀌었거나 실패했으면 다시 보낸다.
@@ -25,10 +27,11 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
       clearTimeout(timer);
       timer = undefined;
       dirty = false;
+      const attemptEpoch = epoch;
       const attempt = save().then(
         () => true,
         () => {
-          dirty = true;
+          if (attemptEpoch === epoch) dirty = true;
           return false;
         },
       );
@@ -55,6 +58,7 @@ export function createMemberSaver(save: () => Promise<unknown>, delay = 800): Me
       clearTimeout(timer);
       timer = undefined;
       dirty = false;
+      epoch++;
     },
   };
 }

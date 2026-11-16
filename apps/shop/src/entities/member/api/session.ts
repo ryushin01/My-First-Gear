@@ -29,6 +29,14 @@ function verify(value: string | undefined): string | null {
 }
 
 /**
+ * 회원을 가리키는 짧은 표식(서명값). 이 기기의 장바구니·견적이 어느 회원 것인지 가리는 데 쓴다.
+ * 회원 번호(가입 순서)를 드러내지 않고, 서명 키가 없으면 만들 수 없다.
+ */
+export function memberTag(userId: number): string {
+  return sign(`member:${userId}`).slice(0, 22);
+}
+
+/**
  * 세션 쿠키로 회원 id를 찾는다. 세션은 DB에 있어 로그아웃하면 바로 무효가 된다.
  * 쿠키를 읽으므로 이 함수를 부르는 곳은 동적으로 렌더링된다.
  */

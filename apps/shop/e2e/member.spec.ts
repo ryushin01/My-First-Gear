@@ -184,3 +184,18 @@ test("로그아웃하면 이 기기의 회원 장바구니를 비우고, 다시 
   await page.waitForURL(/\/my/);
   await expect(page.getByRole("link", { name: /장바구니/ }).first()).toContainText("[1]");
 });
+
+test("로그아웃하지 않고 같은 기기에서 다른 회원으로 가입해도 이전 회원의 장바구니가 합쳐지지 않는다", async ({ page }) => {
+  await signup(page);
+  const synced = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/product/"));
+  await page.goto("/product/samsung-990-pro-2tb");
+  await synced;
+  await page.getByRole("button", { name: "장바구니 담기" }).click();
+  const cartLink = page.getByRole("link", { name: /장바구니/ }).first();
+  await expect(cartLink).toContainText("[1]");
+  // 공용 컴퓨터: 다른 사람이 로그아웃하지 않은 채 새로 가입한다
+  await signup(page);
+  await expect(cartLink).not.toContainText("[");
+  await page.goto("/cart");
+  await expect(cartLink).not.toContainText("[");
+});

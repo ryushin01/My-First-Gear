@@ -1,1 +1,1 @@
-export { endSession, getActionUserId, getSessionUser, getSessionUserId, startSession } from "./api/session";
+export { endSession, getActionUserId, getSessionUser, getSessionUserId, memberTag, startSession } from "./api/session";

@@ -67,6 +67,20 @@ describe("회원 저장 모으기", () => {
     expect(save).not.toHaveBeenCalled();
   });
 
+  it("보내는 중에 cancel하면 그 저장이 실패해도 다시 보내지 않는다", async () => {
+    let fail = () => {};
+    const save = vi.fn(() => new Promise<void>((_, reject) => (fail = () => reject(new Error("offline")))));
+    const saver = createMemberSaver(save);
+    saver.schedule();
+    const flushed = saver.flush();
+    await vi.advanceTimersByTimeAsync(0);
+    saver.cancel();
+    fail();
+    await expect(flushed).resolves.toBe(false);
+    await expect(saver.flush()).resolves.toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
   it("보내는 중이면 끝날 때까지 기다린다", async () => {
     let finish = () => {};
     const save = vi.fn(() => new Promise<void>((resolve) => (finish = resolve)));
