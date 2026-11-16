@@ -159,6 +159,24 @@ describe("MemberSync", () => {
     expect(readCart()).toEqual([]);
   });
 
+  it("이전 회원의 불러오기가 늦게 세션 종료로 와도 지금 회원의 값을 지우지 않는다", async () => {
+    const { MemberSync, notifyMemberChanged, readCart } = await load();
+    let finishA = (_: unknown) => {};
+    actions.loadMemberStateAction.mockImplementationOnce(() => new Promise((resolve) => (finishA = resolve)));
+    render(<MemberSync />); // 회원 A를 불러오는 중
+
+    // 다른 탭에서 회원 B로 로그인했고, B를 먼저 불러와 합쳤다
+    document.cookie = "mfg_member=member-b; path=/";
+    actions.loadMemberStateAction.mockResolvedValueOnce({ owner: "tag-b", cart: [{ productId: "p-gpu-001", quantity: 1 }], build: null });
+    await act(async () => notifyMemberChanged());
+    await vi.waitFor(() => expect(readCart()).toEqual([{ productId: "p-gpu-001", quantity: 1 }]));
+
+    finishA("signed-out"); // A의 응답이 늦게 왔다
+    await vi.advanceTimersByTimeAsync(0);
+    expect(readCart()).toEqual([{ productId: "p-gpu-001", quantity: 1 }]);
+    expect(window.localStorage.getItem(OWNER_KEY)).toBe("tag-b");
+  });
+
   it("회원 쿠키 없이 회원 값만 남아 있으면(세션이 끝난 뒤 다시 옴) 지운다", async () => {
     const { MemberSync, addToCart, readCart } = await load();
     document.cookie = "mfg_member=; path=/; max-age=0";

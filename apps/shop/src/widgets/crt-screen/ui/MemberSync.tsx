@@ -76,8 +76,11 @@ function loadAndMerge(member: string): Promise<LoadOutcome> {
   if (loading?.member === member) return loading.done;
   const done = loadMemberStateAction()
     .then((remote): LoadOutcome => {
-      // 서버 세션이 끝났다. 서버가 같은 응답에서 회원 쿠키를 지우므로 이름을 비교하기 전에 정리한다.
+      // 서버 세션이 끝났다. 서버가 같은 응답에서 회원 쿠키를 지우므로(이름이 null) 그때도 정리한다.
+      // 그사이 다른 회원으로 로그인했으면(다른 탭) 그 회원의 값을 지우지 않는다.
       if (remote === "signed-out") {
+        const now = readMemberName();
+        if (now !== null && now !== member) return "stale";
         signedOut();
         return "signed-out";
       }
