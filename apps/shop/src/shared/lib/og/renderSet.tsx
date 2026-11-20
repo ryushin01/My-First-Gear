@@ -16,23 +16,20 @@ type SetImage = {
 export function renderSet({ label, rows, note, total }: SetImage) {
   return renderOg(
     <div style={{ display: "flex", flex: 1, flexDirection: "column", marginTop: 18 }}>
-      <div style={{ display: "flex", fontSize: 22, color: "#b2aeab", marginTop: 6 }}>[{label}]</div>
+      <div style={{ display: "flex", fontSize: 22, color: "#bbbbbb", marginTop: 6 }}>[{label}]</div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
         {rows.map(({ slot, product }) => (
-          <div
-            key={slot}
-            style={{ display: "flex", alignItems: "center", gap: 12, width: 504, border: "1px solid #333", borderRadius: 8, padding: "6px 10px" }}
-          >
+          <div key={slot} style={{ display: "flex", alignItems: "center", gap: 12, width: 504, border: "1px solid #333", padding: "6px 10px" }}>
             <img src={artDataUri(product.art)} width={rows.length > 8 ? 44 : 52} height={rows.length > 8 ? 44 : 52} alt="" />
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ display: "flex", fontSize: 16, color: "#b2aeab" }}>{slot}</div>
+              <div style={{ display: "flex", fontSize: 16, color: "#bbbbbb" }}>{slot}</div>
               <div style={{ display: "flex", fontSize: 21 }}>{product.name}</div>
             </div>
           </div>
         ))}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "auto", fontSize: 34 }}>
-        <div style={{ display: "flex", color: "#b2aeab" }}>{note}</div>
+        <div style={{ display: "flex", color: "#bbbbbb" }}>{note}</div>
         <div style={{ display: "flex" }}>총액 {formatPrice(total)}</div>
       </div>
     </div>,

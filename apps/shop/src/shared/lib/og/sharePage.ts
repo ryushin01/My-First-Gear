@@ -45,7 +45,7 @@ export function sharePage({ title, description, image, target }: SharePage): Res
 <meta name="twitter:image" content="${imageUrl}">
 <link rel="canonical" href="${targetUrl}">
 <meta http-equiv="refresh" content="0; url=${escape(target)}">
-<style>html{background:#050505;color:#fcf8ef;font-family:system-ui,sans-serif}a{color:#fcf8ef}</style>
+<style>html{background:#050505;color:#f5f5f2;font-family:system-ui,sans-serif}a{color:#f5f5f2}</style>
 </head>
 <body><p><a href="${escape(target)}">${escape(title)} 열기</a></p></body>
 </html>`;

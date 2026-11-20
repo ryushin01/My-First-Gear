@@ -53,7 +53,7 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 
 ## 오류 처리
 
-- **404·오류 화면:** 쇼핑몰은 `app/not-found.tsx`·`error.tsx`·`global-error.tsx`가 `src/_app/errors`의 브라운관 화면을 다시 내보냅니다. 오류 화면은 저장값·회원 상태를 읽는 머리글 부분(장바구니 수량, 로그인 링크, 회원 동기화)을 뺀 `CrtScreen bare`로 그려, 그 부분이 원인이어도 다시 죽지 않습니다. 오류는 `reportError`로 모니터링에 보냅니다(Sentry DSN이 있을 때). 어드민은 Bulma 모양으로 같은 세 파일을 둡니다.
+- **404·오류 화면:** 쇼핑몰은 `app/not-found.tsx`·`error.tsx`·`global-error.tsx`가 `src/_app/errors`의 HUD 화면을 다시 내보냅니다. 오류 화면은 저장값·회원 상태를 읽는 머리글 부분(장바구니 수량, 로그인 링크, 회원 동기화)을 뺀 `CrtScreen bare`로 그려, 그 부분이 원인이어도 다시 죽지 않습니다. 오류는 `reportError`로 모니터링에 보냅니다(Sentry DSN이 있을 때). 어드민은 Bulma 모양으로 같은 세 파일을 둡니다.
 - **없는 상품·카테고리:** Cache Components에서는 `dynamicParams`를 쓸 수 없고, 부분 프리렌더가 껍데기를 먼저 보내 상태 코드는 200입니다. 대신 Next가 `noindex`를 붙이고, 그 화면의 메타데이터 제목도 404 화면과 같게 둡니다(`NOT_FOUND_TITLE`).
 - **서버 액션을 직접 부를 때**(결제, 상담, 주문 조회, 견적 저장, 찜, 재입고, 로그아웃)는 `callAction`(`@mfg/hooks`)으로 감쌉니다. 연결이 끊기거나 서버가 던져도 `{ ok: false, message }`로 받아 잠금을 풀고 입력을 그대로 둡니다. 그대로 두면 `await`가 던져 버튼이 "처리 중"에 멈추고, 전환 안에서는 오류 화면까지 올라갑니다.
 - **폼 액션(`useActionState`)**은 감싸지 않고 서버 액션을 그대로 넘깁니다(JS를 받기 전에도 제출되게). 대신 액션 안에서 `guardAction`(각 앱 `shared/lib/server`)으로 예상하지 못한 DB 오류를 잡아 입력값과 함께 안내합니다. `redirect()` 같은 Next 신호는 그대로 던집니다.
@@ -88,11 +88,12 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 
 ## 디자인 기준 (쇼핑몰)
 
-[Arc Marumo](https://www.arcmarumo.com/)의 브라운관 TV와 VHS 테이프 콘셉트를 참고했습니다. 로고와 레이아웃은 복제하지 않았습니다.
+1.2.0부터 The Digital Panda의 [The Spark](https://www.cssdesignawards.com/sites/the-spark/48435/)(SF 통신 단말 같은 HUD)를 참고합니다. 로고는 그대로 두고, 그 사이트의 자료나 레이아웃은 복제하지 않았습니다. 카테고리를 채널(CH 01~35)로 보는 구조는 이전 브라운관 콘셉트에서 이어 왔습니다.
 
-- 색: 배경 `#111`, 포인트 `#ff3131`, 크림 `#fcf8ef`, 회색 `#e4dfd9`·`#b2aeab`, 색 번짐 `#ff2846`·`#2896ff` (`uno.config.ts`)
-- 글꼴: 영문·숫자는 큰 제목과 본문 모두 Azeret Mono(고정폭, 가변 굵기), 한글 큰 제목 Black And White Picture(흑백 영화 자막), 한글 본문 Gothic A1, 라벨과 견적 금액 Nanum Gothic Coding. 모두 `next/font/google`로 빌드 때 받아 함께 배포하고, 한글 글꼴은 화면에 쓰인 글자 묶음의 조각만 받습니다. 공유 이미지(`next/og`)는 그대로 Pretendard Bold를 씁니다.
-- 장치: 화면 전체 브라운관 프레임(주사선·노이즈·비네트), 타임코드, `[대괄호]` 고정폭 라벨, 흑백 토글, 눈금 진행 막대, "Next tape"
+- 색: 바탕 `#050505`, 화면 글자 `#f5f5f2`(색이 치우치지 않은 흰색), 회색 `#dcdcd7`·`#bbbbbb`, 포인트 `#ff3131`, HUD 선 흰색 28% (`uno.config.ts`, `globals.css`의 `--line`)
+- 글꼴(사용자가 견본에서 고른 조합): 영문 큰 제목 Bodoni Moda(광학 크기 축), 한글 큰 제목 Noto Serif KR, 본문 IBM Plex Sans KR, 영문 라벨·숫자 IBM Plex Mono, 한글 라벨 Nanum Gothic Coding. 모두 `next/font/google`로 빌드 때 받아 함께 배포합니다. 한글 글꼴은 굵기마다 글자 묶음별 `@font-face` 규칙이 100개 남짓 붙어 CSS가 커지므로 쓰는 굵기만 둡니다(본문 400·500, 제목 500, 라벨 400).
+- 장치: 화면 네 모서리 조준선(`.crt-overlay`), 120px 십자 격자(`.crt-screen::before`, 고정 층이라 스크롤 때 다시 칠하지 않음), 흰 바탕에 검은 글자로 뒤집은 표시(`hud-tag`), 왼쪽 위·오른쪽 아래 조준선을 단 상자(`.hud-frame`, 상품 화면의 `.crt-inset`), ON/OFF 상자 토글(`SwitchMark`), `[대괄호]` 고정폭 라벨, 타임코드
+- 모서리 둥글기는 테마 토큰에서 모두 0입니다(`rounded-full`만 원). 머리글·상태 표시줄 바탕은 불투명해 뒤 본문이 비치지 않습니다.
 - 노이즈는 화면보다 넓게 깐 층을 `transform`으로 네 위치에 옮깁니다(`steps(4)`). `background-position`을 움직이면 가만히 둔 화면에서도 매 프레임 스타일을 다시 계산하고 다시 칠합니다. 노이즈 타일은 360px입니다. 180px이면 브라우저가 이 장식 그림을 LCP 후보로 잡아 실제 제목 대신 노이즈가 LCP가 됩니다.
 - 셀렉트는 `shared/ui`의 `Select`를 씁니다. 기본 화살표를 끄고 직접 그린 화살표를 글자 왼쪽 간격과 같은 자리에 둡니다(어드민은 Bulma 화살표 위치를 `admin.css`에서 같은 기준으로).
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.

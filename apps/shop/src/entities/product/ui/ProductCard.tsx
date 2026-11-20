@@ -10,13 +10,13 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
   const soldOut = product.stock === 0;
 
   return (
-    <article className="group relative flex h-full flex-col gap-3 rounded-lg border border-white/10 bg-ink-soft/60 p-4 transition-colors hover:border-white/30">
-      <div className="relative grid aspect-square place-items-center overflow-hidden rounded-md bg-black/40 text-cream">
-        <GearArt art={product.art} className="h-4/5 w-4/5 transition-transform duration-300 group-hover:scale-105" />
-        <span className="absolute left-2 top-2 font-mono text-[11px] uppercase text-label">[{category.code}]</span>
-        {soldOut && <span className="absolute right-2 top-2 rounded-sm bg-cream px-1.5 py-0.5 font-mono text-[11px] text-ink">품절</span>}
+    <article className="group relative flex h-full flex-col gap-3 border border-white/15 bg-ink-deep/80 p-4 transition-colors hover:border-cream">
+      <div className="relative grid aspect-square place-items-center overflow-hidden bg-black/50 text-cream">
+        <GearArt art={product.art} className="h-4/5 w-4/5" />
+        <span className="hud-tag absolute left-2 top-2 text-[11px]">{category.code}</span>
+        {soldOut && <span className="hud-tag absolute right-2 top-2 text-[11px]">품절</span>}
         {product.purchaseMode === "consult" && (
-          <span className="absolute right-2 top-2 rounded-sm border border-cream/60 px-1.5 py-0.5 font-mono text-[11px] text-cream">상담</span>
+          <span className="absolute right-2 top-2 border border-cream/70 px-1.5 font-mono text-[11px] leading-5 text-cream">상담</span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1">

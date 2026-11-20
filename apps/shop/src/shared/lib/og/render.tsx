@@ -15,30 +15,51 @@ const fontData = readFile(join(process.cwd(), "node_modules/pretendard/dist/publ
 // 빌드가 이 경로를 추적해 이 파일을 쓰는 서버 함수마다 넣는다(.next/server/app/**/*.nft.json).
 const logoSrc = readFile(join(process.cwd(), "public/brand/logo.png")).then((png) => `data:image/png;base64,${png.toString("base64")}`);
 
-/** 상품 그림(SVG)을 이미지 주소로 바꾼다. 선 색(currentColor)은 크림색으로 칠한다. */
+/** 상품 그림(SVG)을 이미지 주소로 바꾼다. 선 색(currentColor)은 화면 글자색으로 칠한다. */
 export function artDataUri(art: GearArtValue) {
-  const svg = toSvgString(<GearArt art={art} width={200} height={200} xmlns="http://www.w3.org/2000/svg" />).replaceAll("currentColor", "#fcf8ef");
+  const svg = toSvgString(<GearArt art={art} width={200} height={200} xmlns="http://www.w3.org/2000/svg" />).replaceAll("currentColor", "#f5f5f2");
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 }
 
-/** 브라운관 화면처럼 꾸민 1200×630 공유 이미지 틀 */
+/** 화면 네 모서리의 조준선 하나 (사이트 HUD 틀과 같은 모양) */
+function Corner({ top, left }: { top: boolean; left: boolean }) {
+  const line = "3px solid #f5f5f2";
+  return (
+    <div
+      style={{
+        position: "absolute",
+        width: 34,
+        height: 34,
+        ...(top ? { top: 22, borderTop: line } : { bottom: 22, borderBottom: line }),
+        ...(left ? { left: 22, borderLeft: line } : { right: 22, borderRight: line }),
+      }}
+    />
+  );
+}
+
+/** 사이트처럼 검은 바탕에 네 모서리 조준선을 단 1200×630 공유 이미지 틀 */
 export async function renderOg(children: ReactNode) {
   return new ImageResponse(
-    <div style={{ display: "flex", width: "100%", height: "100%", background: "#050505", padding: 28 }}>
+    <div style={{ display: "flex", position: "relative", width: "100%", height: "100%", background: "#050505", padding: 28 }}>
+      <Corner top left />
+      <Corner top left={false} />
+      <Corner top={false} left />
+      <Corner top={false} left={false} />
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           width: "100%",
           height: "100%",
-          borderRadius: 40,
-          background: "radial-gradient(ellipse at 50% 40%, #262626 0%, #111111 65%, #0b0b0b 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.22)",
+          background: "#0a0a0a",
           padding: "40px 56px",
-          color: "#fcf8ef",
+          color: "#f5f5f2",
           fontFamily: "Pretendard",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 30 }}>
+          <div style={{ display: "flex", background: "#f5f5f2", color: "#050505", fontSize: 20, padding: "2px 10px" }}>SYS</div>
           <img src={await logoSrc} width={40} height={40} alt="" />
           My First Gear
         </div>

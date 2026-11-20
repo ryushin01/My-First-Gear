@@ -114,7 +114,7 @@ async function ProductContent({ slug }: { slug: string }) {
         </div>
 
         <div className="flex flex-col gap-8">
-          <figure className="crt-inset relative grid aspect-[4/3] place-items-center overflow-hidden rounded-[28px] border-8 border-[#1d1d1d] bg-black text-cream">
+          <figure className="crt-inset grid aspect-[4/3] place-items-center overflow-hidden text-cream">
             <GearArt art={product.art} label={`${product.name} 그림`} className="h-4/5 w-4/5" />
             <figcaption className="absolute bottom-3 left-4 font-mono text-[11px] uppercase text-label">Play ▶ {product.slug}</figcaption>
           </figure>

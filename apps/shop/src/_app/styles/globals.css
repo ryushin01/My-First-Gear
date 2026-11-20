@@ -1,25 +1,27 @@
 @unocss;
 
 :root {
-  --edge: 40px;
-  --bezel-radius: 36px;
-  --ink: #111111;
+  --edge: 16px;
+  --ink: #0a0a0a;
   --ink-deep: #050505;
-  --cream: #fcf8ef;
+  --cream: #f5f5f2;
   --label: #ffffffbf;
   --brand: #ff3131;
+  /* HUD 선: 상자 테두리와 구분선 */
+  --line: rgb(255 255 255 / 0.28);
   /*
    * 노이즈 타일. 같은 baseFrequency라 360px로 키워도 결은 같고 반복 무늬만 덜 보인다.
    * 180px이면 브라우저가 이 장식 그림을 LCP 후보로 잡아 실제 제목 대신 노이즈가 LCP가 된다(360px은 저엔트로피 그림으로 빠짐).
    */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='360' height='360' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* 십자 격자: 120px마다 작은 + 표시 */
+  --crosshair: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M53 60h15M60 53v15' stroke='white' stroke-opacity='0.2'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 
 @media (max-width: 700px) {
   :root {
-    --edge: 12px;
-    --bezel-radius: 24px;
+    --edge: 8px;
   }
 }
 
@@ -29,10 +31,9 @@ html {
 
 body {
   min-height: 100dvh;
-  padding: var(--edge);
   background: var(--ink-deep);
   color: var(--cream);
-  font-family: var(--ff-latin), var(--ff-sans), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", system-ui, sans-serif;
+  font-family: var(--ff-sans), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -43,55 +44,64 @@ body {
   outline-offset: 3px;
 }
 
+/* 큰 제목: 디도네의 가는 획이 살게 조금 좁히고 중간 굵기로 */
+.font-display {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
 /* 흑백 모드: 화면 전체를 흑백으로 바꾼다 */
 html[data-bw="on"] .crt-screen {
   filter: grayscale(1) contrast(1.15) brightness(1.03);
 }
 
-/* 브라운관 화면 */
+/* 화면 틀: 둥근 브라운관 대신 네 모서리에 조준선을 단 HUD 화면 */
 .crt-screen {
   position: relative;
-  min-height: calc(100dvh - var(--edge) * 2);
-  border-radius: var(--bezel-radius);
-  background: radial-gradient(ellipse at 50% 40%, #222 0%, var(--ink) 60%, #0b0b0b 100%);
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   isolation: isolate;
 }
 
-/* 주사선, 노이즈, 가장자리 어두움. 화면 위에 고정해 스크롤해도 유지한다 */
+/* 십자 격자. 화면에 고정한 층에 깔아 스크롤할 때 다시 칠하지 않는다 */
+.crt-screen::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--crosshair);
+}
+
+/* 네 모서리 조준선과 필름 노이즈. 화면 위에 고정해 스크롤해도 유지한다 */
 .crt-overlay {
+  --corner: 26px;
   position: fixed;
   inset: var(--edge);
-  border-radius: var(--bezel-radius);
-  /* 노이즈 층을 화면보다 넓게 깔고 움직이므로 둥근 화면 밖은 잘라 낸다(바깥 베젤 그림자는 잘리지 않음) */
+  /* 노이즈 층을 화면보다 넓게 깔고 움직이므로 밖은 잘라 낸다 */
   overflow: hidden;
   pointer-events: none;
   z-index: 50;
-  box-shadow:
-    0 0 0 100vmax var(--ink-deep),
-    inset 0 0 80px 20px rgb(0 0 0 / 0.75),
-    inset 0 0 0 2px rgb(255 255 255 / 0.04);
+  background:
+    linear-gradient(var(--cream), var(--cream)) left top / var(--corner) 2px,
+    linear-gradient(var(--cream), var(--cream)) left top / 2px var(--corner),
+    linear-gradient(var(--cream), var(--cream)) right top / var(--corner) 2px,
+    linear-gradient(var(--cream), var(--cream)) right top / 2px var(--corner),
+    linear-gradient(var(--cream), var(--cream)) left bottom / var(--corner) 2px,
+    linear-gradient(var(--cream), var(--cream)) left bottom / 2px var(--corner),
+    linear-gradient(var(--cream), var(--cream)) right bottom / var(--corner) 2px,
+    linear-gradient(var(--cream), var(--cream)) right bottom / 2px var(--corner);
+  background-repeat: no-repeat;
 }
 
-.crt-overlay::before,
 .crt-overlay::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-}
-
-.crt-overlay::before {
-  background: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px);
-}
-
-.crt-overlay::after {
   /* 움직여도 가장자리가 비지 않게 움직이는 거리(최대 50px)보다 넓게 깐다 */
   inset: -60px;
-  border-radius: 0;
   background-image: var(--noise);
-  opacity: 0.06;
+  opacity: 0.05;
   mix-blend-mode: overlay;
   animation: grain-shift 0.9s steps(4) infinite;
 }
@@ -118,66 +128,66 @@ html[data-bw="on"] .crt-screen {
   }
 }
 
-/* 깜빡임은 밝기 변화가 아주 작아 섬광이 되지 않게 둔다 (KWCAG 6.3.1) */
-@keyframes crt-flicker {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.985;
-  }
-}
-
-.crt-content {
-  animation: crt-flicker 4s ease-in-out infinite;
-}
-
-/* 빨강·파랑 색 번짐 */
-.rgb-split {
-  text-shadow:
-    -1.5px 0 rgb(255 40 70 / 0.55),
-    1.5px 0 rgb(40 150 255 / 0.55);
-}
-
-/* 효과 끄기 토글: 노이즈와 깜빡임을 멈춘다 */
-html[data-fx="off"] .crt-overlay::after,
-html[data-fx="off"] .crt-content {
+/* 효과 끄기 토글: 노이즈를 멈춘다 */
+html[data-fx="off"] .crt-overlay::after {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crt-overlay::after,
-  .crt-content {
+  .crt-overlay::after {
     animation: none;
   }
 }
 
-/* 상세 페이지의 작은 TV 화면 */
+/* HUD 상자: 왼쪽 위와 오른쪽 아래 모서리에 조준선을 단다 */
+.hud-frame,
 .crt-inset {
-  box-shadow:
-    inset 0 0 60px rgb(0 0 0 / 0.9),
-    0 20px 50px rgb(0 0 0 / 0.5);
-  background:
-    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.03) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse at 50% 45%, #1e1e1e 0%, #050505 75%);
+  position: relative;
 }
 
-.crt-inset svg {
-  filter: drop-shadow(-2px 0 rgb(255 40 70 / 0.5)) drop-shadow(2px 0 rgb(40 150 255 / 0.5));
+.hud-frame::before,
+.hud-frame::after,
+.crt-inset::before,
+.crt-inset::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--cream);
+  pointer-events: none;
 }
 
-/* 헤더와 상태 표시줄은 화면에 붙어 있으므로 아래 본문이 비치지 않게 배경을 깐다 */
+.hud-frame::before,
+.crt-inset::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.hud-frame::after,
+.crt-inset::after {
+  right: 0;
+  bottom: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* 상세 페이지의 상품 화면: 십자 격자 위에 상품을 놓고 가는 선으로 두른다 */
+.crt-inset {
+  background: var(--ink-deep) var(--crosshair);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* 헤더와 상태 표시줄은 화면에 붙어 있으므로 아래 본문이 비치지 않게 바탕을 깔고 가는 선으로 나눈다 */
 .crt-chrome-top {
-  background: linear-gradient(to bottom, #161616 0%, #161616 78%, rgb(22 22 22 / 0));
-  border-top-left-radius: var(--bezel-radius);
-  border-top-right-radius: var(--bezel-radius);
+  background: var(--ink-deep);
+  border-bottom: 1px solid rgb(255 255 255 / 0.16);
 }
 
 .crt-chrome-bottom {
-  background: linear-gradient(to top, #121212 0%, #121212 78%, rgb(18 18 18 / 0));
-  border-bottom-left-radius: var(--bezel-radius);
-  border-bottom-right-radius: var(--bezel-radius);
+  background: var(--ink-deep);
+  border-top: 1px solid rgb(255 255 255 / 0.16);
 }
 
 /*

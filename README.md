@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-1.1.0-ff3131)
+![version](https://img.shields.io/badge/version-1.2.0-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 악기, 전자제품, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다. 데스크·게이밍 셋업 배치도 [V](https://github.com/ryushin01/V)와 제품 목록을 매일 주고받아, 서로에게 없는 제품을 자동으로 채웁니다.
 
@@ -11,9 +11,9 @@
 
 ## 화면
 
-| 홈 (VHS 테이프 캐러셀) | 게이밍 모니터 존 |
+| 홈 (상품 캐러셀) | 게이밍 모니터 존 |
 |---|---|
-| ![브라운관 화면 안에 VHS 표지처럼 꾸민 AMD 라이젠 7 9800X3D 그림이 가운데 놓이고 양옆에 KEF 스피커, 그래픽카드, 안텍 토크 테이프가 보이는 캐러셀](docs/images/shop-home.jpg) | ![49인치 곡면 오디세이 OLED G9, 평면 32인치, 삼각대 받침 27인치, 곡면 34인치 모니터 그림이 놓인 상품 카드 네 장](docs/images/shop-monitors.jpg) |
+| ![네 모서리에 조준선을 단 검은 화면, 십자 격자 위로 AMD 라이젠 7 9800X3D 신호 카드가 가운데 놓이고 양옆에 KEF 스피커, 그래픽카드, 안텍 토크 카드가 비스듬히 보이는 캐러셀](docs/images/shop-home.jpg) | ![49인치 곡면 오디세이 OLED G9, 평면 32인치, 삼각대 받침 27인치, 곡면 34인치 모니터 그림이 놓인 상품 카드 네 장](docs/images/shop-monitors.jpg) |
 
 | PC 견적 | 예산별 빠른 견적 |
 |---|---|
@@ -21,7 +21,7 @@
 
 | 상품 상세 | 상품 비교 |
 |---|---|
-| ![대괄호 라벨, 큰 세리프 상품명, 작은 TV 화면 속 흰색 곡면 오디세이 OLED G9 그림과 사양 표](docs/images/shop-detail.jpg) | ![게이밍 모니터 세 대의 가격, 평점, 크기, 해상도, 패널, 주사율을 나란히 놓은 비교 표](docs/images/shop-compare.jpg) |
+| ![대괄호 라벨, 큰 세리프 상품명, 십자 격자 위 조준선 틀 속 흰색 곡면 오디세이 OLED G9 그림과 사양 표](docs/images/shop-detail.jpg) | ![게이밍 모니터 세 대의 가격, 평점, 크기, 해상도, 패널, 주사율을 나란히 놓은 비교 표](docs/images/shop-compare.jpg) |
 
 | 마이페이지 | 상품 후기·Q&A |
 |---|---|
@@ -37,7 +37,7 @@
 
 | 모바일 홈 | 어드민 문의 답변 |
 |---|---|
-| <img src="docs/images/mobile-home.jpg" alt="모바일 브라운관 화면 속 CPU 그림 테이프 캐러셀과 넘김 버튼" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
+| <img src="docs/images/mobile-home.jpg" alt="모바일 화면 속 CPU 신호 카드 캐러셀, 넘김 버튼, 시계와 흑백·효과 토글이 한 줄에 놓인 상태 표시줄" width="240"> | ![1:1 문의와 상품 Q&A를 답변 대기 건수와 함께 보여 주고 답변을 입력하는 화면](docs/images/admin-inquiries.jpg) |
 
 ## 주요 기능
 
@@ -45,7 +45,7 @@
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | 브라운관 TV 프레임, ← → 키로 넘기는 VHS 테이프 캐러셀, 스크롤하면 부품이 케이스 안으로 모이는 조립 장면(화면 고정, CSS 스크롤 타임라인), 게이밍 모니터 존, 35개 카테고리 채널 목록 |
+| 홈 | 네 모서리 조준선과 십자 격자의 HUD 화면, ← → 키로 넘기는 상품 캐러셀, 스크롤하면 부품이 케이스 안으로 모이는 조립 장면(화면 고정, CSS 스크롤 타임라인), 게이밍 모니터 존, 35개 카테고리 채널 목록 |
 | 기어·검색 | 카테고리 목록(48개씩 더 보기), 필터·정렬(주소에 유지), 검색(카테고리 별칭 포함), 상품 비교(최대 4개), 최근 본 상품, 상품별 공유 이미지·구조화 데이터 |
 | V 연동 | 상품 290개 중 155개는 V 배치도의 실제 모델에서 가져온 상품(놓는 자리·소비 전력 사양). V에도 있는 상품은 V로 이어 주는 링크. 쇼핑몰 상품 목록을 `/feed/gear.json`으로 공개하고 V 목록은 매일 동기화 |
 | PC 견적·조립 | 부품 8칸 선택, 소켓·메모리·보드 크기·그래픽카드 길이·두께·전원 커넥터·쿨러 높이·파워 용량 검사, 예산·용도별 빠른 견적, 견적 주소 공유(메신저 미리보기에 구성 이미지)·되돌리기, 조립 옵션 |
@@ -130,10 +130,11 @@ packages/
 
 | 글꼴 | 쓰는 곳 | 굵기 |
 |---|---|---|
-| Azeret Mono | 영문·숫자 (큰 제목·본문) | 100~900 가변 |
-| 블랙 앤 화이트 픽처 | 한글 큰 제목 | 400 |
-| Gothic A1 | 한글 본문 | 400·700 |
-| 나눔고딕코딩 | 라벨·견적 금액 | 400·700 |
+| Bodoni Moda | 영문 큰 제목 | 가변(광학 크기 축) |
+| Noto Serif KR | 한글 큰 제목 | 500 |
+| IBM Plex Sans KR | 본문(한글·영문) | 400·500 |
+| IBM Plex Mono | 영문 라벨·숫자·금액 | 400·500 |
+| 나눔고딕코딩 | 한글 라벨 | 400 |
 
 저작자·라이선스·원본은 아래 출처 표에 있습니다. 모두 `next/font/google`이 빌드 때 받아 같은 사이트에서 제공합니다(외부 글꼴 CDN 없음).
 
@@ -142,10 +143,11 @@ packages/
 | 자료 | 저작자 | 사용 허락 | 원본 |
 |---|---|---|---|
 | 트로피 아이콘 (두 앱의 파비콘·홈 화면 아이콘·머리글 로고) | Slidicon | Flaticon 무료 라이선스(저작자 표기 조건) | [Flaticon "Trophy"](https://www.flaticon.com/free-icon/trophy_3865212) — [Trophy icons created by Slidicon - Flaticon](https://www.flaticon.com/free-icons/trophy) |
-| Azeret Mono (영문·숫자 큰 제목·본문) | Displaay, Martin Vácha | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Azeret+Mono) |
-| Black And White Picture (한글 큰 제목) | AsiaSoft Inc. | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Black+And+White+Picture) |
-| Gothic A1 (본문 한글) | HanYang I&C Co | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Gothic+A1) |
-| Nanum Gothic Coding (라벨·금액) | Sandoll Communication (네이버 나눔글꼴) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Nanum+Gothic+Coding) |
+| Bodoni Moda (영문 큰 제목) | Owen Earl (indestructible type*) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Bodoni+Moda) |
+| Noto Serif KR (한글 큰 제목) | Google, Adobe (본명조) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Serif+KR) |
+| IBM Plex Sans KR (본문) | Mike Abbink, Bold Monday (IBM) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans+KR) |
+| IBM Plex Mono (영문 라벨·금액) | Mike Abbink, Bold Monday (IBM) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Mono) |
+| Nanum Gothic Coding (한글 라벨) | Sandoll Communication (네이버 나눔글꼴) | SIL OFL 1.1 | [Google Fonts](https://fonts.google.com/specimen/Nanum+Gothic+Coding) |
 | Pretendard Bold (공유 이미지) | 길형진 (orioncactus) | SIL OFL 1.1 | [GitHub](https://github.com/orioncactus/pretendard) |
 
-상품 그림 SVG는 모두 실제 제품을 보고 직접 그렸고, 로고와 상표 문양은 넣지 않았습니다. 브라운관·VHS 화면 콘셉트는 [arc marumo](https://www.arcmarumo.com/)를 참고했으며 그 사이트의 자료는 가져오지 않았습니다.
+상품 그림 SVG는 모두 실제 제품을 보고 직접 그렸고, 로고와 상표 문양은 넣지 않았습니다. 1.2.0의 HUD 화면(검은 노이즈 바탕, 십자 격자, 모서리 조준선, 뒤집은 라벨)은 The Digital Panda의 [The Spark](https://www.cssdesignawards.com/sites/the-spark/48435/)를, 그 전의 브라운관·VHS 콘셉트는 [arc marumo](https://www.arcmarumo.com/)를 참고했으며 두 사이트의 자료는 가져오지 않았습니다.

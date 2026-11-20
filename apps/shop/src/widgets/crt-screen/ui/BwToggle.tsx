@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { SwitchMark } from "./SwitchMark";
 
 const STORAGE_KEY = "mfg:bw";
 const listeners = new Set<() => void>();
@@ -38,9 +39,10 @@ export function BwToggle() {
       type="button"
       aria-pressed={on}
       onClick={() => write(!on)}
-      className="min-h-8 justify-self-start font-mono uppercase text-label hover:text-cream"
+      className="inline-flex min-h-8 items-center gap-2 justify-self-start font-mono uppercase text-label hover:text-cream"
     >
-      B&amp;W <span aria-hidden="true">[{on ? "ON" : "OFF"}]</span>
+      B&amp;W
+      <SwitchMark on={on} />
     </button>
   );
 }
