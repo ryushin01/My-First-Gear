@@ -49,10 +49,20 @@ export function ProductBrowser({ categoryId, group }: ProductBrowserProps) {
   const visible = shown.slice(0, limit);
   const rest = shown.length - visible.length;
   const brandList = brandsOf(all);
+  // 한글 브랜드는 영문 표기를 함께 적는다(영어 병기).
+  const brandEn = new Map(all.flatMap((p) => (p.brandEn ? [[p.brand, p.brandEn] as const] : [])));
   const brandBoxes: ReactNode = brandList.map((brand) => (
     <label key={brand} className="inline-flex min-h-8 cursor-pointer items-center gap-2 text-sm">
       <input type="checkbox" className="size-4 accent-[#ff3131]" name="brand" value={brand} defaultChecked={brands.includes(brand)} />
-      {brand}
+      <span>
+        {brand}
+        {brandEn.has(brand) && (
+          <span lang="en" className="text-label">
+            {" "}
+            {brandEn.get(brand)}
+          </span>
+        )}
+      </span>
     </label>
   ));
 

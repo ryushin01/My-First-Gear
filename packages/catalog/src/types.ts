@@ -138,7 +138,11 @@ export type Product = {
   id: string;
   slug: string;
   name: string;
+  /** 영문 이름(영어 병기). 이름에 한글이 있는 상품에 붙는다(english.ts). */
+  nameEn?: string;
   brand: string;
+  /** 브랜드 영문 표기. 브랜드 이름이 한글일 때만 붙는다(english.ts). */
+  brandEn?: string;
   categoryId: CategoryId;
   /** 판매가 (원). 가상 가격이다. */
   price: number;
