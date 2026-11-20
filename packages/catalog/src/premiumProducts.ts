@@ -226,7 +226,7 @@ export const premiumProducts: Product[] = [
       ["지원 CPU", "스레드리퍼 7000·9000, PRO 7000·9000 WX"],
       ["네트워크", "10GbE + 2.5GbE, Wi-Fi"],
     ],
-    compat: { part: "mainboard", socket: "sTR5", memoryType: "DDR5 RDIMM", formFactor: "E-ATX", memorySlots: 4 },
+    compat: { part: "mainboard", socket: "sTR5", memoryType: "DDR5 RDIMM", formFactor: "CEB", memorySlots: 4 },
     rating: 4.7,
     reviewCount: 19,
     salesRank: 107,
@@ -664,7 +664,7 @@ export const premiumProducts: Product[] = [
     ],
     compat: {
       part: "case",
-      boards: ["ATX", "mATX", "ITX"],
+      boards: ["CEB", "ATX", "mATX", "ITX"],
       maxGpuLengthMm: 400,
       maxCoolerHeightMm: 150,
       maxGpuSlots: 4,

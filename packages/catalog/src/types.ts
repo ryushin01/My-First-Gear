@@ -105,7 +105,8 @@ export type CategoryGroup = {
 export type Socket = "AM5" | "LGA1851" | "LGA1700" | "sTR5";
 /** 스레드리퍼(sTR5)는 레지스터드 메모리(RDIMM)만 받는다. */
 export type MemoryType = "DDR5" | "DDR5 RDIMM";
-export type BoardFormFactor = "E-ATX" | "ATX" | "mATX" | "ITX";
+/** CEB(12×10.5인치, 워크스테이션 보드)는 E-ATX보다 작아 E-ATX를 받는 케이스에도 들어간다. */
+export type BoardFormFactor = "E-ATX" | "CEB" | "ATX" | "mATX" | "ITX";
 export type PsuFormFactor = "ATX" | "SFX";
 
 /** PC 견적에서 호환성을 따질 때 쓰는 부품 값 */

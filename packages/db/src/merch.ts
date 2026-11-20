@@ -23,7 +23,8 @@ export function seedMerch(): Omit<Merch, "updatedAt">[] {
  * 이미 있는 행은 그대로 둔다. 주문처럼 행을 잠그기 전에 부른다.
  */
 export async function ensureMerch(db: Pick<Db, "insert">, productIds: readonly string[]): Promise<void> {
-  const rows = productIds.flatMap((id) => {
+  // 동시에 온 주문이 같은 상품들을 서로 다른 순서로 넣다가 교착하지 않게, 겹친 id를 빼고 id 순서로 넣는다.
+  const rows = [...new Set(productIds)].sort().flatMap((id) => {
     const product = getProductById(id);
     return product ? [defaultMerch(product)] : [];
   });

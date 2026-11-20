@@ -22,6 +22,16 @@ describe("데스크 셋업 조합", () => {
     expect(issues).toContainEqual(expect.objectContaining({ level: "error", message: expect.stringContaining("32인치까지") }));
   });
 
+  it("새로 들인 모니터와 V에서 가져온 모니터도 모니터암 크기를 검사한다", () => {
+    const big = checkSetup({ monitor: p("samsung-odyssey-neo-g9-57"), "monitor-arm": p("ergotron-lx") });
+    expect(big).toContainEqual(expect.objectContaining({ level: "error", slots: ["monitor", "monitor-arm"] }));
+    // V 모니터는 무게를 몰라 크기만 본다.
+    const fromV = checkSetup({ monitor: p("lg-ultragear-45gr95qe"), "monitor-arm": p("ergotron-lx") });
+    expect(fromV.map((issue) => issue.message)).toContainEqual(expect.stringContaining("34인치까지"));
+    const smallV = checkSetup({ monitor: p("lg-ultragear-27gs95qe"), "monitor-arm": p("ergotron-lx") });
+    expect(smallV.filter((issue) => issue.level === "error")).toEqual([]);
+  });
+
   it("무게가 한도를 넘으면 오류", () => {
     const issues = checkSetup({ monitor: p("samsung-odyssey-neo-g7-43"), "monitor-arm": p("ergotron-lx") });
     expect(issues.some((i) => i.level === "error")).toBe(true);

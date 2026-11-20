@@ -117,6 +117,13 @@ const WATTS_BASIS: Readonly<Record<string, string>> = {
   default: "기본값",
 };
 
+/**
+ * 표에서 자기 속성만 읽는다. 피드 값이 "constructor"처럼 객체가 물려받은 이름이어도
+ * 상속 값을 돌려주지 않아, 이상한 피드 한 줄이 카탈로그 전체를 멈추지 않는다.
+ */
+const own = <T>(table: Readonly<Record<string, T>>, key: string | undefined): T | undefined =>
+  key !== undefined && Object.hasOwn(table, key) ? table[key] : undefined;
+
 const PALETTE = ["#ff3131", "#7b3fe4", "#1a9fff", "#e8a33d", "#2fbf71", "#e84393", "#9aa4b1", "#ff7a00"];
 
 /** 짝으로 놓는 스피커처럼 한 상품을 V가 둘로 나눠 둔 모델 */
@@ -179,7 +186,7 @@ function specsOf(main: PlannerFeedItem, group: readonly PlannerFeedItem[], watts
     },
   ];
   if (watts > 0) {
-    const basis = main.wattsBasis ? WATTS_BASIS[main.wattsBasis] : undefined;
+    const basis = own(WATTS_BASIS, main.wattsBasis);
     specs.push({ label: "소비 전력", value: `${num(watts)}W${basis ? ` (${basis})` : ""}` });
   } else if (main.wattsBasis === "usb") {
     specs.push({ label: "전원", value: "USB 전원" });
@@ -202,7 +209,7 @@ export function productsFromV(feed: PlannerFeed, native: readonly Product[]): Pr
   for (const [slug, group] of groupModels(feed.items)) {
     if (known.has(slug) || group.some((item) => known.has(item.id))) continue;
     const main = group.find((item) => item.id === slug) ?? [...group].sort((a, b) => b.watts - a.watts)[0];
-    const categoryId = CATEGORY_OVERRIDES[main.id] ?? KIND_CATEGORY[main.kind];
+    const categoryId = own(CATEGORY_OVERRIDES, main.id) ?? own(KIND_CATEGORY, main.kind);
     if (!categoryId) continue;
 
     const isPair = group.length > 1 && group.every((item) => PAIR.test(item.id));
@@ -212,7 +219,8 @@ export function productsFromV(feed: PlannerFeed, native: readonly Product[]): Pr
     const watts = group.reduce((sum, item) => sum + item.watts, 0);
     const estimate = group.some((item) => item.dimsBasis === "estimate");
     const h = hash(slug);
-    const art: ArtKind = categoryId === "dap" ? "dap" : (KIND_ART[main.kind] ?? "accessory");
+    const art: ArtKind = categoryId === "dap" ? "dap" : (own(KIND_ART, main.kind) ?? "accessory");
+    const compat = own(COMPAT_OVERRIDES, main.id);
 
     result.push({
       id: `p-v-${slug}`,
@@ -220,7 +228,7 @@ export function productsFromV(feed: PlannerFeed, native: readonly Product[]): Pr
       name,
       brand: main.brand,
       categoryId,
-      price: vPrices[slug] ?? fallbackPrices[categoryId] ?? 99_000,
+      price: own(vPrices, slug) ?? own(fallbackPrices, categoryId) ?? 99_000,
       stock: 3 + (h % 38),
       purchaseMode: "cart",
       art: { kind: art, accent: PALETTE[h % PALETTE.length], model: slug },
@@ -229,7 +237,7 @@ export function productsFromV(feed: PlannerFeed, native: readonly Product[]): Pr
         estimate ? " 치수는 제조사 값을 찾지 못해 비슷한 제품으로 추정했습니다." : ""
       }`,
       specs: specsOf(main, group, watts, estimate),
-      ...(COMPAT_OVERRIDES[main.id] ? { compat: COMPAT_OVERRIDES[main.id] } : {}),
+      ...(compat ? { compat } : {}),
       rating: (43 + ((h >>> 8) % 7)) / 10,
       reviewCount: 4 + ((h >>> 12) % 240),
       salesRank: 300 + result.length,

@@ -33,6 +33,8 @@ export function ProductBrowser({ categoryId, group }: ProductBrowserProps) {
   /** "더 보기"로 늘린 개수. 필터나 정렬(주소)이 바뀌면 처음 개수로 돌아간다. */
   const query = params.toString();
   const [paging, setPaging] = useState({ query, limit: PAGE_SIZE });
+  // 주소가 바뀌면 렌더링 중에 바로 처음 개수로 되돌린다(이전 주소로 돌아와도 늘린 개수가 되살아나지 않게).
+  if (paging.query !== query) setPaging({ query, limit: PAGE_SIZE });
   const limit = paging.query === query ? paging.limit : PAGE_SIZE;
   /** "더 보기"로 새로 보인 첫 상품. 키보드 사용자가 이어서 읽도록 그 상품으로 초점을 옮긴다. */
   const focusFrom = useRef<number | null>(null);

@@ -18,7 +18,10 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # 다른 브랜치에서 수동으로 돌려도 그 브랜치 커밋이 main에 섞이지 않게 늘 main을 받는다.
       - uses: actions/checkout@v7
+        with:
+          ref: main
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:

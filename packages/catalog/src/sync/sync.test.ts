@@ -76,6 +76,19 @@ describe("V 카탈로그 동기화", () => {
     expect(list).toEqual([]);
   });
 
+  it("객체가 물려받은 이름(constructor 등)이 와도 카탈로그를 멈추지 않고 건너뛴다", () => {
+    const list = productsFromV(
+      feed([
+        model("constructor", { kind: "constructor", wattsBasis: "constructor", watts: 10 }),
+        model("acme-desk", { kind: "desk", wattsBasis: "toString", watts: 10 }),
+      ]),
+      [],
+    );
+    expect(list.map((p) => p.slug)).toEqual(["acme-desk"]);
+    expect(list[0].price).toBe(690_000);
+    expect(list[0].specs.find((s) => s.label === "소비 전력")?.value).toBe("10W");
+  });
+
   it("같은 모델에는 늘 같은 가격·재고·평점을 준다", () => {
     expect(productsFromV(vFeed, nativeProducts)).toEqual(productsFromV(vFeed, nativeProducts));
   });
@@ -96,7 +109,8 @@ describe("쇼핑몰 피드", () => {
     expect(items.some((item) => imported.has(item.id))).toBe(false);
     expect(items.find((item) => item.id === "edifier-qr65")?.aliases).toEqual(["edifier-qr65-active", "edifier-qr65-passive"]);
     expect(items.find((item) => item.id === "roland-fantom-08")).toMatchObject({ widthCm: 139.3, depthCm: 35.4 });
-    expect(items.find((item) => item.id === "lg-ultragear-oled-45gx950a")).toMatchObject({ diagonalInch: 45, aspect: "21:9" });
+    // 크기 표(monitorSizes)가 있으면 그 실측값(대각선 44.5인치, 스탠드 뺀 폭 992mm)을 보낸다.
+    expect(items.find((item) => item.id === "lg-ultragear-oled-45gx950a")).toMatchObject({ diagonalInch: 44.5, widthCm: 99.2, aspect: "21:9" });
     expect(items.find((item) => item.id === "phoenix-keyboard")?.layout).toBe("텐키리스 F13 (88키)");
   });
 });
