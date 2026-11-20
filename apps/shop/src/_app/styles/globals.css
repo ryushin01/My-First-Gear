@@ -139,6 +139,14 @@ html[data-fx="off"] .crt-overlay::after {
   }
 }
 
+/* 고대비(강제 색) 모드에서는 바탕색이 지워지므로 ON/OFF 토글의 켜진 칸을 테두리로 알린다 */
+@media (forced-colors: active) {
+  .switch-on {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+}
+
 /* HUD 상자: 왼쪽 위와 오른쪽 아래 모서리에 조준선을 단다 */
 .hud-frame,
 .crt-inset {
