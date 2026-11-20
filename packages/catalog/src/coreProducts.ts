@@ -885,6 +885,35 @@ export const coreProducts: Product[] = [
     salesRank: 28,
     releasedAt: "2023-03-01",
   },
+  {
+    id: "p-ep-003",
+    slug: "bang-olufsen-a8",
+    name: "뱅앤올룹슨 A8",
+    brand: "Bang & Olufsen",
+    categoryId: "earphone",
+    price: 260_000,
+    stock: 3,
+    purchaseMode: "cart",
+    art: { kind: "earphone", accent: "#b8bcc2", model: "bang-olufsen-a8" },
+    tagline: "귀 뒤로 거는 알루미늄 오픈형",
+    description:
+      "둥근 알루미늄 몸체에 긴 귀걸이를 달아 귀 뒤로 걸어 쓰는 행거형 오픈에어 이어폰입니다. 걸이가 귀를 감싸 움직여도 잘 빠지지 않습니다. 2000년에 나와 2018년에 단종되어 남은 재고만 판매합니다.",
+    specs: [
+      { label: "형태", value: "행거형 오픈에어" },
+      { label: "드라이버", value: "14mm 다이내믹" },
+      { label: "임피던스", value: "19Ω" },
+      { label: "재생 주파수", value: "20Hz~20kHz" },
+      { label: "무게", value: "약 22g (코드 제외)" },
+      { label: "크기", value: "35 × 50 × 14mm" },
+      { label: "하우징", value: "알루미늄" },
+      { label: "케이블", value: "1.2m, 3.5mm 스테레오 플러그" },
+      { label: "구성품", value: "휴대용 가죽 케이스" },
+    ],
+    rating: 4.6,
+    reviewCount: 312,
+    salesRank: 146,
+    releasedAt: "2000-01-01",
+  },
 
   // 헤드폰
   {

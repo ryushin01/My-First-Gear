@@ -251,6 +251,43 @@ function blessing3(): ReactNode {
   );
 }
 
+/** 뱅앤올룹슨 A8: 둥근 알루미늄 몸체 위로 긴 귀걸이가 휘어 귀 뒤로 넘어가는 행거형 */
+function boA8(): ReactNode {
+  const unit = (cx: number, flip: boolean) => (
+    <g transform={flip ? `scale(-1 1) translate(${-2 * cx} 0)` : undefined}>
+      {/* 귀 위로 넘어가 뒤로 내려오는 귀걸이 */}
+      <path
+        d={`M${cx + 6} 100 C ${cx + 6} 44, ${cx - 44} 30, ${cx - 40} 76 C ${cx - 37} 100, ${cx - 26} 110, ${cx - 22} 126`}
+        fill="none"
+        stroke="#2b2c31"
+        strokeWidth={6}
+        strokeLinecap="round"
+      />
+      <path d={`M${cx + 4} 92 C ${cx + 4} 54, ${cx - 30} 42, ${cx - 34} 66`} fill="none" stroke="#4a4c53" strokeWidth={1.4} />
+      {/* 길이를 맞추는 알루미늄 막대 */}
+      <rect x={cx + 2} y={86} width={8} height={26} rx={2} fill="#b8bcc2" />
+      <rect x={cx + 4} y={88} width={2} height={22} fill="#e4e6e9" opacity={0.7} />
+      {/* 둥근 알루미늄 몸체 */}
+      <circle cx={cx + 6} cy={124} r={18} fill="#a8adb4" />
+      <circle cx={cx + 6} cy={124} r={15} fill="#c9ccd1" />
+      <circle cx={cx + 6} cy={124} r={9} fill="#8f949b" />
+      {range(3).map((i) => (
+        <circle key={i} cx={cx + 6} cy={124} r={3 + i * 2} fill="none" stroke="#c9ccd1" strokeWidth={0.8} opacity={0.6} />
+      ))}
+      <path d={`M${cx - 6} 116 A 15 15 0 0 1 ${cx + 12} 110`} fill="none" stroke="#ffffff" strokeWidth={2} opacity={0.5} />
+      {/* 케이블 */}
+      <path d={`M${cx + 6} 142 C ${cx + 8} 162, 100 160, 100 186`} fill="none" stroke="#2b2c31" strokeWidth={2} />
+    </g>
+  );
+  return (
+    <g>
+      <Shadow cx={100} cy={186} rx={56} ry={4} />
+      {unit(62, false)}
+      {unit(138, true)}
+    </g>
+  );
+}
+
 /* ───────────── 헤드폰 ───────────── */
 
 function hd600(): ReactNode {
@@ -438,6 +475,7 @@ export const deviceModels: Record<string, () => ReactNode> = {
   "sony-nw-a306": () => walkman({ body: "#2f5d8c", bodyLight: "#5d8fc4", screen: ["#101216", "#2d6fb3"] }),
   "sony-wf-1000xm5": wf1000xm5,
   "moondrop-blessing-3": blessing3,
+  "bang-olufsen-a8": boA8,
   "sennheiser-hd-600": hd600,
   "sony-wh-1000xm6": wh1000xm6,
   "nintendo-switch-2": switch2,
