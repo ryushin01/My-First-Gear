@@ -8,3 +8,5 @@ export * from "./search";
 export * from "./recommend";
 export * from "./setup";
 export * from "./sales";
+export { V_PLANNER_URL, type PlannerFeed, type PlannerFeedItem, type ShopFeed, type ShopFeedItem } from "./sync/feeds";
+export { shopFeed } from "./sync/shopFeed";

@@ -22,7 +22,8 @@ const comparators: Record<SortKey, (a: Product, b: Product) => number> = {
   sales: (a, b) => a.salesRank - b.salesRank,
   "price-asc": (a, b) => a.price - b.price,
   "price-desc": (a, b) => b.price - a.price,
-  newest: (a, b) => b.releasedAt.localeCompare(a.releasedAt),
+  // 출시일을 모르는 상품(V에서 가져온 상품)은 뒤로 보낸다.
+  newest: (a, b) => (b.releasedAt ?? "").localeCompare(a.releasedAt ?? ""),
   reviews: (a, b) => b.reviewCount - a.reviewCount,
 };
 

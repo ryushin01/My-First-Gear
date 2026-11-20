@@ -5,7 +5,9 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "peripherals", name: "주변기기", code: "PERIPHERALS" },
   { id: "desk-setup", name: "데스크 셋업", code: "DESK SETUP" },
   { id: "computers", name: "컴퓨터", code: "COMPUTERS" },
+  { id: "electronics", name: "전자제품", code: "ELECTRONICS" },
   { id: "audio", name: "오디오", code: "AUDIO" },
+  { id: "music", name: "악기", code: "MUSIC" },
   { id: "play", name: "게임", code: "PLAY" },
   { id: "ride", name: "탈것", code: "RIDE" },
   { id: "watch", name: "시계", code: "WATCH" },
@@ -40,6 +42,15 @@ export const categories: Category[] = [
   { id: "car", group: "ride", name: "자동차", code: "CAR" },
   { id: "watch", group: "watch", name: "시계", code: "WATCH" },
   { id: "camping", group: "outdoor", name: "캠핑", code: "CAMPING", aliases: ["camping"] },
+  // 1.1.0에서 더한 카테고리. 채널 번호가 바뀌지 않게 뒤에 붙인다.
+  { id: "riser", group: "pc-parts", name: "라이저 킷", code: "RISER", aliases: ["라이저 케이블", "riser"] },
+  { id: "os", group: "pc-parts", name: "OS", code: "OS", aliases: ["운영체제", "operating system"] },
+  { id: "desktop", group: "computers", name: "데스크톱", code: "DESKTOP", aliases: ["데스크탑", "desktop"] },
+  { id: "amp-dac", group: "audio", name: "DAC·앰프", code: "DAC/AMP", aliases: ["dac", "amp"] },
+  { id: "instrument", group: "music", name: "악기", code: "INSTRUMENT", aliases: ["instrument"] },
+  { id: "electronics", group: "electronics", name: "전자제품", code: "ELECTRONICS", aliases: ["가전", "electronics"] },
+  { id: "furniture", group: "desk-setup", name: "선반·가구", code: "FURNITURE", aliases: ["가구", "furniture"] },
+  { id: "desk-accessory", group: "desk-setup", name: "데스크 소품", code: "ACCESSORY", aliases: ["소품", "accessory"] },
 ];
 
 const byId = new Map(categories.map((category) => [category.id, category]));

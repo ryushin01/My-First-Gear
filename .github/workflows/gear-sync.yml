@@ -1,0 +1,53 @@
+name: V 카탈로그 동기화
+
+# V 셋업 배치도의 실제 모델 목록(/feed/gear.json)을 매일 받아, 쇼핑몰에 없는 제품을 상품으로 들인다.
+# 바뀐 게 있으면 카탈로그·DB 시험을 돌린 뒤 main에 바로 올린다(운영 배포는 Vercel이 main을 받아 한다).
+on:
+  schedule:
+    - cron: "40 18 * * *" # 매일 03:40 (KST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gear-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: V 피드 받기
+        run: node packages/catalog/scripts/sync-v-feed.mjs
+      - name: 바뀐 게 있는지 보기
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "V 카탈로그가 그대로입니다."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat
+          fi
+      - if: steps.diff.outputs.changed == 'true'
+        run: pnpm install --frozen-lockfile
+      - name: 시험
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          pnpm typecheck
+          pnpm --filter @mfg/catalog test
+          pnpm --filter @mfg/db test
+      - name: main에 반영
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: V 카탈로그 동기화"
+          git push origin HEAD:main

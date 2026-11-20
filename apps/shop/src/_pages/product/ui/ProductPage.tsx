@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { channelOf, getCategory, getProductBySlug, nextInCategory, products, type Product } from "@mfg/catalog";
+import { channelOf, getCategory, getProductBySlug, nextInCategory, products, V_PLANNER_URL, type Product } from "@mfg/catalog";
 import { NOT_FOUND_TITLE, SITE_URL } from "@/shared/config";
 import { getCatalog } from "@/entities/product/index.server";
 import { GearArt } from "@mfg/gear-art";
@@ -136,6 +136,19 @@ async function ProductContent({ slug }: { slug: string }) {
                 ))}
               </tbody>
             </table>
+            {product.vModelId && (
+              <p className="text-sm text-mute-200">
+                {product.source === "v" && "V 셋업 배치도의 실제 모델에서 가져온 상품입니다. "}
+                <a
+                  href={V_PLANNER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center text-cream underline underline-offset-4 hover:text-brand"
+                >
+                  V 셋업 배치도에서 실제 크기로 배치해 보기<span className="sr-only"> (새 창)</span>
+                </a>
+              </p>
+            )}
           </section>
 
           {next.id !== product.id && (

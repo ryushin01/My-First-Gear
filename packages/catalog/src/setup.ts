@@ -63,7 +63,10 @@ export function checkSetup(setup: Setup): SetupIssue[] {
   const issues: SetupIssue[] = [];
   const monitor = setup.monitor ? monitorSizes[setup.monitor.slug] : undefined;
   const arm = setup["monitor-arm"] ? armSpecs[setup["monitor-arm"].slug] : undefined;
-  const desk = setup.desk ? deskSpecs[setup.desk.slug] : undefined;
+  // 표에 없는 책상(V에서 가져온 책상 등)은 놓는 자리의 가로 길이를 쓴다.
+  const desk = setup.desk
+    ? (deskSpecs[setup.desk.slug] ?? (setup.desk.footprint ? { widthMm: Math.round(setup.desk.footprint.widthCm * 10) } : undefined))
+    : undefined;
 
   if (monitor && arm) {
     if (monitor.inch > arm.maxInch) {
