@@ -1,8 +1,10 @@
 // @ts-expect-error 로컬 DB 스크립트는 JS 모듈이다
 import { startLocalDb } from "../scripts/local-db.mjs";
-import { sql } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
+import { getProductById, products } from "@mfg/catalog";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createDb, type Db } from "./client";
+import { productMerch } from "./schema";
 import { applyMerch, listMerch, updateMerch } from "./merch";
 import { dashboardStats, findOrderForBuyer, listOrders, OrderError, placeOrder, updateOrderStatus } from "./orders";
 import { createConsult, listConsults } from "./consults";
@@ -30,8 +32,20 @@ const buyer = { name: "김기어", phone: "010-1234-5678", email: "", address: "
 
 describe("판매 정보", () => {
   it("시드 마이그레이션으로 모든 상품이 들어 있다", async () => {
-    expect(await listMerch(db)).toHaveLength(91);
+    expect(await listMerch(db)).toHaveLength(products.length);
     expect(await listReviews(db, "p-cpu-001")).toHaveLength(2);
+  });
+
+  it("판매 정보 행이 없는 새 상품도 어드민에서 저장하고 주문할 수 있다", async () => {
+    await db.delete(productMerch).where(inArray(productMerch.productId, ["p-gpu-007", "p-v-sonos-arc-ultra"]));
+    const saved = await updateMerch(db, "p-gpu-007", { stock: 2 });
+    expect(saved).toMatchObject({ productId: "p-gpu-007", price: 5_290_000, stock: 2, visible: true });
+    expect(await updateMerch(db, "p-unknown", { stock: 1 })).toBeUndefined();
+
+    const order = await placeOrder(db, { lines: [{ itemId: "p-v-sonos-arc-ultra", quantity: 1 }], buyer, payment: "card" });
+    expect(order.subtotal).toBe(1_390_000);
+    const row = (await listMerch(db)).find((m) => m.productId === "p-v-sonos-arc-ultra");
+    expect(row?.stock).toBe(getProductById("p-v-sonos-arc-ultra")!.stock - 1);
   });
 
   it("가격을 바꾸고 숨기면 카탈로그에 반영된다", async () => {

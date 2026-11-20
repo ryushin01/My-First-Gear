@@ -16,7 +16,7 @@ test("검색: 낱말이 모두 들어간 상품을 찾고 최근 검색어를 �
   await page.goto("/search");
   await page.getByRole("searchbox", { name: "검색어" }).fill("AM5 메인보드");
   await page.getByRole("button", { name: "검색", exact: true }).click();
-  await expect(page.getByRole("status").filter({ hasText: "검색 결과" })).toHaveText('"AM5 메인보드" 검색 결과 2개');
+  await expect(page.getByRole("status").filter({ hasText: "검색 결과" })).toHaveText('"AM5 메인보드" 검색 결과 3개');
   await expect(page.getByRole("link", { name: "AM5 메인보드" })).toBeVisible(); // 최근 검색어
 });
 

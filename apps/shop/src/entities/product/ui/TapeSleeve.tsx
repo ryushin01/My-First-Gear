@@ -27,7 +27,7 @@ export function TapeSleeve({ product }: { product: Product }) {
         </p>
         <div aria-hidden="true" className="mt-[4%] flex items-center justify-between font-mono text-[clamp(8px,1.4cqi,10px)] uppercase text-label">
           <span className="rounded-sm border border-current px-1">{category.code}</span>
-          <span>{product.releasedAt.slice(0, 4)}</span>
+          <span>{product.releasedAt?.slice(0, 4) ?? "V"}</span>
           <span className="rounded-full border border-current px-1.5">MFG</span>
         </div>
       </div>

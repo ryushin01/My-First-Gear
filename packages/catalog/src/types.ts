@@ -26,7 +26,15 @@ export type ArtKind =
   | "chair"
   | "desk"
   | "monitor-arm"
-  | "lamp";
+  | "lamp"
+  | "riser"
+  | "os"
+  | "synth"
+  | "tv"
+  | "tablet"
+  | "amp"
+  | "shelf"
+  | "accessory";
 
 export type GearArt = {
   kind: ArtKind;
@@ -38,7 +46,8 @@ export type GearArt = {
   model?: string;
 };
 
-export type CategoryGroupId = "pc-parts" | "peripherals" | "computers" | "audio" | "play" | "ride" | "watch" | "outdoor" | "desk-setup";
+export type CategoryGroupId =
+  "pc-parts" | "peripherals" | "computers" | "electronics" | "audio" | "music" | "play" | "ride" | "watch" | "outdoor" | "desk-setup";
 
 export type CategoryId =
   | "cpu"
@@ -67,7 +76,15 @@ export type CategoryId =
   | "chair"
   | "desk"
   | "monitor-arm"
-  | "lighting";
+  | "lighting"
+  | "riser"
+  | "os"
+  | "desktop"
+  | "amp-dac"
+  | "instrument"
+  | "electronics"
+  | "furniture"
+  | "desk-accessory";
 
 export type Category = {
   id: CategoryId;
@@ -85,9 +102,11 @@ export type CategoryGroup = {
   code: string;
 };
 
-export type Socket = "AM5" | "LGA1851";
-export type MemoryType = "DDR5";
-export type BoardFormFactor = "E-ATX" | "ATX" | "mATX" | "ITX";
+export type Socket = "AM5" | "LGA1851" | "LGA1700" | "sTR5";
+/** 스레드리퍼(sTR5)는 레지스터드 메모리(RDIMM)만 받는다. */
+export type MemoryType = "DDR5" | "DDR5 RDIMM";
+/** CEB(12×10.5인치, 워크스테이션 보드)는 E-ATX보다 작아 E-ATX를 받는 케이스에도 들어간다. */
+export type BoardFormFactor = "E-ATX" | "CEB" | "ATX" | "mATX" | "ITX";
 export type PsuFormFactor = "ATX" | "SFX";
 
 /** PC 견적에서 호환성을 따질 때 쓰는 부품 값 */
@@ -137,6 +156,13 @@ export type Product = {
   reviewCount: number;
   /** 판매량 순위 (작을수록 많이 팔림) */
   salesRank: number;
-  releasedAt: string;
+  /** 출시일. V에서 가져온 상품처럼 출시일을 모르면 비워 둔다. */
+  releasedAt?: string;
   featured?: boolean;
+  /** 놓는 자리(가로 × 세로, cm). V 배치도에 넘길 때 쓴다. */
+  footprint?: { widthCm: number; depthCm: number };
+  /** 같은 제품이 있는 V 배치도 모델 id. 있으면 상품 화면에서 V로 이어 준다. */
+  vModelId?: string;
+  /** "v"면 V 배치도 카탈로그에서 가져온 상품 */
+  source?: "v";
 };

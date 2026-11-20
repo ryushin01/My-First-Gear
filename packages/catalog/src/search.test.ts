@@ -5,7 +5,11 @@ import { searchProducts } from "./search";
 
 describe("상품 검색", () => {
   it("낱말이 모두 들어간 상품만, 이름에 맞는 것을 먼저 찾는다", () => {
-    expect(searchProducts("AM5 메인보드").map((p) => p.slug)).toEqual(["asus-tuf-gaming-b650-plus", "msi-mag-b650m-mortar-wifi"]);
+    expect(searchProducts("AM5 메인보드").map((p) => p.slug)).toEqual([
+      "asus-tuf-gaming-b650-plus",
+      "msi-mag-b650m-mortar-wifi",
+      "msi-mag-x870e-tomahawk-max-wifi-pz",
+    ]);
     expect(searchProducts("소니 헤드폰")[0].slug).toBe("sony-wh-1000xm6");
     expect(searchProducts("  ")).toEqual([]);
     expect(searchProducts("없는상품이름")).toEqual([]);

@@ -507,6 +507,104 @@ const lamp: Drawing = (a) => (
   </>
 );
 
+const riser: Drawing = (a) => (
+  <>
+    {/* 메인보드에 꽂는 단자, 접히는 리본 케이블, 그래픽카드를 받는 슬롯 */}
+    <path d="M58 134 C 58 92, 142 108, 142 62" stroke={a} strokeOpacity="0.22" strokeWidth="26" strokeLinecap="butt" />
+    <path d="M45 134 C 45 86, 129 100, 129 62 M71 134 C 71 98, 155 116, 155 62" strokeWidth="1.5" />
+    <rect x="28" y="134" width="60" height="16" rx="2" />
+    {range(6).map((i) => (
+      <path key={i} d={`M${34 + i * 10} 150 v10`} stroke={a} strokeWidth="2" />
+    ))}
+    <rect x="110" y="40" width="64" height="22" rx="3" />
+    <path d="M118 51 h48" strokeWidth="1.5" />
+  </>
+);
+
+const os: Drawing = (a) => (
+  <>
+    {/* 설치 메모리가 든 상자. 상표 문양 대신 빈 창 모양만 그린다. */}
+    <path d="M52 44 h96 v124 h-96 z" />
+    <path d="M52 44 l14 -12 h96 l-14 12 M148 44 l14 -12 v124 l-14 12" />
+    <rect x="68" y="62" width="64" height="44" rx="3" fill={a} fillOpacity="0.15" stroke={a} />
+    <path d="M68 76 h64" stroke={a} strokeWidth="1.5" />
+    <rect x="86" y="122" width="28" height="34" rx="4" />
+    <rect x="92" y="114" width="16" height="8" />
+  </>
+);
+
+const synth: Drawing = (a) => (
+  <>
+    <rect x="14" y="74" width="172" height="62" rx="5" />
+    <rect x="24" y="82" width="34" height="14" rx="2" fill={a} fillOpacity="0.25" stroke={a} />
+    {range(6).map((i) => (
+      <circle key={i} cx={74 + i * 16} cy="89" r="4.5" strokeWidth="1.5" />
+    ))}
+    <path d="M24 104 h152 v24 h-152 z" />
+    {range(18).map((i) => (
+      <path key={i} d={`M${32 + i * 8} 104 v24`} strokeWidth="1" />
+    ))}
+    {[0, 1, 3, 4, 5, 7, 8, 10, 11, 12, 14, 15].map((i) => (
+      <rect key={i} x={30 + i * 8} y="104" width="4" height="14" fill="currentColor" stroke="none" />
+    ))}
+    <path d="M40 136 v12 M160 136 v12" />
+  </>
+);
+
+const tv: Drawing = (a) => (
+  <>
+    <rect x="16" y="40" width="168" height="98" rx="3" />
+    <path d="M26 112 Q 90 60, 172 70" stroke={a} strokeWidth="2" />
+    <path d="M44 138 l-8 18 M156 138 l8 18 M76 162 h48" />
+    <circle cx="100" cy="133" r="1.5" fill={a} stroke="none" />
+  </>
+);
+
+const tablet: Drawing = (a) => (
+  <>
+    <rect x="40" y="32" width="96" height="136" rx="10" />
+    <rect x="48" y="44" width="80" height="112" rx="3" fill={a} fillOpacity="0.12" stroke={a} />
+    <circle cx="88" cy="38" r="1.5" fill="currentColor" stroke="none" />
+    <rect x="128" y="96" width="40" height="72" rx="8" />
+    <path d="M136 106 h24 v52 h-24 z" strokeWidth="1.5" />
+  </>
+);
+
+const amp: Drawing = (a) => (
+  <>
+    <rect x="26" y="70" width="148" height="62" rx="6" />
+    <circle cx="140" cy="101" r="17" />
+    <path d="M140 101 L150 90" stroke={a} strokeWidth="3" />
+    <circle cx="46" cy="113" r="5" />
+    <circle cx="64" cy="113" r="5" />
+    <rect x="40" y="84" width="58" height="12" rx="2" fill={a} fillOpacity="0.2" stroke={a} />
+    <circle cx="112" cy="90" r="2.5" fill={a} stroke="none" />
+    <path d="M36 132 v8 M164 132 v8" />
+  </>
+);
+
+const shelf: Drawing = (a) => (
+  <>
+    <rect x="22" y="80" width="156" height="12" rx="2" />
+    <path d="M36 92 V140 M164 92 V140 M28 140 h20 M152 140 h20" />
+    <rect x="32" y="100" width="8" height="34" fill={a} fillOpacity="0.25" stroke="none" />
+    <rect x="160" y="100" width="8" height="34" fill={a} fillOpacity="0.25" stroke="none" />
+    <path d="M14 152 h172" strokeWidth="1.5" strokeDasharray="4 6" />
+  </>
+);
+
+const accessory: Drawing = (a) => (
+  <>
+    {/* 데스크 매트 위의 트레이, 펜, 컵 */}
+    <rect x="16" y="112" width="168" height="52" rx="8" fill={a} fillOpacity="0.14" stroke={a} />
+    <rect x="34" y="98" width="62" height="24" rx="5" />
+    <path d="M44 110 h42" strokeWidth="1.5" />
+    <path d="M112 132 L160 118" strokeWidth="4" />
+    <path d="M128 64 h28 l-4 40 h-20 z" />
+    <path d="M156 74 c 12 0, 12 18, 0 18" />
+  </>
+);
+
 export const drawings: Record<string, Drawing> = {
   cpu,
   mainboard,
@@ -535,4 +633,12 @@ export const drawings: Record<string, Drawing> = {
   desk,
   "monitor-arm": monitorArm,
   lamp,
+  riser,
+  os,
+  synth,
+  tv,
+  tablet,
+  amp,
+  shelf,
+  accessory,
 };

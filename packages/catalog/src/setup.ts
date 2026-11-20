@@ -23,7 +23,8 @@ export const setupSlots: SetupSlot[] = [
   { id: "microphone", label: "마이크", categoryId: "microphone" },
 ];
 
-type MonitorSize = { inch: number; widthMm: number; weightKg: number; curved: boolean };
+/** weightKg를 모르면(V에서 가져온 모니터) 무게 검사를 건너뛴다. */
+type MonitorSize = { inch: number; widthMm: number; weightKg?: number; curved: boolean };
 type ArmSpec = { maxInch: number; minKg: number; maxKg: number; monitors: 1 | 2 };
 type DeskSpec = { widthMm: number };
 
@@ -36,7 +37,26 @@ export const monitorSizes: Record<string, MonitorSize> = {
   "samsung-odyssey-oled-g8-g80sd": { inch: 32, widthMm: 712, weightKg: 5.2, curved: false },
   "samsung-odyssey-neo-g7-43": { inch: 43, widthMm: 963, weightKg: 11.6, curved: false },
   "alienware-aw2725df": { inch: 27, widthMm: 608, weightKg: 4.3, curved: false },
+  "lg-ultragear-oled-45gx950a": { inch: 44.5, widthMm: 992, weightKg: 9.4, curved: true },
+  "lg-ultragear-oled-39gx90sa": { inch: 39, widthMm: 888, weightKg: 7.3, curved: true },
+  "lg-ultragear-oled-32gx870a": { inch: 31.5, widthMm: 714, weightKg: 5.6, curved: false },
+  "samsung-odyssey-neo-g9-57": { inch: 57, widthMm: 1328, weightKg: 15.4, curved: true },
+  "samsung-odyssey-ark-55-g97nc": { inch: 55, widthMm: 1175, weightKg: 21.1, curved: true },
+  "samsung-odyssey-3d-g90xf": { inch: 27, widthMm: 614, weightKg: 4.7, curved: false },
 };
+
+/**
+ * 모니터 크기. 표에 없는 모니터(V에서 가져온 모니터)는 V의 화면 크기와 놓는 자리 가로 길이를 쓴다.
+ * 둘 다 모르면 검사하지 않는다.
+ */
+export function monitorSizeOf(product: Product): MonitorSize | undefined {
+  const known = monitorSizes[product.slug];
+  if (known) return known;
+  const screen = product.specs.find((spec) => spec.label === "화면 크기")?.value ?? "";
+  const inch = Number(/(\d+(?:\.\d+)?)인치/.exec(screen)?.[1]);
+  if (!inch || !product.footprint) return undefined;
+  return { inch, widthMm: Math.round(product.footprint.widthCm * 10), curved: false };
+}
 
 /** 모니터암이 받치는 화면 크기와 무게 (모니터 한 대 기준) */
 export const armSpecs: Record<string, ArmSpec> = {
@@ -61,9 +81,12 @@ export type SetupIssue = { level: "error" | "warning"; slots: SetupSlotId[]; mes
 
 export function checkSetup(setup: Setup): SetupIssue[] {
   const issues: SetupIssue[] = [];
-  const monitor = setup.monitor ? monitorSizes[setup.monitor.slug] : undefined;
+  const monitor = setup.monitor ? monitorSizeOf(setup.monitor) : undefined;
   const arm = setup["monitor-arm"] ? armSpecs[setup["monitor-arm"].slug] : undefined;
-  const desk = setup.desk ? deskSpecs[setup.desk.slug] : undefined;
+  // 표에 없는 책상(V에서 가져온 책상 등)은 놓는 자리의 가로 길이를 쓴다.
+  const desk = setup.desk
+    ? (deskSpecs[setup.desk.slug] ?? (setup.desk.footprint ? { widthMm: Math.round(setup.desk.footprint.widthCm * 10) } : undefined))
+    : undefined;
 
   if (monitor && arm) {
     if (monitor.inch > arm.maxInch) {
@@ -72,7 +95,7 @@ export function checkSetup(setup: Setup): SetupIssue[] {
         slots: ["monitor", "monitor-arm"],
         message: `모니터암은 ${arm.maxInch}인치까지 받칩니다. 모니터는 ${monitor.inch}인치입니다.`,
       });
-    } else if (monitor.weightKg > arm.maxKg || monitor.weightKg < arm.minKg) {
+    } else if (monitor.weightKg !== undefined && (monitor.weightKg > arm.maxKg || monitor.weightKg < arm.minKg)) {
       issues.push({
         level: "error",
         slots: ["monitor", "monitor-arm"],

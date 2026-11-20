@@ -58,6 +58,30 @@ describe("checkBuild", () => {
   });
 });
 
+describe("CEB 워크스테이션 보드", () => {
+  it("E-ATX를 받는 케이스와 SSI-CEB 케이스에는 들어가고, 작은 케이스에는 오류", () => {
+    const board = p("asus-pro-ws-trx50-sage-wifi");
+    const boardIssue = (slug: string) => checkBuild({ mainboard: board, case: p(slug) }).some((i) => i.parts.join() === "mainboard,case");
+    expect(boardIssue("antec-torque")).toBe(false);
+    expect(boardIssue("cougar-conquer-2")).toBe(false);
+    expect(boardIssue("cooler-master-nr200p")).toBe(true);
+  });
+
+  it("스레드리퍼는 sTR5 보드·RDIMM·sTR5 쿨러와 맞고 일반 DDR5와는 맞지 않는다", () => {
+    const build = {
+      cpu: p("amd-ryzen-threadripper-9980x"),
+      mainboard: p("asus-pro-ws-trx50-sage-wifi"),
+      memory: p("gskill-zeta-r5-neo-ddr5-6400-128gb-rdimm"),
+      cooler: p("noctua-nh-u14s-tr5-sp6"),
+      // 내장 그래픽이 없어 그래픽카드도 넣는다.
+      gpu: p("nvidia-rtx-pro-6000-blackwell-server-edition"),
+    };
+    expect(checkBuild(build).filter((i) => i.level === "error")).toEqual([]);
+    const udimm = checkBuild({ ...build, memory: p("gskill-trident-z5-rgb-ddr5-6400-96gb") });
+    expect(udimm).toContainEqual(expect.objectContaining({ level: "error", parts: ["memory", "mainboard"] }));
+  });
+});
+
 describe("fitsBuild", () => {
   it("지금 견적과 소켓이 다른 메인보드는 맞지 않는다", () => {
     const build: Build = { cpu: p("amd-ryzen-7-9800x3d") };

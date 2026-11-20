@@ -1,4 +1,4 @@
-import type { PartCompat, PartKind, Product } from "./types";
+import type { BoardFormFactor, PartCompat, PartKind, Product } from "./types";
 
 /** PC 견적의 칸 순서 */
 export const buildSlots: { part: PartKind; label: string; required: boolean }[] = [
@@ -39,7 +39,11 @@ export function recommendedWatts(build: Build): number {
   return Math.ceil((estimateWatts(build) * 1.4) / 50) * 50;
 }
 
-const boardLabel = { "E-ATX": "E-ATX", ATX: "ATX", mATX: "M-ATX", ITX: "ITX" } as const;
+const boardLabel = { "E-ATX": "E-ATX", CEB: "CEB", ATX: "ATX", mATX: "M-ATX", ITX: "ITX" } as const;
+
+/** 케이스가 보드를 받는지. CEB는 E-ATX보다 작아 E-ATX를 받는 케이스에도 들어간다. */
+const caseFitsBoard = (boards: readonly BoardFormFactor[], board: BoardFormFactor) =>
+  boards.includes(board) || (board === "CEB" && boards.includes("E-ATX"));
 
 export function checkBuild(build: Build): BuildIssue[] {
   const issues: BuildIssue[] = [];
@@ -74,7 +78,7 @@ export function checkBuild(build: Build): BuildIssue[] {
       });
     }
   }
-  if (board && pcCase && !pcCase.boards.includes(board.formFactor)) {
+  if (board && pcCase && !caseFitsBoard(pcCase.boards, board.formFactor)) {
     issues.push({
       level: "error",
       parts: ["mainboard", "case"],

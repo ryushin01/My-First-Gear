@@ -2,6 +2,7 @@ import { and, count, desc, eq, gte, inArray, ne, sql, sum } from "drizzle-orm";
 import { randomInt } from "node:crypto";
 import { getProductById, getService, shippingFee } from "@mfg/catalog";
 import type { Db } from "./client";
+import { ensureMerch } from "./merch";
 import { consultRequests, orderEvents, orderLines, orders, productMerch, type OrderStatus } from "./schema";
 
 export type Order = typeof orders.$inferSelect;
@@ -60,6 +61,8 @@ export async function placeOrder(db: Db, input: PlaceOrderInput, generateId: () 
 
   return db.transaction(async (tx) => {
     const productIds = lines.map((l) => l.itemId).filter((id) => getProductById(id));
+    // 새로 올린 상품은 판매 정보 행이 아직 없을 수 있어 기본 행을 먼저 만든다(이미 있으면 그대로).
+    await ensureMerch(tx, productIds);
     const merchRows = productIds.length ? await tx.select().from(productMerch).where(inArray(productMerch.productId, productIds)).for("update") : [];
     const merch = new Map(merchRows.map((m) => [m.productId, m]));
 

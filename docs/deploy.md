@@ -80,6 +80,8 @@
 4. `pnpm build`
 5. 쇼핑몰 E2E, 어드민 + 쇼핑몰 E2E (실패하면 결과를 아티팩트로 올림)
 
+`.github/workflows/gear-sync.yml`은 매일 03:40(KST) V 배치도의 제품 목록(`https://v-setup-planner-ryushin01.vercel.app/feed/gear.json`)을 받아 `packages/catalog/src/sync/vFeed.ts`를 고칩니다. 바뀌었으면 타입 검사와 카탈로그·DB 시험을 돌린 뒤 `github-actions[bot]`이 main에 바로 올리고, Vercel이 그 커밋으로 운영 배포합니다(바뀐 게 없으면 배포하지 않음). Actions 탭에서 직접 실행할 수도 있습니다.
+
 `.github/workflows/smoke.yml`은 Vercel이 운영 배포를 마치고 보내는 `repository_dispatch`(`vercel.deployment.success`) 이벤트에 맞춰(프로젝트 Git 설정에서 저장소 이벤트를 켜 둠), 운영 주소를 대상으로 읽기 전용 스모크 테스트(`apps/shop/smoke`)를 돌립니다. 주요 화면 응답, DB 연결(시드 후기), sitemap·robots·OG 이미지, 크론 거절, 어드민 `noindex`, 두 앱의 보안 헤더를 확인합니다. Actions 탭에서 직접 실행할 수도 있습니다.
 
 ## PR 미리보기 배포
