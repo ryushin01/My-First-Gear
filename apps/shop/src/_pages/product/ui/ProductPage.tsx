@@ -6,7 +6,7 @@ import { channelOf, getCategory, getProductBySlug, nextInCategory, products, V_P
 import { NOT_FOUND_TITLE, SITE_URL } from "@/shared/config";
 import { getCatalog } from "@/entities/product/index.server";
 import { GearArt } from "@mfg/gear-art";
-import { PriceTag, RecentlyViewed, RecordRecentView } from "@/entities/product";
+import { BrandName, EnglishName, PriceTag, RecentlyViewed, RecordRecentView } from "@/entities/product";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductCommunity } from "./ProductCommunity";
 import { CompareButton } from "./CompareButton";
@@ -75,7 +75,9 @@ async function ProductContent({ slug }: { slug: string }) {
 
           <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 font-mono text-xs uppercase">
             <dt className="text-label">[Brand]</dt>
-            <dd>{product.brand}</dd>
+            <dd>
+              <BrandName product={product} />
+            </dd>
             <dt className="text-label">[Channel]</dt>
             <dd>
               CH {channel} · {category.code}
@@ -89,6 +91,7 @@ async function ProductContent({ slug }: { slug: string }) {
           </dl>
 
           <h1 className="font-display text-5xl leading-[0.95] tracking-tight md:text-7xl">{product.name}</h1>
+          <EnglishName product={product} className="-mt-3 font-mono text-sm text-label md:text-base" />
           <p className="text-lg text-mute-100">{product.tagline}</p>
           <p className="text-mute-200">{product.description}</p>
 
@@ -178,7 +181,7 @@ export async function generateProductMetadata({ params }: ProductPageProps): Pro
   const product = getProductBySlug(slug);
   // 없는 상품은 스트리밍 도중 404 화면이 되어 이 메타데이터가 그대로 쓰인다. 404 화면과 같은 제목을 준다.
   if (!product) return { title: NOT_FOUND_TITLE };
-  const description = `${product.tagline} · ${product.brand} ${getCategory(product.categoryId).name}`;
+  const description = `${product.tagline} · ${product.brand} ${getCategory(product.categoryId).name}${product.nameEn ? ` (${product.nameEn})` : ""}`;
   return {
     title: product.name,
     description,
@@ -193,8 +196,9 @@ function ProductJsonLd({ product }: { product: Product }) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    ...(product.nameEn ? { alternateName: product.nameEn } : {}),
     description: product.description,
-    brand: { "@type": "Brand", name: product.brand },
+    brand: { "@type": "Brand", name: product.brand, ...(product.brandEn ? { alternateName: product.brandEn } : {}) },
     category: getCategory(product.categoryId).name,
     sku: product.id,
     image: new URL(`/product/${product.slug}/opengraph-image`, SITE_URL).href,

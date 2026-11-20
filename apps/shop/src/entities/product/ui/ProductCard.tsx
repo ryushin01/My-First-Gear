@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCategory, type Product } from "@mfg/catalog";
 import { GearArt } from "@mfg/gear-art";
 import { PriceTag } from "./PriceTag";
+import { BrandName, EnglishName } from "./ProductNames";
 
 /** 목록용 상품 카드. 카드 전체가 하나의 링크다. */
 export function ProductCard({ product, headingLevel = 3 }: { product: Product; headingLevel?: 2 | 3 | 4 }) {
@@ -20,12 +21,15 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1">
-        <p className="font-mono text-xs uppercase text-label">{product.brand}</p>
+        <p className="font-mono text-xs uppercase text-label">
+          <BrandName product={product} />
+        </p>
         <Heading className="text-base font-medium leading-snug">
           <Link href={`/product/${product.slug}`} className="after:absolute after:inset-0 after:content-['']">
             {product.name}
           </Link>
         </Heading>
+        <EnglishName product={product} className="font-mono text-xs leading-snug text-label" />
         <p className="text-sm text-mute-200">{product.tagline}</p>
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           <PriceTag product={product} />

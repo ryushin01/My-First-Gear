@@ -1,8 +1,9 @@
 import { formatPrice, type Product } from "@mfg/catalog";
 import { GearArt } from "@mfg/gear-art";
+import { BrandName, EnglishName } from "@/entities/product";
 
 type ProductOptionProps = {
-  product: Pick<Product, "id" | "slug" | "brand" | "name" | "price" | "stock" | "specs">;
+  product: Pick<Product, "id" | "slug" | "brand" | "brandEn" | "name" | "nameEn" | "price" | "stock" | "specs">;
   /** 지금 견적·셋업과 맞지 않을 때 보여 줄 말 */
   warning?: string;
   onSelect: (productId: string) => void;
@@ -19,8 +20,11 @@ export function ProductOption({ product, warning, onSelect }: ProductOptionProps
     >
       <GearArt slug={product.slug} className="size-16 rounded-md bg-black/40 p-1" />
       <span className="flex flex-col gap-0.5">
-        <span className="font-mono text-[11px] uppercase text-label">{product.brand}</span>
+        <span className="font-mono text-[11px] uppercase text-label">
+          <BrandName product={product} />
+        </span>
         <span>{product.name}</span>
+        <EnglishName product={product} className="font-mono text-[11px] text-label" />
         <span className="text-xs text-mute-200">
           {product.specs
             .slice(0, 3)

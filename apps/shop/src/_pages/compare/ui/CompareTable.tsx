@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { formatPrice, getCategory } from "@mfg/catalog";
 import { GearArt } from "@mfg/gear-art";
-import { clearCompare, toggleCompare, useCatalog, useCompareList } from "@/entities/product";
+import { BrandName, clearCompare, EnglishName, toggleCompare, useCatalog, useCompareList } from "@/entities/product";
 
 /** 비교 목록의 상품을 표로 나란히 놓는다. 행은 사양 이름을 합친 것이다. */
 export function CompareTable() {
@@ -42,8 +42,9 @@ export function CompareTable() {
                   <Link href={`/product/${p.slug}`} className="block font-medium hover:underline">
                     {p.name}
                   </Link>
+                  <EnglishName product={p} className="block font-mono text-xs text-label" />
                   <span className="block text-xs text-mute-200">
-                    {p.brand} · {getCategory(p.categoryId).name}
+                    <BrandName product={p} /> · {getCategory(p.categoryId).name}
                   </span>
                   <button
                     type="button"

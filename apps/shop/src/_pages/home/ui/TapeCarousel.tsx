@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, type KeyboardEvent } from "react";
 import { formatPrice, getCategory, type Product } from "@mfg/catalog";
-import { TapeSleeve } from "@/entities/product";
+import { BrandName, TapeSleeve } from "@/entities/product";
 
 const VISIBLE = 2; // 가운데 양옆으로 보이는 테이프 수
 
@@ -71,7 +71,7 @@ export function TapeCarousel({ products }: { products: Product[] }) {
 
       <div aria-live="polite" aria-atomic="true" className="flex min-h-24 flex-col items-center gap-1 text-center">
         <p className="font-mono text-xs uppercase text-label">
-          {getCategory(current.categoryId).name} · {current.brand}
+          {getCategory(current.categoryId).name} · <BrandName product={current} />
         </p>
         <p className="font-mono text-sm uppercase text-cream">{current.tagline}</p>
         <p className="font-mono text-xs text-mute-200 tabular-nums">

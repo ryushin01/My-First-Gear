@@ -22,8 +22,10 @@ export async function ProductOgImage({ params }: { params: Promise<{ slug: strin
       <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: 18 }}>
         <div style={{ display: "flex", fontSize: 26, color: "#bbbbbb" }}>
           [{category.code}] {product.brand}
+          {product.brandEn ? ` ${product.brandEn}` : ""}
         </div>
         <div style={{ display: "flex", fontSize: 64, lineHeight: 1.1, color: product.art.accent }}>{product.name}</div>
+        {product.nameEn && <div style={{ display: "flex", fontSize: 28, color: "#bbbbbb" }}>{product.nameEn}</div>}
         <div style={{ display: "flex", fontSize: 30, color: "#dcdcd7" }}>{product.tagline}</div>
         <div style={{ display: "flex", fontSize: 40, marginTop: 12 }}>
           {product.purchaseMode === "consult" ? `상담 후 구매 · ${formatPrice(product.price)}` : formatPrice(product.price)}
