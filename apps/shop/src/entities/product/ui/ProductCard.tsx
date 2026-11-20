@@ -12,7 +12,7 @@ export function ProductCard({ product, headingLevel = 3 }: { product: Product; h
   return (
     <article className="group relative flex h-full flex-col gap-3 border border-white/15 bg-ink-deep/80 p-4 transition-colors hover:border-cream">
       <div className="relative grid aspect-square place-items-center overflow-hidden bg-black/50 text-cream">
-        <GearArt art={product.art} className="h-4/5 w-4/5" />
+        <GearArt slug={product.slug} className="h-4/5 w-4/5" />
         <span className="hud-tag absolute left-2 top-2 text-[11px]">{category.code}</span>
         {soldOut && <span className="hud-tag absolute right-2 top-2 text-[11px]">품절</span>}
         {product.purchaseMode === "consult" && (

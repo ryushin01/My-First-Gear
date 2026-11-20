@@ -73,7 +73,7 @@ export function QuickBuild() {
                 return (
                   <li key={slot.part} className="grid grid-cols-[48px_1fr_auto] items-center gap-3 rounded-lg border border-white/10 p-2">
                     <span className="grid size-12 place-items-center rounded bg-black/40 text-cream">
-                      {product ? <GearArt art={product.art} className="size-10" /> : <span className="font-mono text-[11px] text-label">—</span>}
+                      {product ? <GearArt slug={product.slug} className="size-10" /> : <span className="font-mono text-[11px] text-label">—</span>}
                     </span>
                     <span className="flex flex-col">
                       <span className="font-mono text-[11px] uppercase text-label">[{slot.label}]</span>

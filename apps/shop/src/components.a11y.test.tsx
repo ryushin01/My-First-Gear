@@ -6,20 +6,13 @@ import { render } from "@testing-library/react";
 import axe from "axe-core";
 import type { ReactElement } from "react";
 import { describe, expect, it } from "vitest";
-import { featuredProducts, getProductBySlug, products } from "@mfg/catalog";
-import { GearArt, models } from "@mfg/gear-art";
+import { featuredProducts, getProductBySlug } from "@mfg/catalog";
+import { GearArt } from "@mfg/gear-art";
 import { PriceTag, ProductCard, TapeSleeve } from "@/entities/product";
 import { ErrorSummary, TextAreaField, TextField } from "@/shared/ui";
 import { Wordmark } from "@/widgets/crt-screen/ui/Wordmark";
 
 const product = (slug: string) => getProductBySlug(slug)!;
-
-/** 실제로 그려지는 그림마다 상품 하나. 실사풍 그림이 없으면 종류·변형이 같은 상품은 같은 그림이다. */
-const artSamples = [
-  ...new Map(
-    products.map((p) => [p.art.model && models[p.art.model] ? `model:${p.art.model}` : `kind:${p.art.kind}:${p.art.variant ?? ""}`, p]),
-  ).values(),
-];
 
 const cases: [string, ReactElement][] = [
   ["상품 카드: 할인", <ProductCard key="a" product={product("geforce-rtx-5070-ti-16gb")} />],
@@ -35,14 +28,12 @@ const cases: [string, ReactElement][] = [
     </div>,
   ],
   [
-    "상품 그림: 모든 그림 (설명 있음)",
-    <ul key="f">
-      {artSamples.map((p) => (
-        <li key={p.id}>
-          <GearArt art={p.art} label={`${p.name} 그림`} />
-        </li>
-      ))}
-    </ul>,
+    // 그림 내용(SVG 문서)은 그림 파일 테스트(_app/art)가 상품마다 검사한다.
+    "상품 그림: 설명 있는 그림, 장식 그림",
+    <div key="f">
+      <GearArt slug="bang-olufsen-a8" label="뱅앤올룹슨 A8 그림" />
+      <GearArt slug="geforce-rtx-5070-ti-16gb" />
+    </div>,
   ],
   [
     "입력 칸: 필수·도움말·오류, 여러 줄, 오류 요약",

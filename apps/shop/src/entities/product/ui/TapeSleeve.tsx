@@ -20,7 +20,7 @@ export function TapeSleeve({ product }: { product: Product }) {
           <span>CH {channelOf(product.categoryId)}</span>
         </div>
         <div className="relative mt-[5%] grid flex-1 place-items-center border border-[var(--accent)]/70 bg-black/50 text-cream">
-          <GearArt art={product.art} className="h-[86%] w-[86%]" />
+          <GearArt slug={product.slug} className="h-[86%] w-[86%]" priority />
         </div>
         <p className="mt-[5%] line-clamp-2 font-display text-[clamp(18px,11cqi,46px)] leading-[0.95] text-cream">{product.name}</p>
         <div aria-hidden="true" className="mt-[4%] flex items-center justify-between font-mono text-[clamp(8px,1.4cqi,10px)] uppercase text-label">

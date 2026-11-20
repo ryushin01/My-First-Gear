@@ -7,7 +7,7 @@ type PlannerSlotProps = {
   label: string;
   /** 꼭 고르지 않아도 되는 칸이면 라벨 뒤에 '선택'을 붙인다. */
   optional?: boolean;
-  product: Pick<Product, "name" | "price" | "art"> | undefined;
+  product: Pick<Product, "name" | "price" | "slug"> | undefined;
   /** 고르지 않았을 때 보여 줄 글 */
   emptyText: string;
   /** 이 칸에 걸린 호환성 문제 */
@@ -24,7 +24,7 @@ export function PlannerSlot({ index, label, optional, product, emptyText, issues
   return (
     <li className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-lg border border-white/10 p-3 sm:grid-cols-[auto_1fr_auto]">
       <div className="grid size-16 place-items-center rounded-md bg-black/40 text-cream">
-        {product ? <GearArt art={product.art} className="size-14" /> : <span className="font-mono text-xs text-label">{number}</span>}
+        {product ? <GearArt slug={product.slug} className="size-14" /> : <span className="font-mono text-xs text-label">{number}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-0.5">
         <p className="font-mono text-[11px] uppercase text-label">

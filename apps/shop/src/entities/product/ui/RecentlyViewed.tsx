@@ -31,7 +31,7 @@ export function RecentlyViewed({ exclude, headingLevel = 2 }: { exclude?: string
               className="flex flex-col gap-2 rounded-md border border-white/10 p-2 text-xs hover:border-white/40"
             >
               <span className="grid aspect-square place-items-center rounded bg-black/40 text-cream">
-                <GearArt art={product.art} className="h-4/5 w-4/5" />
+                <GearArt slug={product.slug} className="h-4/5 w-4/5" />
               </span>
               <span className="line-clamp-2">{product.name}</span>
             </Link>
