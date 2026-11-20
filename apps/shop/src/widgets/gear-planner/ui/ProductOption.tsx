@@ -2,7 +2,7 @@ import { formatPrice, type Product } from "@mfg/catalog";
 import { GearArt } from "@mfg/gear-art";
 
 type ProductOptionProps = {
-  product: Pick<Product, "id" | "brand" | "name" | "price" | "stock" | "art" | "specs">;
+  product: Pick<Product, "id" | "slug" | "brand" | "name" | "price" | "stock" | "specs">;
   /** 지금 견적·셋업과 맞지 않을 때 보여 줄 말 */
   warning?: string;
   onSelect: (productId: string) => void;
@@ -17,7 +17,7 @@ export function ProductOption({ product, warning, onSelect }: ProductOptionProps
       onClick={() => onSelect(product.id)}
       className="grid w-full grid-cols-[64px_1fr_auto] items-center gap-4 rounded-lg border border-white/10 p-3 text-left hover:border-white/40 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <GearArt art={product.art} className="size-16 rounded-md bg-black/40 p-1" />
+      <GearArt slug={product.slug} className="size-16 rounded-md bg-black/40 p-1" />
       <span className="flex flex-col gap-0.5">
         <span className="font-mono text-[11px] uppercase text-label">{product.brand}</span>
         <span>{product.name}</span>

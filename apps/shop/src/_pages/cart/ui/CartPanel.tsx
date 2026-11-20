@@ -41,7 +41,7 @@ export function CartPanel() {
               >
                 <div className="grid size-16 place-items-center rounded-md bg-black/40 text-cream">
                   {line.product ? (
-                    <GearArt art={line.product.art} className="size-14" />
+                    <GearArt slug={line.product.slug} className="size-14" />
                   ) : (
                     <span className="font-mono text-[11px] text-label">SVC</span>
                   )}

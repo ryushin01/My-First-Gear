@@ -9,7 +9,7 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 | `apps/shop` | 쇼핑몰. UnoCSS, Next.js 16 Cache Components(ISR 1분) |
 | `apps/admin` | 어드민. Bulma 기본 스타일만 사용, 요청마다 DB를 읽는 동적 화면 |
 | `packages/catalog` | 상품·카테고리 콘텐츠, 정렬·필터 쿼리, PC 호환성 검사, 조립 서비스 요금 |
-| `packages/gear-art` | 상품 SVG 그림 (`<GearArt art={…} />`) |
+| `packages/gear-art` | 상품 SVG 그림. 브라우저는 `<GearArt slug={…} />`로 미리 만든 그림 파일을 받고, 그림 코드는 `@mfg/gear-art/server`(서버 전용)에 있음 |
 | `packages/hooks` | 두 앱이 함께 쓰는 React 훅. 중복 제출 잠금(`useSubmitLock`, `useActionFormLock`) |
 | `packages/db` | Drizzle 스키마·마이그레이션(`migrations/`), 쿼리, 로컬 DB(PGlite) 실행 스크립트 |
 
@@ -98,6 +98,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 - 셀렉트는 `shared/ui`의 `Select`를 씁니다. 기본 화살표를 끄고 직접 그린 화살표를 글자 왼쪽 간격과 같은 자리에 둡니다(어드민은 Bulma 화살표 위치를 `admin.css`에서 같은 기준으로).
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.
 - 상품 그림은 `packages/gear-art`에 있습니다. `art.model`(상품 slug)에 맞는 실사풍 그림이 `src/models/`(PC 부품 `pc.tsx`, 기기·모니터 `devices.tsx`, 탈것 `vehicles.tsx`, 시계 `watches.tsx`, 아웃도어 `outdoor.tsx`, 데스크 셋업 `desk.tsx`)에 있으면 그것을, 없으면 `art.kind`별 선 그림(`drawings.tsx`)을 씁니다.
+- 쇼핑몰은 빌드할 때 상품마다 그림을 SVG 파일(`/art/<slug>.svg`, `app/art/[file]/route.ts`)로 미리 만들고, 화면은 `GearArt`로 이 파일을 이미지로 받습니다. 그림 코드는 `@mfg/gear-art/server`로만 내보내 브라우저 번들에 들어가지 않으므로, 그림을 더해도 JS 크기는 그대로입니다. 첫 화면의 큰 그림(상품 화면, 홈 신호 카드)은 `priority`로 바로 받고 나머지는 화면에 다가올 때 받습니다. 이미지 안의 그림은 페이지 글자색을 물려받지 못해 선 색(`currentColor`)을 화면 글자색 `#f5f5f2`로 칠합니다(`shared/lib/art`의 `artSvg`, 공유 이미지도 같은 함수).
 - 실사풍 그림은 실제 제품의 형태·색·재질을 참고하고, 로고·엠블럼·상표 문양과 글자(`<text>`)는 넣지 않습니다. 같은 그림이 한 화면에 여러 번 나와 id가 겹치므로 그라데이션 대신 면을 겹쳐 명암을 냅니다. 공유 이미지 직렬화기(`toSvgString`)가 읽을 수 있게 훅 없는 JSX로만 씁니다.
 
 ## 접근성 (KWCAG 2.2)
@@ -133,7 +134,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 
 ## 품질 예산
 
-- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 440 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다. 전체 JS는 모든 조각의 합계라, Turbopack이 작은 공유 조각을 화면별 조각에 합치면(첫 화면 요청 수를 줄이는 기본 동작) 같은 코드가 여러 번 세어집니다. 0.15.0에서 합계가 338 → 401 kB로 늘었지만 화면별 첫 JS(클라이언트 참조 매니페스트의 진입 조각)는 1.3~2.1 kB만 늘어(홈 60.4 → 62.4 kB) 기준을 410 kB로 올렸습니다. 1.1.0에서 상품이 91 → 290개가 되며(원본 카탈로그는 브라우저 코드에 있음) 401 → 424 kB가 되어, 매일 동기화로 늘어날 몫까지 더해 440 kB로 올렸습니다. 화면별 크기는 `.next/server/app/**/page_client-reference-manifest.js`의 `entryJSFiles`로 확인합니다.
+- **번들 크기:** `pnpm --filter shop size`가 쇼핑몰 전체 JS 410 kB, CSS 92 kB(gzip)를 넘으면 실패합니다. 기준은 `.size-limit.json`에 있습니다. 전체 JS는 모든 조각의 합계라, Turbopack이 작은 공유 조각을 화면별 조각에 합치면(첫 화면 요청 수를 줄이는 기본 동작) 같은 코드가 여러 번 세어집니다. 0.15.0에서 합계가 338 → 401 kB로 늘었지만 화면별 첫 JS(클라이언트 참조 매니페스트의 진입 조각)는 1.3~2.1 kB만 늘어(홈 60.4 → 62.4 kB) 기준을 410 kB로 올렸습니다. 1.1.0에서 상품이 91 → 290개가 되며(원본 카탈로그는 브라우저 코드에 있음) 401 → 424 kB가 되어, 매일 동기화로 늘어날 몫까지 더해 440 kB로 올렸습니다. 1.3.0에서 상품 그림을 빌드 때 만든 SVG 파일로 옮겨 그림 코드가 브라우저 번들에서 빠지며 425 → 395 kB(화면별 첫 JS 홈 106.3 → 82.7 kB)가 되어 기준을 410 kB로 다시 낮췄습니다. 화면별 크기는 `.next/server/app/**/page_client-reference-manifest.js`의 `entryJSFiles`로 확인합니다.
 - **Lighthouse:** `pnpm --filter shop lhci`가 쇼핑몰의 첫 화면·상품 상세·데스크 셋업·PC 견적이 데스크톱 기준 성능 90·접근성 100·권장 사항 95·SEO 90점, LCP 2.5초·TBT 200ms·CLS 0.1 이하인지 3번씩 재서 확인합니다. 기준은 `lighthouserc.json`에 있습니다.
 - **접근성 린트:** `eslint-config-next`는 jsx-a11y 규칙을 몇 개만 켭니다. 플러그인은 이미 등록되어 있어 `eslint.config`에서 recommended 규칙만 더해 모두 켭니다. 레이블 글자가 `label > span > span`에 있는 선택지가 있어 `label-has-associated-control`의 찾는 깊이는 3입니다. 홈 캐러셀의 화살표 키·옆 테이프 클릭은 이전·다음 버튼이 키보드 대안이라 그 줄만 예외로 둡니다.
 

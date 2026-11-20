@@ -37,7 +37,7 @@ export function CompareTable() {
               {items.map((p) => (
                 <th key={p.id} scope="col" className="py-3 pr-4 text-left font-normal">
                   <span className="mb-2 grid size-20 place-items-center rounded bg-black/40 text-cream">
-                    <GearArt art={p.art} className="size-16" />
+                    <GearArt slug={p.slug} className="size-16" />
                   </span>
                   <Link href={`/product/${p.slug}`} className="block font-medium hover:underline">
                     {p.name}

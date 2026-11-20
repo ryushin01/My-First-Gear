@@ -3,8 +3,8 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import type { ReactNode } from "react";
-import { GearArt, type GearArtValue } from "@mfg/gear-art";
-import { toSvgString } from "./svgString";
+import type { GearArtValue } from "@mfg/gear-art";
+import { artSvg } from "@/shared/lib/art";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
@@ -15,10 +15,9 @@ const fontData = readFile(join(process.cwd(), "node_modules/pretendard/dist/publ
 // 빌드가 이 경로를 추적해 이 파일을 쓰는 서버 함수마다 넣는다(.next/server/app/**/*.nft.json).
 const logoSrc = readFile(join(process.cwd(), "public/brand/logo.png")).then((png) => `data:image/png;base64,${png.toString("base64")}`);
 
-/** 상품 그림(SVG)을 이미지 주소로 바꾼다. 선 색(currentColor)은 화면 글자색으로 칠한다. */
+/** 상품 그림(SVG)을 이미지 주소로 바꾼다. 선 색은 화면 글자색으로 칠한다(artSvg). */
 export function artDataUri(art: GearArtValue) {
-  const svg = toSvgString(<GearArt art={art} width={200} height={200} xmlns="http://www.w3.org/2000/svg" />).replaceAll("currentColor", "#f5f5f2");
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+  return `data:image/svg+xml;base64,${Buffer.from(artSvg(art)).toString("base64")}`;
 }
 
 /** 화면 네 모서리의 조준선 하나 (사이트 HUD 틀과 같은 모양) */
