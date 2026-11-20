@@ -18,7 +18,7 @@ test("목록 필터와 정렬이 주소에 남는다", async ({ page }) => {
   await page.goto("/gear/gpu");
   // 필터는 비제어 입력이라 하이드레이션 전에 눌러도 상태가 되돌아가지 않는다.
   await page.getByRole("checkbox", { name: "NVIDIA" }).check();
-  await expect(page.getByRole("status").filter({ hasText: "개 상품" })).toHaveText("2개 상품");
+  await expect(page.getByRole("status").filter({ hasText: "개 상품" })).toHaveText("3개 상품");
   await page.getByLabel("[Sort]").selectOption("price-asc");
   await expect(page).toHaveURL(/brand=NVIDIA/);
   await expect(page).toHaveURL(/sort=price-asc/);
@@ -26,6 +26,15 @@ test("목록 필터와 정렬이 주소에 남는다", async ({ page }) => {
   await expect(page.getByRole("checkbox", { name: "NVIDIA" })).toBeChecked();
   const names = await page.locator("main:visible ul li h3").allTextContents();
   expect(names[0]).toContain("RTX 5060");
+});
+
+test("전체 기어는 48개씩 보여 주고, 더 보기를 누르면 새로 보인 첫 상품으로 초점을 옮긴다", async ({ page }) => {
+  await page.goto("/gear");
+  const names = page.locator("main:visible ul li h3");
+  await expect(names).toHaveCount(48);
+  await page.getByRole("button", { name: /더 보기/ }).click();
+  await expect(names).toHaveCount(96);
+  await expect(page.locator(":focus")).toHaveAttribute("href", /^\/product\//);
 });
 
 test("장바구니에 담고 모의 결제 후 주문을 조회한다", async ({ page }) => {
@@ -74,7 +83,7 @@ test("PC 견적에서 호환성 오류를 알리고 해결하면 담을 수 있�
   };
 
   await pick("CPU", "라이젠7 9800X3D");
-  await pick("메인보드", "Z890", false); // 소켓이 다른 보드
+  await pick("메인보드", "Z890 Pro RS", false); // 소켓이 다른 보드
   await expect(page.getByText(/CPU 소켓\(AM5\)과 메인보드 소켓\(LGA1851\)이 다릅니다/).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "견적 전체 장바구니 담기" })).toBeDisabled();
 
@@ -108,7 +117,7 @@ test("데스크 셋업에서 모니터암·책상 조합을 확인하고 한 번
   await expect(page.getByRole("button", { name: "셋업 전체 장바구니 담기" })).toBeDisabled();
 
   await page.getByRole("button", { name: /빼기\s*:\s*모니터암$/ }).click();
-  await pick("책상", "MAGNUS Pro");
+  await pick("책상", "시크릿랩 MAGNUS Pro");
   await pick("스피커", "에디파이어 MR4");
   await expect(page.getByText(/스피커를 놓기 빠듯합니다/).first()).toBeVisible();
   await expect(page.getByText("조합 확인을 마쳤습니다")).toBeVisible();
