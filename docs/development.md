@@ -98,7 +98,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 - 노이즈는 화면보다 넓게 깐 층을 `transform`으로 네 위치에 옮깁니다(`steps(4)`). `background-position`을 움직이면 가만히 둔 화면에서도 매 프레임 스타일을 다시 계산하고 다시 칠합니다. 노이즈 타일은 360px입니다. 180px이면 브라우저가 이 장식 그림을 LCP 후보로 잡아 실제 제목 대신 노이즈가 LCP가 됩니다.
 - 셀렉트는 `shared/ui`의 `Select`를 씁니다. 기본 화살표를 끄고 직접 그린 화살표를 글자 왼쪽 간격과 같은 자리에 둡니다(어드민은 Bulma 화살표 위치를 `admin.css`에서 같은 기준으로).
 - 글자를 휘거나 기울이는 장식은 쓰지 않고, 목록·견적·결제 화면은 읽기 쉽게 평평하게 둡니다.
-- 상품 그림은 `packages/gear-art`에 있습니다. `art.model`(상품 slug)에 맞는 실사풍 그림이 `src/models/`(PC 부품 `pc.tsx`, 기기·모니터 `devices.tsx`, 탈것 `vehicles.tsx`, 시계 `watches.tsx`, 아웃도어 `outdoor.tsx`, 데스크 셋업 `desk.tsx`)에 있으면 그것을, 없으면 `art.kind`별 선 그림(`drawings.tsx`)을 씁니다.
+- 상품 그림은 `packages/gear-art`에 있습니다. `art.model`(상품 slug)에 맞는 실사풍 그림이 `src/models/`(PC 부품 `pc.tsx`, 기기·모니터 `devices.tsx`, 탈것 `vehicles.tsx`, 시계 `watches.tsx`, 아웃도어 `outdoor.tsx`, 데스크 셋업 `desk.tsx`, 1.1.0 고가 상품 `premium.tsx`)에 있으면 그것을, 없으면 `art.kind`별 선 그림(`drawings.tsx`)을 씁니다.
 - 쇼핑몰은 빌드할 때 상품마다 그림을 SVG 파일(`/art/<slug>.svg`, `app/art/[file]/route.ts`)로 미리 만들고, 화면은 `GearArt`로 이 파일을 이미지로 받습니다. 그림 코드는 `@mfg/gear-art/server`로만 내보내 브라우저 번들에 들어가지 않으므로, 그림을 더해도 JS 크기는 그대로입니다. 첫 화면의 큰 그림(상품 화면, 홈 신호 카드)은 `priority`로 바로 받고 나머지는 화면에 다가올 때 받습니다. 이미지 안의 그림은 페이지 글자색을 물려받지 못해 선 색(`currentColor`)을 화면 글자색 `#f5f5f2`로 칠합니다(`shared/lib/art`의 `artSvg`, 공유 이미지도 같은 함수).
 - 실사풍 그림은 실제 제품의 형태·색·재질을 참고하고, 로고·엠블럼·상표 문양과 글자(`<text>`)는 넣지 않습니다. 같은 그림이 한 화면에 여러 번 나와 id가 겹치므로 그라데이션 대신 면을 겹쳐 명암을 냅니다. 공유 이미지 직렬화기(`toSvgString`)가 읽을 수 있게 훅 없는 JSX로만 씁니다.
 

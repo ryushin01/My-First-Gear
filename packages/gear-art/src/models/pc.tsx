@@ -237,7 +237,7 @@ function card({ shroud, trim, fans, length, accent, backplate, fanRing }: CardSt
 
 /* ───────────── SSD (M.2 2280) ───────────── */
 
-function m2(label: { base: string; band?: string; text: string }): ReactNode {
+export function m2(label: { base: string; band?: string; text: string }): ReactNode {
   return (
     <g>
       <Shadow cx={100} cy={128} rx={86} ry={4} />

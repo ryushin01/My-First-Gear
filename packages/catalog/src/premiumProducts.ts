@@ -32,7 +32,8 @@ type Row = {
 const product = ({ kind, accent, variant, specs, purchaseMode = "cart", ...row }: Row): Product => ({
   ...row,
   purchaseMode,
-  art: variant ? { kind, accent, variant } : { kind, accent },
+  // 실사풍 그림은 상품 slug를 키로 @mfg/gear-art에 있다(models/premium.tsx).
+  art: { kind, accent, ...(variant ? { variant } : {}), model: row.slug },
   specs: specs.map(([label, value]): Spec => ({ label, value })),
 });
 
