@@ -29,15 +29,18 @@ type CrtScreenProps = {
   bare?: boolean;
 };
 
-/** 브라운관 TV 화면 프레임. 헤더, 본문, 하단 상태 표시줄로 이루어진다. */
+/** HUD 화면 틀. 헤더, 본문, 하단 상태 표시줄로 이루어진다. */
 export function CrtScreen({ children, source = "MY FIRST GEAR", bare = false }: CrtScreenProps) {
   return (
     <div className="crt-screen">
       {!bare && <MemberSync />}
       <ScreenShell
         header={
-          <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-12">
-            <div className="flex items-center gap-8 font-mono text-xs uppercase text-label">
+          <header className="crt-chrome-top sticky top-0 z-40 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 px-5 pt-5 pb-3 md:grid-cols-[1fr_auto_1fr] md:px-16 md:pt-8 md:pb-4">
+            <div className="flex items-center gap-3 font-mono text-xs uppercase text-label md:gap-6">
+              <span aria-hidden="true" className="hud-tag">
+                SYS
+              </span>
               <Link href="/" className="inline-flex min-h-8 items-center hover:text-cream">
                 Home
               </Link>
@@ -52,7 +55,10 @@ export function CrtScreen({ children, source = "MY FIRST GEAR", bare = false }: 
               <ul className="flex flex-wrap justify-end gap-x-4 gap-y-1 font-mono md:gap-x-6 text-xs uppercase text-label">
                 {NAV.map((item) => (
                   <li key={item.href}>
-                    <Link href={item.href} className="inline-flex min-h-8 min-w-8 items-center justify-center hover:text-cream">
+                    <Link
+                      href={item.href}
+                      className="inline-flex min-h-8 min-w-8 items-center justify-center border border-transparent px-1.5 hover:border-cream hover:bg-cream hover:text-ink"
+                    >
                       {item.label}
                       {!bare && item.href === "/cart" && <CartCount />}
                     </Link>
@@ -68,15 +74,19 @@ export function CrtScreen({ children, source = "MY FIRST GEAR", bare = false }: 
           </header>
         }
         footer={
-          <footer className="crt-chrome-bottom sticky bottom-0 z-40 px-5 pb-5 pt-3 md:px-16 md:pb-12">
-            <div className="grid grid-cols-2 items-center gap-4 font-mono text-xs uppercase text-label md:grid-cols-4">
+          <footer className="crt-chrome-bottom sticky bottom-0 z-40 px-5 pb-5 pt-3 md:px-16 md:pb-8">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 font-mono text-xs uppercase text-label md:grid-cols-4 md:gap-4">
               <LocalClock />
-              <span className="flex flex-wrap gap-x-4">
+              <span className="flex flex-wrap justify-end gap-x-4 gap-y-2 md:justify-start">
                 <BwToggle />
                 <FxToggle />
               </span>
               <p className="hidden md:block">Source: {source}</p>
-              <p className="col-span-2 normal-case md:col-span-1 md:justify-self-end">포트폴리오 데모 · 실제 판매하지 않습니다</p>
+              {/* 좁은 화면에서는 상태 표시줄이 본문을 덜 가리게 상자 없이 한 줄로 */}
+              <p className="col-span-2 flex flex-wrap gap-x-3 leading-5 md:col-span-1 md:justify-self-end md:border md:border-cream/60 md:px-2 md:py-1">
+                <span className="hidden md:inline">Property of: MFG</span>
+                <span className="normal-case">포트폴리오 데모, 실제로 판매하지 않습니다</span>
+              </p>
             </div>
           </footer>
         }

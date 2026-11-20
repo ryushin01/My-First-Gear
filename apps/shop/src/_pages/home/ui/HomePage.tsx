@@ -54,11 +54,14 @@ export async function HomePage() {
               전체 기어 보기 <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="grid grid-cols-2 border-l border-t border-white/15 sm:grid-cols-3 lg:grid-cols-7">
             {categories.map((category) => (
-              <li key={category.id}>
-                <Link href={`/gear/${category.id}`} className="flex h-full min-h-20 flex-col justify-between gap-2 bg-ink p-4 hover:bg-ink-soft">
-                  <span className="font-mono text-[11px] text-label">CH {channelOf(category.id)}</span>
+              <li key={category.id} className="border-b border-r border-white/15">
+                <Link
+                  href={`/gear/${category.id}`}
+                  className="flex h-full min-h-20 flex-col justify-between gap-2 bg-ink-deep/80 p-4 hover:bg-ink-soft"
+                >
+                  <span className="hud-tag self-start text-[11px]">CH {channelOf(category.id)}</span>
                   <span className="text-base">{category.name}</span>
                 </Link>
               </li>

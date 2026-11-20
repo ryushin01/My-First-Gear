@@ -19,7 +19,8 @@ export function AssemblySequence() {
       <div className="assembly-stage">
         <div className="assembly-copy flex flex-col gap-4">
           <p className="mono-label">[Assembly Sequence]</p>
-          <h2 id="home-assembly" className="assembly-title font-display text-4xl md:text-6xl">
+          {/* 제목은 스크롤 연출에서 1.12배로 커졌다가 줄어든다(아래 기준). 커진 만큼 위 라벨과 닿지 않게 띄운다 */}
+          <h2 id="home-assembly" className="assembly-title mt-6 font-display text-4xl leading-[1.1] md:text-6xl">
             흩어진 부품이
             <br />한 대의 PC가 되기까지
           </h2>

@@ -54,3 +54,6 @@ playwright-report/
 .local-db/
 .lighthouseci
 !.env.example
+
+# Playwright MCP 브라우저 도구가 남기는 화면·스냅샷
+.playwright-mcp/

@@ -12,12 +12,12 @@ export default async function HomeOgImage() {
       <div style={{ display: "flex", fontSize: 72, lineHeight: 1.15, letterSpacing: -2 }}>첫 번째 장비를 고르는 시간</div>
       <div style={{ display: "flex", gap: 28 }}>
         {picks.map((p) => (
-          <div key={p.id} style={{ display: "flex", border: `3px solid ${p.art.accent}`, borderRadius: 6, padding: 10, background: "#0b0b0b" }}>
+          <div key={p.id} style={{ display: "flex", border: `3px solid ${p.art.accent}`, padding: 10, background: "#0b0b0b" }}>
             <img src={artDataUri(p.art)} width={180} height={180} alt="" />
           </div>
         ))}
       </div>
-      <div style={{ display: "flex", fontSize: 26, color: "#b2aeab" }}>PC 부품 · 오디오 · 게임기 · 탈것 · 시계 — 포트폴리오 데모</div>
+      <div style={{ display: "flex", fontSize: 26, color: "#bbbbbb" }}>PC 부품 · 오디오 · 게임기 · 탈것 · 시계 — 포트폴리오 데모</div>
     </div>,
   );
 }

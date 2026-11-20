@@ -61,7 +61,7 @@ export function TapeCarousel({ products }: { products: Product[] }) {
                 visibility: hidden ? "hidden" : "visible",
               }}
             >
-              <Link href={`/product/${product.slug}`} className="block rounded-[3px] focus-visible:outline-offset-6">
+              <Link href={`/product/${product.slug}`} className="block focus-visible:outline-offset-6">
                 <TapeSleeve product={product} />
               </Link>
             </div>

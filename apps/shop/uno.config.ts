@@ -7,21 +7,37 @@ export default defineConfig({
   presets: [presetWind4({ preflights: { reset: true } })],
   theme: {
     colors: {
-      ink: { DEFAULT: "#111111", deep: "#050505", soft: "#1a1a1a" },
+      ink: { DEFAULT: "#0a0a0a", deep: "#050505", soft: "#161616" },
       brand: "#ff3131",
-      cream: "#fcf8ef",
-      mute: { 100: "#e4dfd9", 200: "#b2aeab" },
+      // 화면 글자: 레퍼런스처럼 색이 치우치지 않은 흰색
+      cream: "#f5f5f2",
+      mute: { 100: "#dcdcd7", 200: "#bbbbbb" },
       label: "#ffffffbf",
       rgb: { red: "#ff2846", blue: "#2896ff" },
     },
     font: {
-      // 대체 글꼴: 브라운관 화면 글씨처럼 영문은 고정폭 타자기 글꼴(Courier New), 한글은 운영체제 고딕
-      display: "var(--ff-latin), var(--ff-display-ko), 'Courier New', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', monospace",
-      mono: "var(--ff-mono), ui-monospace, 'SF Mono', Menlo, Consolas, D2Coding, monospace",
-      sans: "var(--ff-latin), var(--ff-sans), 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', system-ui, sans-serif",
+      // 큰 제목: 영문 Bodoni Moda, 한글 본명조. 대체 글꼴도 명조 계열
+      display: "var(--ff-display-latin), var(--ff-display-ko), 'Bodoni 72', Didot, 'AppleMyungjo', 'Batang', 'Noto Serif CJK KR', serif",
+      // 라벨·숫자: 영문 IBM Plex Mono, 한글 나눔고딕코딩
+      mono: "var(--ff-mono-latin), var(--ff-mono), ui-monospace, 'SF Mono', Menlo, Consolas, D2Coding, monospace",
+      sans: "var(--ff-sans), 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', system-ui, sans-serif",
+    },
+    // HUD 상자처럼 각지게: 둥근 모서리 단계를 모두 0으로 둔다(rounded-full은 그대로 원)
+    radius: {
+      DEFAULT: "0px",
+      xs: "0px",
+      sm: "0px",
+      md: "0px",
+      lg: "0px",
+      xl: "0px",
+      "2xl": "0px",
+      "3xl": "0px",
+      "4xl": "0px",
     },
   },
   shortcuts: {
     "mono-label": "font-mono uppercase text-xs tracking-wide text-label",
+    // 흰 바탕에 검은 글자로 뒤집은 HUD 표시
+    "hud-tag": "inline-block bg-cream px-1.5 font-mono text-xs uppercase leading-5 tracking-wide text-ink",
   },
 });
