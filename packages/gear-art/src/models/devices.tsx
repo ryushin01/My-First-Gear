@@ -251,39 +251,69 @@ function blessing3(): ReactNode {
   );
 }
 
-/** 뱅앤올룹슨 A8: 둥근 알루미늄 몸체 위로 긴 귀걸이가 휘어 귀 뒤로 넘어가는 행거형 */
+/**
+ * 뱅앤올룹슨 A8 (리뷰 사진의 정면 배치를 따름).
+ * 세로 알루미늄 막대 위 경첩에서 은색 띠 두 줄을 감은 검은 걸이가 바깥으로 휘어 내려오고,
+ * 막대 가운데에서 납작한 알루미늄 판이 검은 둥근 이어피스를 잡는다. 막대 아래는 검은 고무 부싱과 케이블.
+ * 막대의 회사 이름 글자와 로고는 그리지 않는다. 같은 그림이 한 화면에 여러 번 나오므로 그라데이션 없이 면을 겹친다.
+ */
 function boA8(): ReactNode {
-  const unit = (cx: number, flip: boolean) => (
-    <g transform={flip ? `scale(-1 1) translate(${-2 * cx} 0)` : undefined}>
-      {/* 귀 위로 넘어가 뒤로 내려오는 귀걸이 */}
+  // 왼쪽 짝을 그리고, 오른쪽 짝은 가운데(x=100)를 기준으로 뒤집어 조금 낮게 놓는다(사진처럼).
+  const hook = "M87 32 C 70 20, 34 16, 17 34 C 6 46, 8 70, 16 84";
+  const unit = (
+    <g>
+      {/* 걸이: 광택 검정, 위 가장자리 빛 반사, 은색 띠 두 줄, 둥근 끝 */}
+      <path d={hook} fill="none" stroke="#17181b" strokeWidth={7} strokeLinecap="round" />
       <path
-        d={`M${cx + 6} 100 C ${cx + 6} 44, ${cx - 44} 30, ${cx - 40} 76 C ${cx - 37} 100, ${cx - 26} 110, ${cx - 22} 126`}
+        d="M85 29.6 C 69 17.6, 35 13.8, 17 31 C 7 42, 6 62, 11 76"
         fill="none"
-        stroke="#2b2c31"
-        strokeWidth={6}
+        stroke="#5c6068"
+        strokeWidth={1.1}
         strokeLinecap="round"
+        opacity={0.9}
       />
-      <path d={`M${cx + 4} 92 C ${cx + 4} 54, ${cx - 30} 42, ${cx - 34} 66`} fill="none" stroke="#4a4c53" strokeWidth={1.4} />
-      {/* 길이를 맞추는 알루미늄 막대 */}
-      <rect x={cx + 2} y={86} width={8} height={26} rx={2} fill="#b8bcc2" />
-      <rect x={cx + 4} y={88} width={2} height={22} fill="#e4e6e9" opacity={0.7} />
-      {/* 둥근 알루미늄 몸체 */}
-      <circle cx={cx + 6} cy={124} r={18} fill="#a8adb4" />
-      <circle cx={cx + 6} cy={124} r={15} fill="#c9ccd1" />
-      <circle cx={cx + 6} cy={124} r={9} fill="#8f949b" />
-      {range(3).map((i) => (
-        <circle key={i} cx={cx + 6} cy={124} r={3 + i * 2} fill="none" stroke="#c9ccd1" strokeWidth={0.8} opacity={0.6} />
-      ))}
-      <path d={`M${cx - 6} 116 A 15 15 0 0 1 ${cx + 12} 110`} fill="none" stroke="#ffffff" strokeWidth={2} opacity={0.5} />
-      {/* 케이블 */}
-      <path d={`M${cx + 6} 142 C ${cx + 8} 162, 100 160, 100 186`} fill="none" stroke="#2b2c31" strokeWidth={2} />
+      <path d="M8.6 56 L8.4 63" stroke="#ffffff" strokeWidth={0.9} strokeLinecap="round" opacity={0.55} />
+      <path d="M52 18.2 V25.4" stroke="#d9dce0" strokeWidth={1.5} />
+      <path d="M6.4 49.5 L13.5 50.6" stroke="#d9dce0" strokeWidth={1.5} />
+      <circle cx={16} cy={84} r={4} fill="#17181b" />
+      <circle cx={14.8} cy={82.6} r={1} fill="#6a6e75" />
+      {/* 걸이를 막대에 잇는 은색 소매 */}
+      <path d="M86.6 31.7 L80 27.4" stroke="#c9ccd1" strokeWidth={7.6} />
+      <path d="M80.6 23.6 L78.2 30.9" stroke="#8f949b" strokeWidth={0.8} />
+      {/* 세로 알루미늄 막대: 왼쪽은 어둡게, 오른쪽 가장자리는 밝게 */}
+      <rect x={84.5} y={35} width={6} height={58} fill="#c9ccd1" />
+      <rect x={84.5} y={35} width={1.6} height={58} fill="#9aa0a7" />
+      <rect x={89.2} y={35} width={0.9} height={58} fill="#eef0f2" />
+      <rect x={84.5} y={35} width={6} height={1.8} fill="#a8adb4" />
+      {/* 맨 위 경첩: 둥근 알루미늄과 육각 홈 */}
+      <circle cx={87.5} cy={32} r={5.2} fill="#9aa0a7" />
+      <circle cx={87.5} cy={32} r={4.2} fill="#d0d3d7" />
+      <polygon points="87.5,30.2 89.06,31.1 89.06,32.9 87.5,33.8 85.94,32.9 85.94,31.1" fill="#5a5e66" />
+      {/* 검은 이어피스: 판보다 먼저 그려 판이 위쪽을 덮게 */}
+      <circle cx={56.5} cy={86} r={13.5} fill="#17181b" />
+      <circle cx={56.5} cy={86} r={13.5} fill="none" stroke="#2e3036" strokeWidth={1} />
+      <path d="M45.5 80 A 12 12 0 0 1 54 74" fill="none" stroke="#4c4f56" strokeWidth={1.6} strokeLinecap="round" />
+      <ellipse cx={51} cy={92} rx={3.2} ry={1.5} fill="#5c6068" opacity={0.45} />
+      {/* 납작한 알루미늄 판과 막대를 감싸는 고정 고리 */}
+      <path d="M84.5 77 L60.5 75.8 Q 56.2 80 59.8 84.8 L84.5 84.4 Z" fill="#b8bcc2" />
+      <path d="M84.5 77 L60.5 75.8" stroke="#eceef0" strokeWidth={0.8} />
+      <path d="M59.8 84.8 L84.5 84.4" stroke="#8f949b" strokeWidth={0.8} />
+      <path d="M62.6 79.4 L84 79.8 M62.4 82.2 L84 82.4" stroke="#d0d3d7" strokeWidth={0.4} />
+      <rect x={83.8} y={75.6} width={7.4} height={10.2} fill="#b4b9bf" />
+      <rect x={83.8} y={75.6} width={7.4} height={0.9} fill="#8f949b" />
+      <rect x={83.8} y={84.9} width={7.4} height={0.9} fill="#8f949b" />
+      <rect x={89.6} y={76.5} width={0.9} height={8.4} fill="#eef0f2" />
+      {/* 막대 아래 고리, 가늘어지는 고무 부싱, 케이블 */}
+      <rect x={84} y={92.5} width={7} height={2.6} fill="#9aa0a7" />
+      <path d="M84.6 95 H90.4 L88.6 121 H86.4 Z" fill="#1d1e21" />
+      <path d="M89.3 96.5 L88 119" stroke="#3a3c42" strokeWidth={0.6} />
+      <path d="M87.5 121 C 88 150, 95 170, 97 199" fill="none" stroke="#2a2420" strokeWidth={1.3} />
     </g>
   );
   return (
     <g>
-      <Shadow cx={100} cy={186} rx={56} ry={4} />
-      {unit(62, false)}
-      {unit(138, true)}
+      {unit}
+      <g transform="translate(200 8) scale(-1 1)">{unit}</g>
     </g>
   );
 }
