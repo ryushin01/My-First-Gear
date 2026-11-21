@@ -26,14 +26,19 @@
 nvm use
 corepack enable pnpm
 pnpm install
-pnpm --filter shop dev:db     # 로컬 Postgres(PGlite) + 쇼핑몰 http://localhost:3000
-pnpm --filter admin dev:db    # 같은 DB로 어드민 http://localhost:3001
+pnpm dev                      # 로컬 DB(PGlite) 하나로 쇼핑몰 http://localhost:3000 · 어드민 http://localhost:3001
+pnpm build && pnpm start      # 프로덕션 빌드를 같은 방식으로
+pnpm --filter shop dev:db     # 앱 하나만(로컬 DB + 쇼핑몰)
+pnpm --filter admin dev:db    # 같은 DB 폴더로 어드민만
 ```
 
+- 루트 `pnpm dev`·`pnpm start`(`packages/db/scripts/local-stack.mjs`)는 `MFG_DATABASE_URL`·`DATABASE_URL`이 없으면 PGlite(`apps/shop/.local-db`)를 띄워 마이그레이션·시드를 적용하고 두 앱에 같은 DB와 캐시 갱신 값을 넘깁니다. `.env`·인터넷 없이 쇼핑몰과 어드민이 시드 데이터로 뜹니다. 포트는 `MFG_SHOP_PORT`·`MFG_ADMIN_PORT`, turbo로 두 앱 `dev`만 띄우려면 `pnpm dev:turbo`.
+- PGlite 폴더는 한 프로세스만 열 수 있어 루트 `pnpm dev`와 앱별 `dev:db`를 함께 띄우지 않습니다.
+- 쇼핑몰 글꼴은 `next/font/google`이라 **빌드할 때만** 인터넷이 필요합니다(화면은 인터넷 없이 됨).
 - DB 없이 `pnpm --filter shop dev`만 돌려도 화면은 뜨지만 주문·조회·상담은 "서버에 연결할 수 없습니다"로 안내합니다.
 - 스키마를 바꾸면 `pnpm --filter @mfg/db db:generate`로 새 마이그레이션을 만들어 커밋합니다.
 - README 화면: 먼저 `pnpm build`, 그다음 `pnpm --filter admin screenshots`.
-- 환경 변수(이름만, `apps/*/.env.example`·[배포](docs/deploy.md)): `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `MFG_DATABASE_URL`, `MFG_SESSION_SECRET`, `MFG_REVALIDATE_SECRET`, `MFG_SHOP_URL`, `MFG_ADMIN_SECRET`, `MFG_ADMIN_PASSWORD`, `MFG_DEMO_RESET`, `MFG_MIGRATE_ON_PREVIEW`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SENTRY_DSN`.
+- 환경 변수(이름만, `apps/*/.env.example`·[배포](docs/deploy.md)): `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `MFG_DATABASE_URL`, `MFG_SESSION_SECRET`, `MFG_REVALIDATE_SECRET`, `MFG_SHOP_URL`, `MFG_ADMIN_SECRET`(Vercel에서만 필수, 로컬은 로컬 전용 값), `MFG_ADMIN_PASSWORD`, `MFG_DEMO_RESET`, `MFG_MIGRATE_ON_PREVIEW`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SENTRY_DSN`.
 
 ## 4. 검사·테스트 명령
 
@@ -48,7 +53,7 @@ pnpm test                 # 컴포넌트·접근성·호환성·PGlite 통합 �
 pnpm build
 pnpm --filter shop exec playwright install --with-deps chromium
 CI=1 pnpm --filter shop test:e2e
-CI=1 pnpm --filter admin test:e2e   # 어드민 + 쇼핑몰
+CI=1 pnpm --filter admin test:e2e   # 어드민 + 쇼핑몰, 외부 요청을 막는 e2e/offline.spec.ts 포함
 pnpm --filter shop size             # 전체 JS·CSS 예산(.size-limit.json)
 pnpm --filter shop lhci             # Lighthouse(lighthouserc.json)
 ```
@@ -56,7 +61,7 @@ pnpm --filter shop lhci             # Lighthouse(lighthouserc.json)
 - `pnpm --filter shop test:smoke`는 운영 주소를 읽기 전용으로 검사합니다. 운영 배포가 끝나면 `.github/workflows/smoke.yml`이 자동으로 돌립니다.
 - E2E를 다시 돌릴 때는 예전 서버를 끄고 `.next`를 지운 뒤 빌드합니다.
 - **Testing Library 원칙**: 구현 세부가 아니라 사용자가 보는 동작을 검사하고, 요소는 역할·이름(`getByRole`)으로 찾습니다. Cache Components가 숨긴 화면이 DOM에 남으므로 E2E 선택자도 `getByRole`처럼 보이는 요소만 고르는 것을 씁니다. 단위·컴포넌트는 Vitest + Testing Library(`@testing-library/react`, `user-event`, `jest-dom`, jsdom, 컴포넌트 옆 `*.test.tsx`), 화면 흐름은 Playwright E2E, 접근성은 axe(`src/components.a11y.test.tsx`의 `axe-core`, E2E의 `@axe-core/playwright`)로 검사합니다. 명도 대비는 jsdom에서 판단할 수 없어 E2E에서 봅니다.
-- Vitest는 `--no-experimental-webstorage`로 돕니다(Node 26 전역 `localStorage`가 jsdom 저장소를 가림).
+- Vitest는 `--no-experimental-webstorage`로 돕니다(Node 25 이상에서 켜지는 전역 `localStorage`가 jsdom 저장소를 가림, `apps/*/vitest.config.mts`).
 - 버그를 고치면 고치기 전에 실패하는 테스트를 함께 넣습니다.
 
 ## 5. 코드 스타일
@@ -75,7 +80,7 @@ pnpm --filter shop lhci             # Lighthouse(lighthouserc.json)
 
 ## 6. Git·PR
 
-- 흐름은 **GitHub Flow**입니다. `main`에 직접 커밋·푸시하지 않고, 최신 `main`에서 브랜치를 만들어 PR로만 병합합니다. 예외로 `.github/workflows/gear-sync.yml`의 `github-actions[bot]`이 매일 V 카탈로그 동기화(`chore: V 카탈로그 동기화`)를 `main`에 바로 올립니다.
+- 흐름은 **GitHub Flow**입니다. `main`에 직접 커밋·푸시하지 않고, 최신 `main`에서 브랜치를 만들어 PR로만 병합합니다. 예외로 `.github/workflows/gear-sync.yml`이 매일 V 카탈로그 동기화(`chore: V 카탈로그 동기화`)를 `main`에 바로 올립니다.
 - 브랜치 이름: `feat/…`, `fix/…`, `refactor/…`, `docs/…`, `test/…`, `chore/…`, `release/…`. 기능 브랜치는 `feat/v1.5.0-premium-art`처럼 버전을 넣어 왔습니다.
 - 커밋 메시지는 **Conventional Commits**(`<타입>: <한국어 요약>`)입니다. 타입은 `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `style`, `chore`, `ci`, `build`입니다. 실제 예: `feat: 브랜드와 상품 이름에 영어를 함께 적음(영어 병기), 1.4.0`, `fix: 리뷰 반영 — 고대비 모드에서도 ON/OFF 토글의 켜진 칸이 보이게`. 이 저장소는 버전을 `, 1.4.0`처럼 쉼표 뒤에 붙이고, PR 제목은 `1.5.0: 고가 상품 44개 실사풍 그림`처럼 버전을 앞에 적어 왔습니다(표준의 끝 `(x.y.z)`와 다른 점).
 - **기여자는 ryushin01만 남깁니다.** 커밋 작성자는 항상 ryushin01(`ryushin0 <141554987+ryushin01@users.noreply.github.com>`)입니다. 이 저장소는 백엔드 코드가 있는 저장소라 공동 작성자 줄은 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` 하나만 넣습니다.
@@ -97,6 +102,9 @@ pnpm --filter shop lhci             # Lighthouse(lighthouserc.json)
 
 ## 8. 보안·주의사항
 
+- **상태는 명령 결과로만 말합니다.** CI·배포·릴리스가 "통과했다", "끝났다"는 실제 명령 결과(`gh pr checks`, Vercel 배포 상태, 주소 응답 코드)로 확인한 뒤에 말합니다.
+- **먼저 묻기:** 새 런타임 의존성 추가, 빌드 설정(`next.config.ts`, `vercel.json`, `turbo.json`) 변경, 운영 DB에 닿는 마이그레이션.
+- **절대 금지:** 비밀값을 `NEXT_PUBLIC_*`에 넣기, `.env*` 커밋, `eslint-disable`·`--no-verify`로 검사 우회, `main`에 직접 푸시(동기화 워크플로 예외).
 - 비밀값과 `.env.local`, `.local-db`를 커밋하지 않습니다. 비밀은 Vercel에 Sensitive로 넣습니다. `MFG_REVALIDATE_SECRET`은 두 앱이 같아야 합니다.
 - **마이그레이션 규칙**: 이미 적용된 마이그레이션은 고치거나 지우지 않고 새 파일로 더합니다. 운영 DB에 `drizzle-kit push`를 쓰지 않습니다.
 - DB 연결은 운영 환경에만 있습니다. 미리보기에서 DB가 필요하면 Neon 프리뷰 브랜치와 `MFG_MIGRATE_ON_PREVIEW=1`을 씁니다.
