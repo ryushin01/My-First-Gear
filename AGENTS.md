@@ -5,7 +5,7 @@
 ## 1. 프로젝트 개요
 
 - 컴퓨터 부품·데스크 셋업부터 오디오·악기·자전거·캠핑까지 첫 장비를 고르는 기어 숍 포트폴리오입니다. PC 견적과 호환성 검사, 모의 결제를 하고, [V](https://github.com/ryushin01/V)와 제품 목록을 매일 주고받습니다. 가격·재고·주문은 모두 가상 데이터입니다.
-- 화면 축: 쇼핑몰(`apps/shop`) · 어드민(`apps/admin`) 2개.
+- 화면 축: 쇼핑몰(`apps/shop`) · 어드민(`apps/admin`).
 - 쇼핑몰: https://my-first-gear-ryushin01.vercel.app/ · 어드민: https://my-first-gear-admin-ryushin01.vercel.app/ (데모 비밀번호·회원은 README 참고)
 
 ## 2. 기술 스택과 구조
