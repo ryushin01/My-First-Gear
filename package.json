@@ -1,10 +1,12 @@
 {
   "name": "my-first-gear",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "node packages/db/scripts/local-stack.mjs dev",
+    "dev:turbo": "turbo run dev",
     "build": "turbo run build",
+    "start": "node packages/db/scripts/local-stack.mjs start",
     "lint": "turbo run lint && steiger apps/shop/src && steiger apps/admin/src",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

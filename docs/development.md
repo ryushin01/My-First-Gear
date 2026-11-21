@@ -65,13 +65,19 @@ pnpm 워크스페이스와 Turborepo로 묶은 모노레포입니다.
 `packages/db/scripts/with-db.mjs`가 PGlite(WASM Postgres)를 `pg-gateway`로 감싸 로컬 Postgres를 띄우고, 마이그레이션을 적용한 뒤 명령에 `MFG_DATABASE_URL`을 넘깁니다. 계정이나 Docker가 필요 없습니다.
 
 ```bash
-pnpm --filter shop dev:db     # DB 파일은 apps/shop/.local-db에 남는다
-pnpm --filter admin dev:db    # 같은 DB 폴더를 쓴다
+pnpm dev                      # 로컬 DB 하나로 쇼핑몰(3000)·어드민(3001)을 함께 (DB 파일은 apps/shop/.local-db)
+pnpm build && pnpm start      # 프로덕션 빌드를 같은 방식으로
+pnpm --filter shop dev:db     # 앱 하나만: DB 파일은 apps/shop/.local-db에 남는다
+pnpm --filter admin dev:db    # 같은 DB 폴더를 쓴다(PGlite 폴더는 한 프로세스만 열 수 있어 위 둘은 함께 띄우지 않음)
 ```
+
+루트의 `pnpm dev`·`pnpm start`는 `packages/db/scripts/local-stack.mjs`입니다. `MFG_DATABASE_URL`·`DATABASE_URL`이 없으면 PGlite를 띄워 마이그레이션(시드 상품·데모 회원 포함)을 적용하고, 두 앱에 같은 `MFG_DATABASE_URL`과 캐시 갱신 값(`MFG_SHOP_URL=http://localhost:3000`, 로컬 전용 `MFG_REVALIDATE_SECRET`)을 넘깁니다. 연결 문자열이 있으면 그 DB를 씁니다. 포트는 `MFG_SHOP_PORT`·`MFG_ADMIN_PORT`로 바꿉니다. turbo로 두 앱의 `dev`만 띄우려면 `pnpm dev:turbo`입니다.
+
+`.env` 없이 `pnpm start`로 띄운 프로덕션 빌드에서도 어드민에 로그인할 수 있도록, `MFG_ADMIN_SECRET`이 없으면 운영(Vercel, `VERCEL` 환경 변수)에서만 멈추고 이 컴퓨터에서는 로컬 전용 값을 씁니다(쇼핑몰 `MFG_SESSION_SECRET`과 같은 방식).
 
 DB 없이 `pnpm --filter shop dev`만 실행해도 화면은 뜨지만, 주문·조회·상담은 "서버에 연결할 수 없습니다"라고 안내합니다.
 
-어드민에서 바꾼 가격·숨김·답변을 쇼핑몰에 바로 반영하려면 두 앱의 `.env.local`에 같은 `MFG_REVALIDATE_SECRET`을 넣고, 어드민에는 `MFG_SHOP_URL=http://localhost:3000`도 넣습니다(`apps/*/.env.example` 참고). 없으면 어드민이 캐시 갱신을 건너뛰어, 쇼핑몰에는 캐시 수명(1분 안팎)이 지난 뒤에 보입니다.
+앱을 따로 띄울 때 어드민에서 바꾼 가격·숨김·답변을 쇼핑몰에 바로 반영하려면 두 앱의 `.env.local`에 같은 `MFG_REVALIDATE_SECRET`을 넣고, 어드민에는 `MFG_SHOP_URL=http://localhost:3000`도 넣습니다(`apps/*/.env.example` 참고). 없으면 어드민이 캐시 갱신을 건너뛰어, 쇼핑몰에는 캐시 수명(1분 안팎)이 지난 뒤에 보입니다.
 
 PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 PostgreSQL 17 → 18) 예전 `.local-db` 폴더는 열 수 없습니다. 스크립트가 폴더의 버전과 지금 버전을 알려 주므로, 폴더를 지우고 다시 실행해 새로 만듭니다(로컬에서 넣은 주문·상담 등은 지워집니다).
 
@@ -119,7 +125,7 @@ PGlite를 PostgreSQL 주 버전이 다른 판으로 올리면(0.3 → 0.5는 Pos
 | `pnpm test` | `packages/catalog` 호환성·검색·예산 추천·판매 정보 덧칠·V 동기화·피드·영어 병기(42), `packages/hooks` 중복 제출 잠금·서버 액션 호출(4), `packages/db` 로컬 Postgres(PGlite) 통합 테스트(31: 주문·재고 정합성, 같은 제출 재전송, 시도 제한·동시 요청, 기록 정리, 행 없는 상품 저장·주문 포함), 쇼핑몰 컴포넌트·접근성·저장값 정리·공유 되돌리기·장바구니 호환성·동기화·로그아웃 전 저장·다른 회원 값 가리기·재입고 알림 수·그림 파일 테스트(88), 어드민 컴포넌트·세션 테스트(4) |
 | `pnpm --filter shop test:e2e` | 쇼핑몰 프로덕션 빌드 + 로컬 DB, 데스크톱·모바일 122개. 전체 기어 더 보기와 초점 이동, 검색, 빠른 견적, 비교, 최근 본 상품, 장바구니 호환성, 기기 간 동기화, 주문 취소·배송 단계, 재입고 알림, 로그인 시도 제한, 세션 무효화, sitemap·OG·구조화 데이터, 성능 예산(홈 글꼴 700KB 이하, 카탈로그 화면 전송량) 포함. 404 화면, 결제 중 연결 끊김·응답만 끊긴 재결제(주문 1건), 깨진 저장값, 서버 세션 소멸 뒤 화면, 로그아웃 뒤 장바구니, 로그아웃 없이 다른 회원으로 가입해도 이전 장바구니가 합쳐지지 않음, 공유 견적 되돌리기, 비회원 조회 시도 제한, 공유 미리보기(봇). 25개 주소의 가로 넘침·24px 미만 조작 요소·axe, 중복 id, 캐러셀 키보드, 필터, 결제·조회, PC 견적, 상담, 회원 가입·로그인, 후기·Q&A·찜, 마이페이지, 더블 클릭 |
 | `pnpm --filter shop test:smoke` | 운영 주소를 대상으로 읽기 전용 스모크 테스트 (배포 직후 GitHub Actions가 자동 실행) |
-| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 30개. 로그인, 가격 변경 반영, 주문·상담 상태, 어드민 취소 재고 복구, 문의 답변 반영, 재입고 알림(재고 변경 → 회원 머리글 → 담기), 두 앱 보안 헤더, 가로 넘침·axe, 데모 초기화 크론 |
+| `pnpm --filter admin test:e2e` | 쇼핑몰과 어드민을 같은 DB로 띄워 데스크톱·모바일 50개. 인터넷 없이(localhost 밖 요청을 모두 막고) 쇼핑몰 5개 화면·주문서·어드민 로그인·상품·주문·회원 화면이 내용과 함께 뜨고 axe 위반이 없는지(`offline.spec.ts`), 로그인, 가격 변경 반영, 주문·상담 상태, 어드민 취소 재고 복구, 문의 답변 반영, 재입고 알림(재고 변경 → 회원 머리글 → 담기), 두 앱 보안 헤더, 가로 넘침·axe, 데모 초기화 크론 |
 
 - 컴포넌트 테스트는 컴포넌트 옆 `*.test.tsx`에 둡니다 (Vitest + Testing Library, jsdom).
 - `src/components.a11y.test.tsx`가 공용 컴포넌트(상품 카드의 할인·품절·상담 상태, 테이프 표지, 실제로 그려지는 상품 그림마다 하나, 입력 칸과 오류 요약 등)를 렌더링해 axe로 검사합니다. 명도 대비는 jsdom에서 판단할 수 없어 E2E에서 검사합니다.

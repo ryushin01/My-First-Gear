@@ -5,7 +5,8 @@ export const SESSION_TTL_SECONDS = 60 * 60 * 8;
 function secret(): string {
   const value = process.env.MFG_ADMIN_SECRET;
   if (value) return value;
-  if (process.env.NODE_ENV === "production") throw new Error("MFG_ADMIN_SECRET이 필요합니다.");
+  // 운영(Vercel)에서는 꼭 있어야 한다. 이 컴퓨터에서 띄운 빌드(pnpm start)는 .env 없이도 데모로 열리게 로컬 전용 값을 쓴다.
+  if (process.env.NODE_ENV === "production" && process.env.VERCEL) throw new Error("MFG_ADMIN_SECRET이 필요합니다.");
   return "dev-only-admin-secret";
 }
 
