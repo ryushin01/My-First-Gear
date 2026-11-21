@@ -1,7 +1,7 @@
 # My First Gear
 
 [![CI](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml/badge.svg)](https://github.com/ryushin01/My-First-Gear/actions/workflows/ci.yml)
-![version](https://img.shields.io/badge/version-1.2.1-ff3131)
+![version](https://img.shields.io/badge/version-1.6.0-ff3131)
 
 컴퓨터 부품과 데스크 셋업(의자·책상·모니터암·조명)부터 오디오, 악기, 전자제품, 게임기, 자전거, 자동차, 시계, 캠핑까지 **첫 장비를 고르는 기어 숍**입니다. 부품을 골라 PC 견적을 내면 호환성을 바로 확인하고, 조립까지 맡길 수 있습니다. 데스크·게이밍 셋업 배치도 [V](https://github.com/ryushin01/V)와 제품 목록을 매일 주고받아, 서로에게 없는 제품을 자동으로 채웁니다.
 
@@ -85,12 +85,15 @@ Node.js 24(`.nvmrc`)와 pnpm 12가 필요합니다.
 nvm use
 corepack enable pnpm
 pnpm install
-pnpm --filter shop dev:db    # 로컬 Postgres(PGlite) + 쇼핑몰 http://localhost:3000
-pnpm --filter admin dev:db   # 같은 DB로 어드민 http://localhost:3001 (비밀번호 demo-admin)
+pnpm dev     # 로컬 Postgres(PGlite) 하나 + 쇼핑몰 http://localhost:3000 + 어드민 http://localhost:3001 (비밀번호 demo-admin)
 ```
+
+`.env` 없이 `pnpm dev`, `pnpm build` → `pnpm start`가 바로 시드 데이터(상품·데모 회원)로 돕니다. DB 연결 문자열이 없으면 로컬 Postgres(PGlite, `apps/shop/.local-db`)를 띄워 두 앱이 같은 DB를 쓰고, 어드민에서 바꾼 가격·노출이 쇼핑몰에 바로 반영됩니다. 상품 그림(SVG)·글꼴·카탈로그는 저장소 안에 있어 화면을 열 때 인터넷이 필요 없습니다(`apps/admin/e2e/offline.spec.ts`가 localhost 밖 요청을 막고 확인). 인터넷이 필요한 것은 설치와 빌드(`next/font/google`이 빌드할 때 글꼴을 받아 사이트에 넣음)뿐입니다.
 
 | 명령 | 설명 |
 |---|---|
+| `pnpm dev` / `pnpm start` | 로컬 DB + 쇼핑몰·어드민 개발 서버 / 프로덕션 빌드 실행 (DB 연결 문자열이 있으면 그 DB) |
+| `pnpm --filter shop dev:db` / `pnpm --filter admin dev:db` | 앱 하나만 로컬 DB로 띄우기 |
 | `pnpm build` | 두 앱 프로덕션 빌드 |
 | `pnpm lint` / `typecheck` | ESLint + FSD 검사 / 타입 검사 |
 | `pnpm format` / `format:check` | Prettier로 서식 맞추기 / 서식 검사(CI) |
